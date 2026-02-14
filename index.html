@@ -1,0 +1,2604 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>يومياتي</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#2d3436">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --accent-warm: #fdcb6e;
+            --accent-cool: #74b9ff;
+            --accent-gentle: #fab1a0;
+            --accent-calm: #a29bfe;
+            --accent-nature: #55efc4;
+            --border-soft: #dfe6e9;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+            min-height: 100vh;
+            padding-bottom: 80px; /* Space for bottom nav */
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #2d3436 0%, #34495e 100%);
+            padding: 1.5rem 1rem;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        h1 {
+            font-family: 'Amiri', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .menu-btn, .back-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .menu-btn:hover, .back-btn:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+        }
+        
+        /* Hamburger Menu */
+        .hamburger-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100%;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+        
+        .hamburger-menu.open {
+            right: 0;
+        }
+        
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        .menu-overlay.active {
+            display: block;
+        }
+        
+        .menu-header {
+            padding: 2rem 1.5rem;
+            background: linear-gradient(135deg, var(--accent-warm), var(--accent-gentle));
+            color: var(--text-primary);
+        }
+        
+        .menu-header h2 {
+            font-family: 'Amiri', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .menu-items {
+            padding: 1rem 0;
+        }
+        
+        .menu-item {
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            border-right: 3px solid transparent;
+        }
+        
+        .menu-item:hover {
+            background: var(--bg-primary);
+            border-right-color: var(--accent-warm);
+        }
+        
+        .menu-item-icon {
+            font-size: 1.5rem;
+        }
+        
+        .menu-item-text {
+            font-weight: 500;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.5rem 0;
+            z-index: 99;
+        }
+        
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+        }
+        
+        .nav-item.active {
+            color: var(--accent-warm);
+        }
+        
+        .nav-item-icon {
+            font-size: 1.5rem;
+        }
+        
+        .nav-item-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        /* Landing Page */
+        .landing-hero {
+            text-align: center;
+            padding: 3rem 1rem;
+            background: linear-gradient(135deg, rgba(253, 203, 110, 0.1), rgba(250, 177, 160, 0.1));
+            border-radius: 20px;
+            margin-bottom: 2rem;
+        }
+        
+        .landing-hero h2 {
+            font-family: 'Amiri', serif;
+            font-size: 2.5rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        
+        .landing-hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .feature-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent-warm);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-title {
+            font-family: 'Amiri', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .feature-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+        }
+        
+        .card-title {
+            font-family: 'Amiri', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+        
+        input[type="text"],
+        input[type="date"],
+        input[type="number"],
+        input[type="range"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border-soft);
+            border-radius: 10px;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--bg-primary);
+        }
+        
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-cool);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(116, 185, 255, 0.1);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+        
+        /* Emotion Pickers */
+        .emotion-section {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .emotion-section-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .emotion-choices {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .emotion-chip {
+            background: white;
+            border: 2px solid var(--border-soft);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .emotion-chip:hover {
+            border-color: var(--accent-warm);
+        }
+        
+        .emotion-chip.selected {
+            background: linear-gradient(135deg, var(--accent-warm), var(--accent-gentle));
+            border-color: var(--accent-warm);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #fdcb6e, #fab1a0);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-soft);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--accent-cool);
+            background: white;
+        }
+        
+        .btn-full {
+            width: 100%;
+        }
+        
+        .btn-back {
+            background: rgba(0,0,0,0.05);
+            padding: 0.5rem 1.5rem;
+            margin-bottom: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Breathing Exercises */
+        .breathing-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .breathing-selector {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .breathing-option {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px solid var(--border-soft);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            min-width: 180px;
+        }
+        
+        .breathing-option:hover {
+            border-color: var(--accent-calm);
+            transform: translateY(-3px);
+        }
+        
+        .breathing-option.active {
+            border-color: var(--accent-calm);
+            background: linear-gradient(135deg, rgba(162, 155, 254, 0.1), rgba(85, 239, 196, 0.1));
+        }
+        
+        .breathing-option h3 {
+            font-family: 'Amiri', serif;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .breathing-visualizer {
+            width: 100%;
+            max-width: 400px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(162, 155, 254, 0.05), rgba(85, 239, 196, 0.05));
+            border-radius: 20px;
+            position: relative;
+            padding: 2rem;
+        }
+        
+        .breathing-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-calm), var(--accent-nature));
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            box-shadow: 0 10px 40px rgba(162, 155, 254, 0.3);
+        }
+        
+        .breathing-circle.box-breathing {
+            animation: boxBreathing 16s ease-in-out infinite;
+        }
+        
+        .breathing-circle.breathing-478 {
+            animation: breathing478 19s ease-in-out infinite;
+        }
+        
+        .breathing-circle.equal {
+            animation: equalBreathing 20s ease-in-out infinite;
+        }
+        
+        @keyframes boxBreathing {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.4); }
+            50% { transform: scale(1.4); }
+            75% { transform: scale(1); }
+        }
+        
+        @keyframes breathing478 {
+            0%, 100% { transform: scale(1); }
+            21% { transform: scale(1.4); }
+            58% { transform: scale(1.4); }
+        }
+        
+        @keyframes equalBreathing {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.3); }
+            50% { transform: scale(1.3); }
+            75% { transform: scale(1); }
+        }
+        
+        .breathing-instruction {
+            margin-top: 2rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent-calm);
+            text-align: center;
+        }
+        
+        .breathing-controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        /* Dashboard */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-primary));
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-right: 4px solid var(--accent-warm);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-family: 'Amiri', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .chart-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-title {
+            font-family: 'Amiri', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        /* Entry Display */
+        .entry-display {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            border-right: 4px solid var(--accent-warm);
+        }
+        
+        .entry-date {
+            font-family: 'Amiri', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-cool);
+            margin-bottom: 1rem;
+        }
+        
+        .entry-section {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-soft);
+        }
+        
+        .entry-section:last-child {
+            border-bottom: none;
+        }
+        
+        .entry-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .entry-value {
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        /* Messages */
+        .message {
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .message-success {
+            background: #d4edda;
+            color: #155724;
+            border-right: 4px solid #28a745;
+        }
+        
+        .message-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-right: 4px solid #dc3545;
+        }
+        
+        .message-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-right: 4px solid #17a2b8;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Setup Box */
+        .setup-box {
+            background: linear-gradient(135deg, #fff5e6, #ffe8cc);
+            border-right: 4px solid #fdcb6e;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .setup-step {
+            margin-bottom: 1rem;
+            padding-right: 1.5rem;
+        }
+        
+        code {
+            background: rgba(0,0,0,0.05);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        /* CBT Steps Progress */
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border-soft);
+            transition: all 0.3s ease;
+        }
+        
+        .step-dot.active {
+            background: var(--accent-warm);
+            width: 30px;
+            border-radius: 5px;
+        }
+        
+        /* Range Slider */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: var(--border-soft);
+            outline: none;
+            border-radius: 10px;
+            height: 8px;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--accent-warm);
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--accent-warm);
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            border: none;
+        }
+        
+        .range-value {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-warm);
+            margin: 1rem 0;
+        }
+        
+        /* Scenarios Interactive */
+        .scenario-ai-response {
+            background: linear-gradient(135deg, rgba(162, 155, 254, 0.1), rgba(116, 185, 255, 0.1));
+            border-right: 4px solid var(--accent-calm);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+        }
+        
+        .ai-thinking {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(162, 155, 254, 0.1);
+            border-radius: 8px;
+        }
+        
+        .ai-thinking-dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .ai-thinking-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-calm);
+            animation: bounce 1.4s ease-in-out infinite;
+        }
+        
+        .ai-thinking-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .ai-thinking-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes bounce {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+        }
+        /* تنسيق نصوص الـ Markdown */
+        .markdown-content {
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+
+        /* تنسيق القوائم النقطية والرقمية */
+        .markdown-content ul, .markdown-content ol {
+            margin-right: 1.5rem; /* مسافة بادئة لليمين لأننا عربي */
+            margin-bottom: 1rem;
+        }
+
+        .markdown-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* تنسيق العناوين والخط العريض */
+        .markdown-content strong, .markdown-content b {
+            color: var(--accent-warm); /* تلوين الكلمات المهمة */
+            font-weight: 700;
+        }
+
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+            font-size: 1.1rem;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .markdown-content p {
+            margin-bottom: 1rem; /* مسافة بين الفقرات */
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 0.5rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.4rem;
+            }
+            
+            .landing-hero h2 {
+                font-size: 1.8rem;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .breathing-circle {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .hamburger-menu {
+                width: 250px;
+                right: -250px;
+            }
+        }
+        
+        /* Utility Classes */
+        .hidden {
+            display: none;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mb-3 { margin-bottom: 1.5rem; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <h1 id="app-title">يومياتي 📔</h1>
+            <div class="header-actions">
+                <button class="back-btn hidden" onclick="goBack()" id="back-btn">
+                    ← رجوع
+                </button>
+                <button class="menu-btn" onclick="toggleMenu()">
+                    ☰ القائمة
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hamburger Menu -->
+    <div class="menu-overlay" id="menu-overlay" onclick="toggleMenu()"></div>
+    <div class="hamburger-menu" id="hamburger-menu">
+        <div class="menu-header">
+            <h2>القائمة</h2>
+            <p>استكشف جميع الأقسام</p>
+        </div>
+        <div class="menu-items">
+            <div class="menu-item" onclick="navigateTo('landing'); toggleMenu();">
+                <span class="menu-item-icon">🏠</span>
+                <span class="menu-item-text">الصفحة الرئيسية</span>
+            </div>
+            <div class="menu-item" onclick="navigateTo('write-daily'); toggleMenu();">
+                <span class="menu-item-icon">📝</span>
+                <span class="menu-item-text">اليوميات الرئيسية</span>
+            </div>
+            <div class="menu-item" onclick="navigateTo('cbt'); toggleMenu();">
+                <span class="menu-item-icon">🧠</span>
+                <span class="menu-item-text">يوميات CBT</span>
+            </div>
+            <div class="menu-item" onclick="navigateTo('write-scenarios'); toggleMenu();">
+                <span class="menu-item-icon">🎯</span>
+                <span class="menu-item-text">يوميات السيناريوهات</span>
+            </div>
+            <div class="menu-item" onclick="navigateTo('write-exposure'); toggleMenu();">
+                <span class="menu-item-icon">💪</span>
+                <span class="menu-item-text">يوميات المواجهة</span>
+            </div>
+            <div class="menu-item" onclick="navigateTo('breathing'); toggleMenu();">
+                <span class="menu-item-icon">🧘</span>
+                <span class="menu-item-text">تمارين التنفس</span>
+            </div>
+            <div class="menu-item" onclick="navigateTo('read'); toggleMenu();">
+                <span class="menu-item-icon">📖</span>
+                <span class="menu-item-text">قراءة اليوميات</span>
+            </div>
+            <div class="menu-item" onclick="navigateTo('dashboard'); toggleMenu();">
+                <span class="menu-item-icon">📊</span>
+                <span class="menu-item-text">لوحة التحكم</span>
+            </div>
+            <div class="menu-item" onclick="navigateTo('setup'); toggleMenu();">
+                <span class="menu-item-icon">⚙️</span>
+                <span class="menu-item-text">الإعدادات</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Landing Page -->
+        <div id="content-landing" class="tab-content active">
+            <div class="landing-hero">
+                <h2>مرحباً بك في مساحتك الآمنة 🌸</h2>
+                <p>رحلتك نحو الوعي الذاتي والنمو الشخصي تبدأ من هنا</p>
+            </div>
+            
+            <div class="feature-grid">
+                <div class="feature-card" onclick="navigateTo('write-daily')">
+                    <div class="feature-icon">📝</div>
+                    <div class="feature-title">اليوميات الرئيسية</div>
+                    <div class="feature-desc">سجّل يومك، مشاعرك، وأفكارك بالتفصيل</div>
+                </div>
+                
+                <div class="feature-card" onclick="navigateTo('cbt')">
+                    <div class="feature-icon">🧠</div>
+                    <div class="feature-title">يوميات العلاج المعرفي CBT</div>
+                    <div class="feature-desc">التقط أفكارك ومشاعرك وعدّلها خطوة بخطوة</div>
+                </div>
+                
+                <div class="feature-card" onclick="navigateTo('write-scenarios')">
+                    <div class="feature-icon">🎯</div>
+                    <div class="feature-title">يوميات السيناريوهات التفاعلية</div>
+                    <div class="feature-desc">واجه مواقف افتراضية واحصل على تقييم ذكي</div>
+                </div>
+                
+                <div class="feature-card" onclick="navigateTo('write-exposure')">
+                    <div class="feature-icon">💪</div>
+                    <div class="feature-title">يوميات المواجهة</div>
+                    <div class="feature-desc">تحدّى مخاوفك وتتبع تقدمك</div>
+                </div>
+                
+                <div class="feature-card" onclick="navigateTo('breathing')">
+                    <div class="feature-icon">🧘</div>
+                    <div class="feature-title">تمارين التنفس</div>
+                    <div class="feature-desc">استرخِ وركّز مع تمارين التنفس المتنوعة</div>
+                </div>
+                
+                <div class="feature-card" onclick="navigateTo('read')">
+                    <div class="feature-icon">📖</div>
+                    <div class="feature-title">قراءة اليوميات</div>
+                    <div class="feature-desc">راجع كتاباتك السابقة واستلهم منها</div>
+                </div>
+                
+                <div class="feature-card" onclick="navigateTo('dashboard')">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">لوحة التحكم</div>
+                    <div class="feature-desc">إحصائيات ورؤى عن رحلتك الشخصية</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Daily Journal -->
+        <div id="content-write-daily" class="tab-content">
+            <div class="card">
+                <h2 class="card-title">📝 اليوميات الرئيسية</h2>
+                
+                <div id="write-daily-message"></div>
+                
+                <form id="journal-form-daily" onsubmit="submitEntry(event, 'daily')">
+                    <div class="form-group">
+                        <label class="form-label">اليوم</label>
+                        <input type="date" id="date-daily" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">كيف تقيم جودة يومك؟ (1-10)</label>
+                        <input type="number" id="quality-daily" min="1" max="10" placeholder="من 1 إلى 10">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">فحص HALT (حدد ما تشعر به):</label>
+                        <select id="halt-daily" multiple size="5">
+                            <option value="جوع شديد أو أكل غير صحي">جوع شديد أو أكل غير صحي (Hungry)</option>
+                            <option value="غضب أو انفعال">غضب أو انفعال (Angry)</option>
+                            <option value="وحدة أو عزلة">وحدة أو عزلة (Lonely)</option>
+                            <option value="تعب أو قلة نوم">تعب أو قلة نوم (Tired)</option>
+                            <option value="أشعر بالاتزان">أشعر بالاتزان (None)</option>
+                        </select>
+                        <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
+                            يمكنك اختيار أكثر من خيار باستخدام Ctrl/Cmd
+                        </small>
+                    </div>
+                    
+                    <!-- Emotions -->
+                    <div class="form-group">
+                        <label class="form-label">المشاعر المسيطرة (اختر كل ما ينطبق):</label>
+                        
+                        <div class="emotion-section">
+                            <div class="emotion-section-title">🟡 الفرح</div>
+                            <div class="emotion-choices" id="emotion-joy-daily"></div>
+                        </div>
+                        
+                        <div class="emotion-section">
+                            <div class="emotion-section-title">🟢 الحب / الثقة</div>
+                            <div class="emotion-choices" id="emotion-love-daily"></div>
+                        </div>
+                        
+                        <div class="emotion-section">
+                            <div class="emotion-section-title">🟠 الترقّب</div>
+                            <div class="emotion-choices" id="emotion-anticipation-daily"></div>
+                        </div>
+                        
+                        <div class="emotion-section">
+                            <div class="emotion-section-title">🔴 الغضب</div>
+                            <div class="emotion-choices" id="emotion-anger-daily"></div>
+                        </div>
+                        
+                        <div class="emotion-section">
+                            <div class="emotion-section-title">🟣 الاشمئزاز</div>
+                            <div class="emotion-choices" id="emotion-disgust-daily"></div>
+                        </div>
+                        
+                        <div class="emotion-section">
+                            <div class="emotion-section-title">🔵 الحزن</div>
+                            <div class="emotion-choices" id="emotion-sadness-daily"></div>
+                        </div>
+                        
+                        <div class="emotion-section">
+                            <div class="emotion-section-title">🟢 الخوف</div>
+                            <div class="emotion-choices" id="emotion-fear-daily"></div>
+                        </div>
+                        
+                        <div class="emotion-section">
+                            <div class="emotion-section-title">🟦 المفاجأة</div>
+                            <div class="emotion-choices" id="emotion-surprise-daily"></div>
+                        </div>
+                        
+                        <div class="emotion-section">
+                            <div class="emotion-section-title">⚪ مشاعر مركبة / إضافية</div>
+                            <div class="emotion-choices" id="emotion-complex-daily"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">ما هي الأمور السلبية اليوم؟ (الندم)</label>
+                        <textarea id="negative-daily" placeholder="اكتب عن الأمور التي تندم عليها أو تشعر بأنها كانت سلبية..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">ما هي الأمور الإيجابية اليوم؟ (الامتنان)</label>
+                        <textarea id="positive-daily" placeholder="اكتب عن الأمور التي تشعر بالامتنان لها..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">مساحة حرة (اكتب كل ما يخطر ببالك):</label>
+                        <textarea id="freeform-daily" rows="5" placeholder="مساحة حرة للتعبير عن كل ما تريد..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">هل حدث انجذاب؟ صف صفات من انجذبت إليهم:</label>
+                        <textarea id="attraction-daily" placeholder="صف الصفات التي لاحظتها..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">هل حدثت انتكاسة؟ صف المحفزات والمشاعر قبل وبعد بالتفصيل:</label>
+                        <textarea id="relapse-daily" placeholder="صف المحفزات والمشاعر بالتفصيل..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-full">💾 حفظ المدخل</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- CBT Thought Journal -->
+        <div id="content-cbt" class="tab-content">
+            <!-- Step 1: Situation -->
+            <div class="card" id="cbt-step-1">
+                <button class="btn btn-back" onclick="goToCBTStep(0)">
+                    ← رجوع للخطوة السابقة
+                </button>
+                
+                <div class="step-indicator">
+                    <div class="step-dot active"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                </div>
+                
+                <h2 class="card-title">1️⃣ ابدأ الآن</h2>
+                <p class="mb-2">عن ماذا تريد أن تكتب اليوم؟</p>
+                
+                <div class="form-group">
+                    <input type="text" id="cbt-situation" maxlength="120" 
+                           placeholder="صف الموقف باختصار..." 
+                           oninput="updateCharCount()">
+                    <small id="cbt-counter" style="color: var(--text-secondary);">0/120</small>
+                </div>
+                
+                <button class="btn btn-primary btn-full" onclick="goToCBTStep(2)">
+                    متابعة ➝
+                </button>
+            </div>
+            
+            <!-- Step 2: Cognitive Triangle -->
+            <div class="card hidden" id="cbt-step-2">
+                <button class="btn btn-back" onclick="goToCBTStep(1)">
+                    ← رجوع للخطوة السابقة
+                </button>
+                
+                <div class="step-indicator">
+                    <div class="step-dot"></div>
+                    <div class="step-dot active"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                </div>
+                
+                <h2 class="card-title">2️⃣ التقط التجربة (المثلث المعرفي)</h2>
+                <p class="mb-2">من أي نقطة تريد أن تبدأ؟</p>
+                
+                <div class="feature-grid">
+                    <div class="feature-card" onclick="selectCBTTriangle('feelings')">
+                        <div class="feature-icon">💛</div>
+                        <div class="feature-title">المشاعر</div>
+                        <div class="feature-desc">ماذا تشعر؟</div>
+                    </div>
+                    
+                    <div class="feature-card" onclick="selectCBTTriangle('behaviors')">
+                        <div class="feature-icon">🏃</div>
+                        <div class="feature-title">السلوكيات</div>
+                        <div class="feature-desc">ماذا تفعل أو تتجنب؟</div>
+                    </div>
+                    
+                    <div class="feature-card" onclick="selectCBTTriangle('thoughts')">
+                        <div class="feature-icon">💭</div>
+                        <div class="feature-title">الأفكار</div>
+                        <div class="feature-desc">ماذا تقول لنفسك؟</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 3: Feelings -->
+            <div class="card hidden" id="cbt-feelings">
+                <button class="btn btn-back" onclick="goToCBTStep(2)">
+                    ← رجوع للخطوة السابقة
+                </button>
+                
+                <div class="step-indicator">
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot active"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                </div>
+                
+                <h2 class="card-title">3️⃣ المشاعر والأحاسيس</h2>
+                <p class="mb-2">اختر المشاعر التي تشعر بها الآن</p>
+                
+                <div class="emotion-choices" id="cbt-feelings-chips"></div>
+                
+                <button class="btn btn-primary btn-full mt-2" onclick="goToCBTTriangle('behaviors')">
+                    متابعة ➝
+                </button>
+            </div>
+            
+            <!-- Step 4: Behaviors -->
+            <div class="card hidden" id="cbt-behaviors">
+                <button class="btn btn-back" onclick="goBackFromBehaviors()">
+                    ← رجوع للخطوة السابقة
+                </button>
+                
+                <div class="step-indicator">
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot active"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                </div>
+                
+                <h2 class="card-title">4️⃣ السلوكيات</h2>
+                <p class="mb-2">ماذا فعلت أو تجنبت؟</p>
+                
+                <div class="form-group">
+                    <textarea id="cbt-behavior-text" rows="5" 
+                              placeholder="صف سلوكياتك أو ما تجنبته..."></textarea>
+                </div>
+                
+                <button class="btn btn-primary btn-full" onclick="goToCBTTriangle('thoughts')">
+                    متابعة ➝
+                </button>
+            </div>
+            
+            <!-- Step 5: Thoughts -->
+            <div class="card hidden" id="cbt-thoughts">
+                <button class="btn btn-back" onclick="goBackFromThoughts()">
+                    ← رجوع للخطوة السابقة
+                </button>
+                
+                <div class="step-indicator">
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot active"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                </div>
+                
+                <h2 class="card-title">5️⃣ الأفكار</h2>
+                <p class="mb-2">ماذا تقول لنفسك؟ ما هي الأفكار التي تدور في عقلك؟</p>
+                
+                <div class="form-group">
+                    <textarea id="cbt-thought-text" rows="5" 
+                              placeholder="اكتب أفكارك..."></textarea>
+                </div>
+                
+                <button class="btn btn-primary btn-full" onclick="goToCBTStep('sud1')">
+                    متابعة ➝
+                </button>
+            </div>
+            
+            <!-- Step 6: SUD Before -->
+            <div class="card hidden" id="cbt-sud1">
+                <button class="btn btn-back" onclick="goToCBTStep('thoughts')">
+                    ← رجوع للخطوة السابقة
+                </button>
+                
+                <div class="step-indicator">
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot active"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                </div>
+                
+                <h2 class="card-title">6️⃣ مستوى الضيق (قبل)</h2>
+                <p class="mb-2">كم تشعر بالضيق حالياً؟</p>
+                
+                <div class="form-group">
+                    <input type="range" min="0" max="10" value="5" id="cbt-sud-before" 
+                           oninput="updateSUDBefore()">
+                    <p class="range-value" id="cbt-sud-before-value">5/10</p>
+                </div>
+                
+                <div class="mt-2 mb-2">
+                    <button class="btn btn-secondary btn-full mb-1" onclick="navigateToBreathing('cbt')">
+                        🧘 توقف وتنفس
+                    </button>
+                    <small style="color: var(--text-secondary); display: block; text-align: center;">
+                        خذ استراحة وعد للتكملة
+                    </small>
+                </div>
+                
+                <button class="btn btn-primary btn-full mt-2" onclick="goToCBTStep('traps')">
+                    متابعة ➝
+                </button>
+            </div>
+            
+            <!-- Step 7: Thinking Traps -->
+            <div class="card hidden" id="cbt-traps">
+                <button class="btn btn-back" onclick="goToCBTStep('sud1')">
+                    ← رجوع للخطوة السابقة
+                </button>
+                
+                <div class="step-indicator">
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot active"></div>
+                    <div class="step-dot"></div>
+                </div>
+                
+                <h2 class="card-title">7️⃣ أفخاخ التفكير</h2>
+                <p class="mb-2">هل تعرف أياً من هذه التشوهات المعرفية في أفكارك؟</p>
+                
+                <div class="emotion-choices" id="cbt-trap-chips"></div>
+                
+                <button class="btn btn-primary btn-full mt-2" onclick="goToCBTStep('challenge')">
+                    متابعة ➝
+                </button>
+            </div>
+            
+            <!-- Step 8: Challenge -->
+            <div class="card hidden" id="cbt-challenge">
+                <button class="btn btn-back" onclick="goToCBTStep('traps')">
+                    ← رجوع للخطوة السابقة
+                </button>
+                
+                <div class="step-indicator">
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot active"></div>
+                </div>
+                
+                <h2 class="card-title">8️⃣ تحدّي الأفكار</h2>
+                <p class="mb-2">ما هي الأدلة التي تدعم أو تناقض هذه الأفكار؟</p>
+                
+                <div class="form-group">
+                    <textarea id="cbt-challenge-text" rows="5" 
+                              placeholder="فكّر بموضوعية... هل هذه الأفكار دقيقة؟"></textarea>
+                </div>
+                
+                <button class="btn btn-primary btn-full" onclick="goToCBTStep('action')">
+                    متابعة ➝
+                </button>
+            </div>
+            
+            <!-- Step 9: Action Plan -->
+            <div class="card hidden" id="cbt-action">
+                <button class="btn btn-back" onclick="goToCBTStep('challenge')">
+                    ← رجوع للخطوة السابقة
+                </button>
+                
+                <div class="step-indicator">
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot active"></div>
+                </div>
+                
+                <h2 class="card-title">9️⃣ خطة العمل</h2>
+                <p class="mb-2">ما الإجراء المفيد الذي يمكنك اتخاذه؟</p>
+                
+                <div class="form-group">
+                    <textarea id="cbt-action-text" rows="5" 
+                              placeholder="حدد خطوة عملية واحدة يمكنك القيام بها..."></textarea>
+                </div>
+                
+                <button class="btn btn-primary btn-full" onclick="goToCBTStep('sud2')">
+                    متابعة ➝
+                </button>
+            </div>
+            
+            <!-- Step 10: Final SUD -->
+            <div class="card hidden" id="cbt-sud2">
+                <button class="btn btn-back" onclick="goToCBTStep('action')">
+                    ← رجوع للخطوة السابقة
+                </button>
+                
+                <div class="step-indicator">
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot"></div>
+                    <div class="step-dot active"></div>
+                </div>
+                
+                <h2 class="card-title">🔟 مستوى الضيق (بعد)</h2>
+                <p class="mb-2">كم تشعر بالضيق الآن بعد الجلسة؟</p>
+                
+                <div class="form-group">
+                    <input type="range" min="0" max="10" value="3" id="cbt-sud-after" 
+                           oninput="updateSUDAfter()">
+                    <p class="range-value" id="cbt-sud-after-value">3/10</p>
+                </div>
+                
+                <button class="btn btn-primary btn-full" onclick="saveCBTEntry()">
+                    💾 حفظ الجلسة
+                </button>
+            </div>
+        </div>
+        
+        <!-- Scenarios Journal (Interactive AI) -->
+        <div id="content-write-scenarios" class="tab-content">
+            <div class="card">
+                <h2 class="card-title">🎯 يوميات السيناريوهات التفاعلية</h2>
+                <p class="mb-2">واجه مواقف صعبة واحصل على تقييم ذكي من المساعد النفسي</p>
+                
+                <div id="write-scenarios-message"></div>
+                
+                <div id="scenario-step-1">
+                    <div class="form-group">
+                        <label class="form-label">التاريخ</label>
+                        <input type="date" id="date-scenarios" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">اقترح موقفاً أو مشكلة تريد حلها</label>
+                        <textarea id="scenario-problem" rows="4" 
+                                  placeholder="صف الموقف الذي تريد التدرب عليه، أو اتركه فارغاً ليقترح المساعد موقفاً..."></textarea>
+                        <small style="color: var(--text-secondary);">
+                            إذا تركت الحقل فارغاً، سيقترح المساعد الذكي موقفاً مناسباً لك
+                        </small>
+                    </div>
+                    
+                    <button class="btn btn-primary btn-full" onclick="startScenario()">
+                        بدء السيناريو ➝
+                    </button>
+                </div>
+                
+                <div id="scenario-step-2" class="hidden">
+                    <div class="scenario-ai-response" id="scenario-generated"></div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">ضع نفسك في الموقف... كيف ستتعامل معه؟</label>
+                        <textarea id="scenario-resolution" rows="6" 
+                                  placeholder="اكتب بالتفصيل كيف ستتصرف في هذا الموقف..."></textarea>
+                    </div>
+                    
+                    <button class="btn btn-primary btn-full" onclick="submitScenarioResolution()">
+                        احصل على التقييم 🎯
+                    </button>
+                </div>
+                
+                <div id="scenario-step-3" class="hidden">
+                    <div class="scenario-ai-response" id="scenario-feedback">
+                        <!-- AI feedback will appear here -->
+                    </div>
+                    
+                    <div class="form-group mt-3">
+                        <label class="form-label">ملاحظاتك الشخصية (اختياري)</label>
+                        <textarea id="scenario-personal-notes" rows="3" 
+                                  placeholder="أضف أي ملاحظات أو تأملات شخصية..."></textarea>
+                    </div>
+                    
+                    <button class="btn btn-primary btn-full" onclick="saveScenarioEntry()">
+                        💾 حفظ السيناريو
+                    </button>
+                    <button class="btn btn-secondary btn-full mt-1" onclick="resetScenario()">
+                        🔄 بدء سيناريو جديد
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Exposure Journal -->
+        <div id="content-write-exposure" class="tab-content">
+            <div class="card">
+                <h2 class="card-title">💪 يوميات المواجهة</h2>
+                
+                <div id="write-exposure-message"></div>
+                
+                <form id="journal-form-exposure" onsubmit="submitEntry(event, 'exposure')">
+                    <div class="form-group">
+                        <label class="form-label">التاريخ</label>
+                        <input type="date" id="date-exposure" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">المخاوف / الموقف الذي واجهته</label>
+                        <input type="text" id="exposure-fear" placeholder="مثال: التحدث أمام الجمهور..." required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">مستوى القلق قبل المواجهة (0-10)</label>
+                        <input type="number" id="exposure-anxiety-before" min="0" max="10" placeholder="0 = لا قلق، 10 = قلق شديد" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">الأفكار السلبية قبل المواجهة</label>
+                        <textarea id="exposure-thoughts-before" placeholder="ماذا كنت تتوقع أن يحدث؟ ما هي مخاوفك؟"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">وصف تجربة المواجهة</label>
+                        <textarea id="exposure-experience" rows="4" placeholder="ماذا حدث بالتفصيل؟ كيف كانت التجربة؟" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">مستوى القلق أثناء المواجهة (0-10)</label>
+                        <input type="number" id="exposure-anxiety-during" min="0" max="10" placeholder="0 = لا قلق، 10 = قلق شديد">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">مستوى القلق بعد المواجهة (0-10)</label>
+                        <input type="number" id="exposure-anxiety-after" min="0" max="10" placeholder="0 = لا قلق، 10 = قلق شديد" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">ماذا حدث فعلاً؟ (مقارنة بالتوقعات)</label>
+                        <textarea id="exposure-reality" placeholder="هل كانت مخاوفك في محلها؟ ما الذي فاجأك؟"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">الأفكار الإيجابية / الإنجازات</label>
+                        <textarea id="exposure-positives" placeholder="ما الذي تفخر به؟ ما هي نقاط القوة التي اكتشفتها؟"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">الخطوة التالية</label>
+                        <textarea id="exposure-next-step" placeholder="ما هي المواجهة القادمة التي ستحاولها؟"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-full">💾 حفظ تجربة المواجهة</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Breathing Exercises -->
+        <div id="content-breathing" class="tab-content">
+            <div class="card">
+                <div id="breathing-return-info" class="message message-info hidden">
+                    <p>💡 عند الانتهاء من التمرين، اضغط "العودة للجلسة" للرجوع إلى جلسة CBT</p>
+                </div>
+                
+                <h2 class="card-title">🧘 تمارين التنفس</h2>
+                
+                <div class="breathing-container">
+                    <div class="breathing-selector">
+                        <div class="breathing-option active" onclick="selectBreathing('box')">
+                            <h3>التنفس المربع</h3>
+                            <p>4-4-4-4</p>
+                        </div>
+                        
+                        <div class="breathing-option" onclick="selectBreathing('478')">
+                            <h3>تنفس 4-7-8</h3>
+                            <p>للاسترخاء</p>
+                        </div>
+                        
+                        <div class="breathing-option" onclick="selectBreathing('equal')">
+                            <h3>التنفس المتساوي</h3>
+                            <p>5-5</p>
+                        </div>
+                    </div>
+                    
+                    <div class="breathing-visualizer">
+                        <div class="breathing-circle box-breathing" id="breathing-circle">
+                            <span id="breathing-text">ابدأ</span>
+                        </div>
+                        <div class="breathing-instruction" id="breathing-instruction">اضغط "ابدأ" للبدء</div>
+                        <div class="breathing-controls">
+                            <button class="btn btn-primary" onclick="startBreathing()" id="breathing-start-btn">▶️ ابدأ</button>
+                            <button class="btn btn-secondary" onclick="stopBreathing()" id="breathing-stop-btn">⏸️ توقف</button>
+                        </div>
+                        
+                        <button class="btn btn-secondary mt-3 hidden" id="return-to-cbt-btn" onclick="returnFromBreathing()">
+                            ← العودة للجلسة
+                        </button>
+                    </div>
+                    
+                    <div class="card" style="width: 100%; max-width: 600px;">
+                        <h3 class="card-title">💡 أو استخدم موقع Xhalr</h3>
+                        <p style="margin-bottom: 1rem; color: var(--text-secondary);">
+                            يمكنك أيضاً استخدام موقع Xhalr للحصول على تجربة تنفس تفاعلية متقدمة
+                        </p>
+                        <button onclick="window.open('https://xhalr.com/', '_blank')" class="btn btn-secondary btn-full">
+                            🌐 فتح Xhalr
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Read Journal -->
+        <div id="content-read" class="tab-content">
+            <div class="card">
+                <h2 class="card-title">📅 قراءة اليوميات</h2>
+                
+                <div class="form-group">
+                    <label class="form-label">نوع اليومية</label>
+                    <select id="read-journal-type">
+                        <option value="Form responses 1">اليوميات الرئيسية</option>
+                        <option value="CBT">يوميات CBT</option>
+                        <option value="Scenarios">يوميات السيناريوهات</option>
+                        <option value="Exposure">يوميات المواجهة</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">اختر التاريخ</label>
+                    <input type="date" id="read-date">
+                </div>
+                
+                <button onclick="fetchEntry()" class="btn btn-primary btn-full">🔍 عرض المدخل</button>
+                
+                <div id="read-message"></div>
+                <div id="entry-display"></div>
+            </div>
+        </div>
+        
+        <!-- Dashboard -->
+        <div id="content-dashboard" class="tab-content">
+            <div class="card">
+                <h2 class="card-title">📊 لوحة التحكم</h2>
+                
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">إجمالي المدخلات</div>
+                        <div class="stat-value" id="total-entries">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">متوسط جودة اليوم</div>
+                        <div class="stat-value" id="avg-quality">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">المشاعر الأكثر تكراراً</div>
+                        <div class="stat-value" id="top-emotion" style="font-size: 1.2rem;">-</div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">📈 جودة اليوم عبر الوقت</h3>
+                    <canvas id="quality-chart" style="max-height: 300px;"></canvas>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">رابط لوحة Google Looker (اختياري)</label>
+                    <input type="text" id="looker-url" placeholder="https://lookerstudio.google.com/embed/...">
+                    <button onclick="embedLooker()" class="btn btn-secondary" style="margin-top: 0.5rem;">📊 عرض اللوحة</button>
+                </div>
+                
+                <div id="looker-container" class="hidden" style="margin-top: 1rem;">
+                    <iframe id="looker-iframe" style="width: 100%; height: 600px; border: none; border-radius: 12px;"></iframe>
+                </div>
+                
+                <button onclick="loadDashboard()" class="btn btn-primary btn-full" style="margin-top: 1rem;">🔄 تحديث البيانات</button>
+            </div>
+        </div>
+        
+        <!-- Setup Page -->
+        <div id="content-setup" class="tab-content">
+            <div class="card">
+                <h2 class="card-title">⚙️ الإعدادات</h2>
+                
+                <div class="setup-box">
+                    <h3 style="margin-bottom: 1rem;">📋 خطوات الإعداد السريع:</h3>
+                    
+                    <div class="setup-step">
+                        <strong>1.</strong> افتح Google Sheets الخاص بك (يجب أن يكون اسمه "responses")
+                    </div>
+                    
+                    <div class="setup-step">
+                        <strong>2.</strong> تأكد من وجود الأوراق التالية:
+                        <ul style="margin-right: 1.5rem; margin-top: 0.5rem;">
+                            <li><code>Form responses 1</code> - اليوميات الرئيسية</li>
+                            <li><code>CBT</code> - يوميات CBT</li>
+                            <li><code>Scenarios</code> - يوميات السيناريوهات</li>
+                            <li><code>Exposure</code> - يوميات المواجهة</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="setup-step">
+                        <strong>3.</strong> من القائمة: <strong>ملحقات</strong> ← <strong>Apps Script</strong>
+                    </div>
+                    
+                    <div class="setup-step">
+                        <strong>4.</strong> تأكد من وجود السكريبت "AI professional psychologist" أو أضف الكود المطلوب
+                    </div>
+                    
+                    <div class="setup-step">
+                        <strong>5.</strong> اضغط 💾 <strong>حفظ</strong> ثم <strong>نشر</strong> ← <strong>نشر كتطبيق ويب</strong>
+                    </div>
+                    
+                    <div class="setup-step">
+                        <strong>6.</strong> في إعدادات النشر:
+                        <ul style="margin-right: 1.5rem; margin-top: 0.5rem;">
+                            <li>تنفيذ كـ: <strong>أنا</strong></li>
+                            <li>من لديه إمكانية الوصول: <strong>أي شخص</strong></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="setup-step">
+                        <strong>7.</strong> انسخ <strong>رابط تطبيق الويب</strong> والصقه أدناه
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">رابط Google Apps Script</label>
+                    <input type="text" id="script-url" placeholder="https://script.google.com/macros/s/...../exec">
+                </div>
+                
+                <button onclick="saveConfig()" class="btn btn-primary btn-full">💾 حفظ الإعدادات</button>
+                
+                <div id="setup-message" style="margin-top: 1rem;"></div>
+                
+                <div style="margin-top: 2rem; padding: 1rem; background: #e8f4f8; border-radius: 8px;">
+                    <strong>💡 ملاحظة:</strong> هذه الطريقة آمنة تماماً ولا تتطلب أي دفع. البيانات تبقى في حساب Google الخاص بك فقط.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="bottomNavTo('landing')">
+            <div class="nav-item-icon">🏠</div>
+            <div class="nav-item-label">الرئيسية</div>
+        </button>
+        
+        <button class="nav-item" onclick="bottomNavTo('breathing')">
+            <div class="nav-item-icon">🧘</div>
+            <div class="nav-item-label">تنفس</div>
+        </button>
+        
+        <button class="nav-item" onclick="showAddJournalMenu()">
+            <div class="nav-item-icon" style="font-size: 2rem;">+</div>
+            <div class="nav-item-label">إضافة</div>
+        </button>
+        
+        <button class="nav-item" onclick="bottomNavTo('dashboard')">
+            <div class="nav-item-icon">📊</div>
+            <div class="nav-item-label">الإحصائيات</div>
+        </button>
+        
+        <button class="nav-item" onclick="bottomNavTo('read')">
+            <div class="nav-item-icon">📖</div>
+            <div class="nav-item-label">القراءة</div>
+        </button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // ============= CONFIGURATION =============
+        const EMOTION_CONFIG = {
+            joy: ['فرح','سعادة','بهجة','نشوة','سرور','رضا','امتنان','تفاؤل','أمل','طمأنينة','سكينة'],
+            love: ['حب','مودة','إعجاب','تقدير','قبول','ثقة','تعاطف','احتواء'],
+            anticipation: ['اهتمام','ترقّب','فضول','توقّع','يقظة','استعداد'],
+            anger: ['انزعاج','ضيق','استياء','غضب','غيظ','حنق','سخط','عدوانية'],
+            disgust: ['ملل','اشمئزاز','نفور','كراهية','احتقار','قرف'],
+            sadness: ['حزن','أسى','كآبة','حسرة','وحدة','فراغ','خيبة أمل','حداد'],
+            fear: ['توجس','قلق','توتر','خوف','رهبة','فزع','هلع','عدم أمان'],
+            surprise: ['دهشة','استغراب','صدمة','ذهول','ارتباك'],
+            complex: ['حيرة','تشتت','إرهاق','ضغط نفسي','حماس','تحفيز','ارتياح','فضول ذهني','لا أستطيع تحديد شعوري']
+        };
+        
+        const CBT_FEELINGS = ['قلق','حزين','غاضب','خائف','متحمس','محبط','سعيد','وحيد','ممتن','مشوش'];
+        const CBT_TRAPS = ['التفكير بالأبيض والأسود','التعميم الزائد','التركيز على السلبيات','التنبؤ بالمستقبل','قراءة الأفكار','التهويل','التقليل من الإيجابيات','التسميات'];
+        
+        let CONFIG = {
+            scriptUrl: localStorage.getItem('scriptUrl') || '',
+            breathingInterval: null,
+            breathingState: 0,
+            currentBreathing: 'box',
+            cbtReturnStep: null,  // Track where to return from breathing
+            cbtTriangleOrder: [],  // Track order of cognitive triangle
+            scenarioData: {}  // Store scenario state
+        };
+        
+        let selectedEmotions = {
+            daily: {
+                joy: [], love: [], anticipation: [], anger: [],
+                disgust: [], sadness: [], fear: [], surprise: [], complex: []
+            }
+        };
+        
+        let cbtData = {
+            feelings: [],
+            traps: []
+        };
+        
+        // ============= INITIALIZATION =============
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set dates
+            document.getElementById('date-daily').valueAsDate = new Date();
+            document.getElementById('date-scenarios').valueAsDate = new Date();
+            document.getElementById('date-exposure').valueAsDate = new Date();
+            document.getElementById('read-date').valueAsDate = new Date();
+            
+            // Load config
+            if (CONFIG.scriptUrl) {
+                document.getElementById('script-url').value = CONFIG.scriptUrl;
+            }
+            
+            // Initialize emotion pickers
+            initializeEmotionPickers();
+            initializeCBTChips();
+        });
+        
+        // ============= EMOTION PICKERS =============
+        function initializeEmotionPickers() {
+            Object.keys(EMOTION_CONFIG).forEach(emotionType => {
+                const container = document.getElementById(`emotion-${emotionType}-daily`);
+                if (!container) return;
+                
+                EMOTION_CONFIG[emotionType].forEach(emotion => {
+                    const chip = document.createElement('div');
+                    chip.className = 'emotion-chip';
+                    chip.textContent = emotion;
+                    chip.onclick = () => toggleEmotion('daily', emotionType, emotion, chip);
+                    container.appendChild(chip);
+                });
+            });
+        }
+        
+        function toggleEmotion(journalType, emotionType, emotion, chipElement) {
+            const emotions = selectedEmotions[journalType][emotionType];
+            const index = emotions.indexOf(emotion);
+            
+            if (index > -1) {
+                emotions.splice(index, 1);
+                chipElement.classList.remove('selected');
+            } else {
+                emotions.push(emotion);
+                chipElement.classList.add('selected');
+            }
+        }
+        
+        // ============= CBT CHIPS =============
+        function initializeCBTChips() {
+            // Feelings chips
+            const feelingsContainer = document.getElementById('cbt-feelings-chips');
+            if (feelingsContainer) {
+                CBT_FEELINGS.forEach(feeling => {
+                    const chip = document.createElement('div');
+                    chip.className = 'emotion-chip';
+                    chip.textContent = feeling;
+                    chip.onclick = () => toggleCBTChip('feelings', feeling, chip);
+                    feelingsContainer.appendChild(chip);
+                });
+            }
+            
+            // Traps chips
+            const trapsContainer = document.getElementById('cbt-trap-chips');
+            if (trapsContainer) {
+                CBT_TRAPS.forEach(trap => {
+                    const chip = document.createElement('div');
+                    chip.className = 'emotion-chip';
+                    chip.textContent = trap;
+                    chip.onclick = () => toggleCBTChip('traps', trap, chip);
+                    trapsContainer.appendChild(chip);
+                });
+            }
+        }
+        
+        function toggleCBTChip(type, value, chipElement) {
+            const index = cbtData[type].indexOf(value);
+            
+            if (index > -1) {
+                cbtData[type].splice(index, 1);
+                chipElement.classList.remove('selected');
+            } else {
+                cbtData[type].push(value);
+                chipElement.classList.add('selected');
+            }
+        }
+        
+        // ============= NAVIGATION =============
+        function navigateTo(section) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById('content-' + section).classList.add('active');
+            
+            // Show/hide back button
+            if (section === 'landing') {
+                document.getElementById('back-btn').classList.add('hidden');
+            } else {
+                document.getElementById('back-btn').classList.remove('hidden');
+            }
+            
+            // Update bottom nav
+            updateBottomNav(section);
+            
+            window.scrollTo(0, 0);
+        }
+        
+        function goBack() {
+            navigateTo('landing');
+        }
+        
+        function bottomNavTo(section) {
+            navigateTo(section);
+        }
+        
+        function updateBottomNav(activeSection) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            const navMap = {
+                'landing': 0,
+                'breathing': 1,
+                'dashboard': 3,
+                'read': 4
+            };
+            
+            if (navMap[activeSection] !== undefined) {
+                document.querySelectorAll('.nav-item')[navMap[activeSection]].classList.add('active');
+            }
+        }
+        
+        function showAddJournalMenu() {
+            const options = [
+                { icon: '📝', text: 'اليوميات الرئيسية', target: 'write-daily' },
+                { icon: '🧠', text: 'يوميات CBT', target: 'cbt' },
+                { icon: '🎯', text: 'يوميات السيناريوهات', target: 'write-scenarios' },
+                { icon: '💪', text: 'يوميات المواجهة', target: 'write-exposure' }
+            ];
+            
+            const choice = confirm('أي نوع من اليوميات تريد إضافة؟\n\n1. اليوميات الرئيسية\n2. يوميات CBT\n3. يوميات السيناريوهات\n4. يوميات المواجهة\n\nاختر رقم (1-4):');
+            
+            if (choice) {
+                const num = parseInt(prompt('أدخل الرقم (1-4):'));
+                if (num >= 1 && num <= 4) {
+                    navigateTo(options[num - 1].target);
+                }
+            }
+        }
+        
+        // ============= HAMBURGER MENU =============
+        function toggleMenu() {
+            const menu = document.getElementById('hamburger-menu');
+            const overlay = document.getElementById('menu-overlay');
+            
+            menu.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+        
+        // ============= CONFIG =============
+        function saveConfig() {
+            const url = document.getElementById('script-url').value.trim();
+            if (!url) {
+                showMessage('setup-message', 'الرجاء إدخال رابط Google Apps Script', 'error');
+                return;
+            }
+            
+            CONFIG.scriptUrl = url;
+            localStorage.setItem('scriptUrl', url);
+            showMessage('setup-message', '✅ تم حفظ الإعدادات بنجاح!', 'success');
+        }
+        
+        // ============= DAILY JOURNAL SUBMISSION =============
+        async function submitEntry(event, journalType) {
+            event.preventDefault();
+            
+            if (!CONFIG.scriptUrl) {
+                showMessage(`write-${journalType}-message`, 'الرجاء إعداد الاتصال بـ Google Sheets أولاً من الإعدادات', 'error');
+                return;
+            }
+            
+            let formData = {};
+            let sheetName = '';
+            
+            if (journalType === 'daily') {
+                sheetName = 'Form responses 1';
+                
+                const haltSelect = document.getElementById('halt-daily');
+                const haltValues = Array.from(haltSelect.selectedOptions).map(opt => opt.value).join(', ');
+                
+                const emotionData = {};
+                Object.keys(EMOTION_CONFIG).forEach(emotionType => {
+                    const selected = selectedEmotions.daily[emotionType];
+                    emotionData[emotionType] = selected.join(', ');
+                });
+                
+                formData = {
+                    'اليوم': document.getElementById('date-daily').value,
+                    'كيف تقيم جودة يومك؟': document.getElementById('quality-daily').value,
+                    'فحص HALT': haltValues,
+                    'المشاعر - الفرح': emotionData.joy,
+                    'المشاعر - الحب': emotionData.love,
+                    'المشاعر - الترقب': emotionData.anticipation,
+                    'المشاعر - الغضب': emotionData.anger,
+                    'المشاعر - الاشمئزاز': emotionData.disgust,
+                    'المشاعر - الحزن': emotionData.sadness,
+                    'المشاعر - الخوف': emotionData.fear,
+                    'المشاعر - المفاجأة': emotionData.surprise,
+                    'المشاعر - مشاعر مركبة': emotionData.complex,
+                    'الأمور السلبية': document.getElementById('negative-daily').value,
+                    'الأمور الإيجابية': document.getElementById('positive-daily').value,
+                    'مساحة حرة': document.getElementById('freeform-daily').value,
+                    'الانجذاب': document.getElementById('attraction-daily').value,
+                    'الانتكاسة': document.getElementById('relapse-daily').value
+                };
+            } else if (journalType === 'exposure') {
+                sheetName = 'Exposure';
+                formData = {
+                    'التاريخ': document.getElementById('date-exposure').value,
+                    'المخوف': document.getElementById('exposure-fear').value,
+                    'القلق قبل': document.getElementById('exposure-anxiety-before').value,
+                    'الأفكار قبل': document.getElementById('exposure-thoughts-before').value,
+                    'وصف التجربة': document.getElementById('exposure-experience').value,
+                    'القلق أثناء': document.getElementById('exposure-anxiety-during').value,
+                    'القلق بعد': document.getElementById('exposure-anxiety-after').value,
+                    'ماذا حدث فعلاً': document.getElementById('exposure-reality').value,
+                    'الإيجابيات': document.getElementById('exposure-positives').value,
+                    'الخطوة التالية': document.getElementById('exposure-next-step').value
+                };
+            }
+            
+            try {
+                const response = await fetch(CONFIG.scriptUrl, {
+                    method: 'POST',
+                    body: JSON.stringify({ ...formData, sheetName })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage(`write-${journalType}-message`, '✅ تم حفظ المدخل بنجاح!', 'success');
+                    document.getElementById(`journal-form-${journalType}`).reset();
+                    
+                    if (journalType === 'daily') {
+                        Object.keys(selectedEmotions.daily).forEach(key => {
+                            selectedEmotions.daily[key] = [];
+                        });
+                        document.querySelectorAll('.emotion-chip.selected').forEach(chip => {
+                            chip.classList.remove('selected');
+                        });
+                        document.getElementById('date-daily').valueAsDate = new Date();
+                    } else if (journalType === 'exposure') {
+                        document.getElementById('date-exposure').valueAsDate = new Date();
+                    }
+                } else {
+                    showMessage(`write-${journalType}-message`, '❌ حدث خطأ أثناء الحفظ', 'error');
+                }
+            } catch (error) {
+                showMessage(`write-${journalType}-message`, '❌ خطأ في الاتصال: ' + error.message, 'error');
+            }
+        }
+        
+        // ============= CBT JOURNAL =============
+        function updateCharCount() {
+            const input = document.getElementById('cbt-situation');
+            const counter = document.getElementById('cbt-counter');
+            counter.textContent = `${input.value.length}/120`;
+        }
+        
+        function goToCBTStep(stepId) {
+            // Hide all CBT steps
+            document.querySelectorAll('#content-cbt .card').forEach(card => card.classList.add('hidden'));
+            
+            // Show requested step
+            const stepElement = document.getElementById(`cbt-step-${stepId}`) || document.getElementById(`cbt-${stepId}`);
+            if (stepElement) {
+                stepElement.classList.remove('hidden');
+            }
+            
+            window.scrollTo(0, 0);
+        }
+        
+        function selectCBTTriangle(point) {
+            CONFIG.cbtTriangleOrder = [point];
+            goToCBTStep(point);
+        }
+        
+        function goToCBTTriangle(nextPoint) {
+            CONFIG.cbtTriangleOrder.push(nextPoint);
+            goToCBTStep(nextPoint);
+        }
+        
+        function goBackFromBehaviors() {
+            const lastPoint = CONFIG.cbtTriangleOrder[CONFIG.cbtTriangleOrder.length - 2];
+            if (lastPoint) {
+                CONFIG.cbtTriangleOrder.pop();
+                goToCBTStep(lastPoint);
+            } else {
+                goToCBTStep(2);
+            }
+        }
+        
+        function goBackFromThoughts() {
+            const lastPoint = CONFIG.cbtTriangleOrder[CONFIG.cbtTriangleOrder.length - 2];
+            if (lastPoint) {
+                CONFIG.cbtTriangleOrder.pop();
+                goToCBTStep(lastPoint);
+            } else {
+                goToCBTStep(2);
+            }
+        }
+        
+        function updateSUDBefore() {
+            const value = document.getElementById('cbt-sud-before').value;
+            document.getElementById('cbt-sud-before-value').textContent = `${value}/10`;
+        }
+        
+        function updateSUDAfter() {
+            const value = document.getElementById('cbt-sud-after').value;
+            document.getElementById('cbt-sud-after-value').textContent = `${value}/10`;
+        }
+        
+        function navigateToBreathing(from) {
+            CONFIG.cbtReturnStep = 'sud1';  // Remember we came from CBT SUD step
+            document.getElementById('breathing-return-info').classList.remove('hidden');
+            document.getElementById('return-to-cbt-btn').classList.remove('hidden');
+            navigateTo('breathing');
+        }
+        
+        function returnFromBreathing() {
+            document.getElementById('breathing-return-info').classList.add('hidden');
+            document.getElementById('return-to-cbt-btn').classList.add('hidden');
+            stopBreathing();
+            navigateTo('cbt');
+            goToCBTStep(CONFIG.cbtReturnStep);
+        }
+        
+        async function saveCBTEntry() {
+            if (!CONFIG.scriptUrl) {
+                alert('الرجاء إعداد الاتصال بـ Google Sheets أولاً');
+                return;
+            }
+            
+            const formData = {
+                'التاريخ': new Date().toISOString().split('T')[0],
+                'الموقف': document.getElementById('cbt-situation').value,
+                'المشاعر': cbtData.feelings.join(', '),
+                'السلوكيات': document.getElementById('cbt-behavior-text').value,
+                'الأفكار': document.getElementById('cbt-thought-text').value,
+                'مستوى الضيق قبل': document.getElementById('cbt-sud-before').value,
+                'أفخاخ التفكير': cbtData.traps.join(', '),
+                'التحدي': document.getElementById('cbt-challenge-text').value,
+                'خطة العمل': document.getElementById('cbt-action-text').value,
+                'مستوى الضيق بعد': document.getElementById('cbt-sud-after').value,
+                sheetName: 'CBT'
+            };
+            
+            try {
+                const response = await fetch(CONFIG.scriptUrl, {
+                    method: 'POST',
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ تم حفظ جلسة CBT بنجاح!');
+                    resetCBT();
+                    navigateTo('landing');
+                } else {
+                    alert('❌ حدث خطأ أثناء الحفظ');
+                }
+            } catch (error) {
+                alert('❌ خطأ في الاتصال: ' + error.message);
+            }
+        }
+        
+        function resetCBT() {
+            document.getElementById('cbt-situation').value = '';
+            document.getElementById('cbt-behavior-text').value = '';
+            document.getElementById('cbt-thought-text').value = '';
+            document.getElementById('cbt-challenge-text').value = '';
+            document.getElementById('cbt-action-text').value = '';
+            cbtData = { feelings: [], traps: [] };
+            document.querySelectorAll('#content-cbt .emotion-chip.selected').forEach(chip => {
+                chip.classList.remove('selected');
+            });
+            goToCBTStep(1);
+        }
+        
+        // ============= SCENARIOS (Interactive AI) =============
+        async function startScenario() {
+            const problem = document.getElementById('scenario-problem').value.trim();
+            
+            if (!problem) {
+                // Generate AI scenario
+                showAIThinking('scenario-generated');
+                
+                // Call AI to generate scenario
+                const aiScenario = await callAIForScenario();
+                
+                document.getElementById('scenario-generated').innerHTML = `
+                    <h3 style="margin-bottom: 1rem;">📝 السيناريو المقترح:</h3>
+                    <p style="line-height: 1.8;">${aiScenario}</p>
+                `;
+                
+                CONFIG.scenarioData.problem = aiScenario;
+            } else {
+                document.getElementById('scenario-generated').innerHTML = `
+                    <h3 style="margin-bottom: 1rem;">📝 السيناريو:</h3>
+                    <p style="line-height: 1.8;">${problem}</p>
+                `;
+                CONFIG.scenarioData.problem = problem;
+            }
+            
+            document.getElementById('scenario-step-1').classList.add('hidden');
+            document.getElementById('scenario-step-2').classList.remove('hidden');
+        }
+        
+        async function submitScenarioResolution() {
+            const resolution = document.getElementById('scenario-resolution').value.trim();
+            
+            if (!resolution) {
+                alert('الرجاء كتابة كيفية تعاملك مع الموقف');
+                return;
+            }
+            
+            CONFIG.scenarioData.resolution = resolution;
+            
+            // Show AI thinking
+            document.getElementById('scenario-feedback').innerHTML = '';
+            showAIThinking('scenario-feedback');
+            
+            // Get AI feedback
+            const feedback = await callAIForFeedback(CONFIG.scenarioData.problem, resolution);
+            
+            document.getElementById('scenario-feedback').innerHTML = feedback;
+            
+            CONFIG.scenarioData.feedback = feedback;
+            
+            document.getElementById('scenario-step-2').classList.add('hidden');
+            document.getElementById('scenario-step-3').classList.remove('hidden');
+        }
+        
+        async function saveScenarioEntry() {
+            if (!CONFIG.scriptUrl) {
+                alert('الرجاء إعداد الاتصال بـ Google Sheets أولاً');
+                return;
+            }
+            
+            const formData = {
+                'التاريخ': document.getElementById('date-scenarios').value,
+                'السيناريو': CONFIG.scenarioData.problem,
+                'كيفية التعامل': CONFIG.scenarioData.resolution,
+                'تقييم AI': CONFIG.scenarioData.feedback,
+                'ملاحظات شخصية': document.getElementById('scenario-personal-notes').value,
+                sheetName: 'Scenarios'
+            };
+            
+            try {
+                const response = await fetch(CONFIG.scriptUrl, {
+                    method: 'POST',
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage('write-scenarios-message', '✅ تم حفظ السيناريو بنجاح!', 'success');
+                    resetScenario();
+                } else {
+                    showMessage('write-scenarios-message', '❌ حدث خطأ أثناء الحفظ', 'error');
+                }
+            } catch (error) {
+                showMessage('write-scenarios-message', '❌ خطأ في الاتصال: ' + error.message, 'error');
+            }
+        }
+        
+        function resetScenario() {
+            document.getElementById('scenario-problem').value = '';
+            document.getElementById('scenario-resolution').value = '';
+            document.getElementById('scenario-personal-notes').value = '';
+            document.getElementById('scenario-step-1').classList.remove('hidden');
+            document.getElementById('scenario-step-2').classList.add('hidden');
+            document.getElementById('scenario-step-3').classList.add('hidden');
+            CONFIG.scenarioData = {};
+            document.getElementById('date-scenarios').valueAsDate = new Date();
+        }
+        
+        async function callAIForScenario() {
+            // This would call your Google Apps Script "AI professional psychologist"
+            // For now, returning a sample
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            const scenarios = [
+                'تخيل أنك في اجتماع عمل مهم، وزميل لك انتقد فكرتك أمام الجميع بطريقة قاسية. كيف ستتصرف؟',
+                'صديقك المقرب ألغى خططكما للمرة الثالثة هذا الشهر في اللحظة الأخيرة دون سبب وجيه. ما ردة فعلك؟',
+                'والدك/والدتك يقارنونك باستمرار بأخيك الأكثر نجاحاً. كيف تتعامل مع هذا الموقف؟',
+                'مديرك في العمل يرفض دائماً أفكارك دون إعطاء فرصة حقيقية لشرحها. كيف ستواجه هذا؟'
+            ];
+            
+            return scenarios[Math.floor(Math.random() * scenarios.length)];
+        }
+        
+        async function callAIForFeedback(problem, resolution) {
+            // This would call your Google Apps Script for AI feedback
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            
+            return `
+                <h3 style="margin-bottom: 1rem;">✅ ما قمت به بشكل صحيح:</h3>
+                <ul style="margin-right: 1.5rem; margin-bottom: 1.5rem; line-height: 1.8;">
+                    <li>أظهرت ضبط النفس وعدم الانفعال الفوري</li>
+                    <li>حاولت فهم الموقف من زوايا متعددة</li>
+                    <li>فكرت في عواقب أفعالك</li>
+                </ul>
+                
+                <h3 style="margin-bottom: 1rem;">⚠️ نقاط للتحسين:</h3>
+                <ul style="margin-right: 1.5rem; margin-bottom: 1.5rem; line-height: 1.8;">
+                    <li>كان يمكنك التعبير عن مشاعرك بشكل أوضح وأكثر حزماً</li>
+                    <li>لم تضع حدوداً واضحة للسلوك غير المقبول</li>
+                    <li>تجنبت المواجهة المباشرة مما قد يؤدي لتراكم المشاعر السلبية</li>
+                </ul>
+                
+                <h3 style="margin-bottom: 1rem;">💡 نصائح للواقع:</h3>
+                <ul style="margin-right: 1.5rem; line-height: 1.8;">
+                    <li>استخدم تقنية "أنا أشعر" للتعبير عن مشاعرك دون لوم الآخرين</li>
+                    <li>ضع حدوداً واضحة واشرح عواقب تجاوزها</li>
+                    <li>تدرب على هذا السيناريو مع صديق موثوق قبل المواجهة الفعلية</li>
+                </ul>
+            `;
+        }
+        
+        function showAIThinking(containerId) {
+            document.getElementById(containerId).innerHTML = `
+                <div class="ai-thinking">
+                    <div class="ai-thinking-dots">
+                        <div class="ai-thinking-dot"></div>
+                        <div class="ai-thinking-dot"></div>
+                        <div class="ai-thinking-dot"></div>
+                    </div>
+                    <span>المساعد الذكي يفكر...</span>
+                </div>
+            `;
+        }
+        
+        // ============= BREATHING =============
+        function selectBreathing(type) {
+            CONFIG.currentBreathing = type;
+            document.querySelectorAll('.breathing-option').forEach(opt => opt.classList.remove('active'));
+            event.target.closest('.breathing-option').classList.add('active');
+            
+            stopBreathing();
+            const circle = document.getElementById('breathing-circle');
+            circle.className = 'breathing-circle';
+            document.getElementById('breathing-text').textContent = 'ابدأ';
+            document.getElementById('breathing-instruction').textContent = 'اضغط "ابدأ" للبدء';
+        }
+        
+        function startBreathing() {
+            const circle = document.getElementById('breathing-circle');
+            const text = document.getElementById('breathing-text');
+            const instruction = document.getElementById('breathing-instruction');
+            
+            circle.className = 'breathing-circle ' + CONFIG.currentBreathing + '-breathing';
+            
+            const sequences = {
+                box: [
+                    {text: 'شهيق', instruction: 'خذ نفساً عميقاً (4 ثوانِ)', duration: 4000},
+                    {text: 'احبس', instruction: 'احبس النفس (4 ثوانِ)', duration: 4000},
+                    {text: 'زفير', instruction: 'أخرج النفس ببطء (4 ثوانِ)', duration: 4000},
+                    {text: 'احبس', instruction: 'احبس النفس (4 ثوانِ)', duration: 4000}
+                ],
+                '478': [
+                    {text: 'شهيق', instruction: 'خذ نفساً عميقاً (4 ثوانِ)', duration: 4000},
+                    {text: 'احبس', instruction: 'احبس النفس (7 ثوانِ)', duration: 7000},
+                    {text: 'زفير', instruction: 'أخرج النفس ببطء (8 ثوانِ)', duration: 8000}
+                ],
+                equal: [
+                    {text: 'شهيق', instruction: 'خذ نفساً عميقاً (5 ثوانِ)', duration: 5000},
+                    {text: 'زفير', instruction: 'أخرج النفس ببطء (5 ثوانِ)', duration: 5000}
+                ]
+            };
+            
+            const sequence = sequences[CONFIG.currentBreathing];
+            CONFIG.breathingState = 0;
+            
+            function nextStep() {
+                const step = sequence[CONFIG.breathingState];
+                text.textContent = step.text;
+                instruction.textContent = step.instruction;
+                
+                CONFIG.breathingState = (CONFIG.breathingState + 1) % sequence.length;
+                CONFIG.breathingInterval = setTimeout(nextStep, step.duration);
+            }
+            
+            nextStep();
+        }
+        
+        function stopBreathing() {
+            if (CONFIG.breathingInterval) {
+                clearTimeout(CONFIG.breathingInterval);
+                CONFIG.breathingInterval = null;
+            }
+            const circle = document.getElementById('breathing-circle');
+            circle.className = 'breathing-circle';
+        }
+        
+        // ============= READ JOURNAL =============
+        async function fetchEntry() {
+            if (!CONFIG.scriptUrl) {
+                showMessage('read-message', 'الرجاء إعداد الاتصال بـ Google Sheets أولاً', 'error');
+                return;
+            }
+            
+            const date = document.getElementById('read-date').value;
+            const sheetName = document.getElementById('read-journal-type').value;
+            
+            try {
+                const response = await fetch(`${CONFIG.scriptUrl}?action=get&date=${date}&sheet=${sheetName}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayEntry(result.data);
+                    showMessage('read-message', '', 'success');
+                } else {
+                    showMessage('read-message', '❌ ' + result.message, 'error');
+                    document.getElementById('entry-display').innerHTML = '';
+                }
+            } catch (error) {
+                showMessage('read-message', '❌ خطأ في الاتصال: ' + error.message, 'error');
+            }
+        }
+        
+        function displayEntry(data) {
+            const container = document.getElementById('entry-display');
+            
+            let html = `<div class="entry-display">`;
+            
+            // البحث عن التاريخ وعرضه أولاً
+            const dateField = Object.keys(data).find(k => k.includes('اليوم') || k.includes('التاريخ'));
+            if (dateField) {
+                html += `<div class="entry-date">📅 ${data[dateField]}</div>`;
+            }
+            
+            // عرض باقي الحقول
+            Object.keys(data).forEach(key => {
+                // نتجاهل التاريخ لأنه عُرض، ونتجاهل أي حقل فارغ
+                if (!key.includes('اليوم') && !key.includes('التاريخ') && data[key]) {
+                    
+                    // هنا السحر: تحويل النص من Markdown إلى HTML
+                    // marked.parse هي الوظيفة التي تقوم بالترجمة
+                    let formattedContent = marked.parse(data[key]);
+
+                    html += `
+                        <div class="entry-section">
+                            <div class="entry-label">${key}</div>
+                            <div class="entry-value markdown-content">${formattedContent}</div>
+                        </div>
+                    `;
+                }
+            });
+            
+            html += `</div>`;
+            container.innerHTML = html;
+        }        
+        // ============= DASHBOARD =============
+        async function loadDashboard() {
+            if (!CONFIG.scriptUrl) return;
+            
+            try {
+                const response = await fetch(`${CONFIG.scriptUrl}?action=getAll&sheet=Form responses 1`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    const headers = data[0];
+                    const qualityIdx = headers.findIndex(h => h.includes('جودة'));
+                    const dateIdx = headers.findIndex(h => h.includes('اليوم'));
+                    
+                    let totalEntries = data.length - 1;
+                    let totalQuality = 0;
+                    let qualityCount = 0;
+                    
+                    const chartDates = [];
+                    const chartQualities = [];
+                    
+                    for (let i = 1; i < data.length; i++) {
+                        const quality = parseFloat(data[i][qualityIdx]);
+                        if (!isNaN(quality)) {
+                            totalQuality += quality;
+                            qualityCount++;
+                            chartDates.push(data[i][dateIdx]);
+                            chartQualities.push(quality);
+                        }
+                    }
+                    
+                    document.getElementById('total-entries').textContent = totalEntries;
+                    document.getElementById('avg-quality').textContent = qualityCount > 0 
+                        ? (totalQuality / qualityCount).toFixed(1) 
+                        : '-';
+                    
+                    drawQualityChart(chartDates.slice(-30), chartQualities.slice(-30));
+                }
+            } catch (error) {
+                console.error('Dashboard error:', error);
+            }
+        }
+        
+        let qualityChart = null;
+        function drawQualityChart(dates, qualities) {
+            const ctx = document.getElementById('quality-chart').getContext('2d');
+            
+            if (qualityChart) {
+                qualityChart.destroy();
+            }
+            
+            qualityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'جودة اليوم',
+                        data: qualities,
+                        borderColor: '#fdcb6e',
+                        backgroundColor: 'rgba(253, 203, 110, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 10
+                        }
+                    }
+                }
+            });
+        }
+        
+        function embedLooker() {
+            const url = document.getElementById('looker-url').value;
+            if (!url) return;
+            
+            document.getElementById('looker-iframe').src = url;
+            document.getElementById('looker-container').classList.remove('hidden');
+        }
+        
+        // ============= UTILITY =============
+        function showMessage(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            if (!message) {
+                container.innerHTML = '';
+                return;
+            }
+            container.innerHTML = `<div class="message message-${type}">${message}</div>`;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Service Worker Registered!', reg))
+                .catch(err => console.log('Service Worker Failed!', err));
+            });
+        }
+    </script>
+</body>
+</html>
