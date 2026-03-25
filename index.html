@@ -3916,8 +3916,9 @@
                 <!-- Filter pills (shown only for main diary) -->
                 <div class="read-filter-pills" id="read-filter-pills" style="display:none;">
                     <button class="filter-pill active" data-filter="all" onclick="setReadFilter(this)">كل شيء</button>
-                    <button class="filter-pill" data-filter="analysis_only" onclick="setReadFilter(this)">التحليل فقط</button>
-                    <button class="filter-pill weekly-only" data-filter="weekly_analysis" onclick="setReadFilter(this)" style="display:none;">التحليل الأسبوعي</button>
+                    <button class="filter-pill" data-filter="analysis_only" onclick="setReadFilter(this)">تحليل يومي</button>
+                    <button class="filter-pill weekly-only" data-filter="weekly_analysis" onclick="setReadFilter(this)" style="display:none;">تقرير أسبوعي</button>
+                    <button class="filter-pill" data-filter="monthly_analysis" onclick="setReadFilter(this)">تقرير شهري</button>
                 </div>
 
                 <!-- Messages -->
@@ -4753,8 +4754,8 @@
         }
                 // ── YES/NO TOGGLE QUESTIONS ──
         function setToggleQuestion(name, isYes) {
-            const wrap = document.getElementById(`tq-${name}`);
-            const body = document.getElementById(`tq-${name}-body`);
+            const wrap   = document.getElementById(`tq-${name}`);
+            const body   = document.getElementById(`tq-${name}-body`);
             const yesBtn = wrap.querySelector('.yn-btn.yes');
             const noBtn  = wrap.querySelector('.yn-btn.no');
 
@@ -4763,7 +4764,6 @@
                 noBtn.classList.remove('active');
                 body.classList.add('open');
                 wrap.classList.add('active');
-                // clear when closing, focus when opening
                 body.querySelector('textarea').focus();
             } else {
                 noBtn.classList.add('active');
@@ -4772,10 +4772,25 @@
                 wrap.classList.remove('active');
                 body.querySelector('textarea').value = '';
             }
+
+            // If BOTH attraction & relapse are "no" → disable deep analysis automatically
+            const attractionNo = !document.getElementById('tq-attraction').classList.contains('active');
+            const relapseNo    = !document.getElementById('tq-relapse').classList.contains('active');
+            const deepPill     = document.getElementById('apill-deep');
+            if (attractionNo && relapseNo) {
+                deepPill.classList.remove('selected');
+                deepPill.title = 'يُعطَّل تلقائياً لأن سؤالَي الانجذاب والانتكاسة لم يُجابا بنعم';
+            } else {
+                deepPill.title = '';
+                // Only re-enable if user had it selected before
+                // (we just re-enable it so user can choose)
+                if (!deepPill.classList.contains('selected')) {
+                    deepPill.classList.add('selected');
+                }
+            }
         }
 
         // ── ANALYSIS MODE PILLS ──
-        // Returns: 'general' | 'deep' | 'both' | 'none'
         function getAnalysisMode() {
             const g = document.getElementById('apill-general').classList.contains('selected');
             const d = document.getElementById('apill-deep').classList.contains('selected');
@@ -4787,15 +4802,30 @@
 
         function toggleAnalysisPill(type) {
             document.getElementById(`apill-${type}`).classList.toggle('selected');
+            // Visual feedback if none selected
+            const mode = getAnalysisMode();
+            const card = document.querySelector('.analysis-mode-card');
+            if (mode === 'none') {
+                card.style.borderColor = '#e17055';
+            } else {
+                card.style.borderColor = 'rgba(108,92,231,0.2)';
+            }
         }
 
-        // ── RESET HELPERS for daily form reset ──
         function resetDailyToggles() {
-            setToggleQuestion('attraction', false);
-            setToggleQuestion('relapse', false);
-            // Reset analysis pills to default (both)
+            ['attraction','relapse'].forEach(name => {
+                const wrap = document.getElementById(`tq-${name}`);
+                const body = document.getElementById(`tq-${name}-body`);
+                if (!wrap) return;
+                wrap.querySelector('.yn-btn.no').classList.add('active');
+                wrap.querySelector('.yn-btn.yes').classList.remove('active');
+                body.classList.remove('open');
+                wrap.classList.remove('active');
+                body.querySelector('textarea').value = '';
+            });
             document.getElementById('apill-general').classList.add('selected');
             document.getElementById('apill-deep').classList.add('selected');
+            document.querySelector('.analysis-mode-card').style.borderColor = 'rgba(108,92,231,0.2)';
         }
 
         // ============= DAILY JOURNAL SUBMISSION =============
@@ -4804,6 +4834,13 @@
             
             if (!CONFIG.scriptUrl) {
                 showMessage(`write-${journalType}-message`, 'الرجاء إعداد الاتصال بـ Google Sheets أولاً من الإعدادات', 'error');
+                return;
+            }
+
+            // For daily journal: block if analysis mode = none (must pick at least one)
+            if (journalType === 'daily' && getAnalysisMode() === 'none') {
+                showMessage('write-daily-message', '⚠️ يرجى اختيار نوع تحليل واحد على الأقل قبل الحفظ', 'error');
+                document.querySelector('.analysis-mode-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return;
             }
             
@@ -5716,22 +5753,23 @@
         // localStorage كـ cache محلي فقط — المصدر الحقيقي هو GAS
         window._quickLogs = JSON.parse(localStorage.getItem('_quickLogs') || '[]');
 
-        // يعرض الـ cache فوراً، ثم يجلب من GAS ويضيف ما يغيب محلياً
+        // يعرض الـ cache فوراً، ثم يجلب من GAS ويحدّث
         async function loadTodayTimeline() {
             const todayStr = new Date().toISOString().split('T')[0];
 
-            // 1. اعرض الـ cache المحلي فوراً
+            // 1. اعرض الـ cache المحلي فوراً (تجربة سريعة)
             renderTimeline(window._quickLogs, todayStr);
 
+            // 2. إذا عنده رابط GAS، اجلب من السيرفر وحدّث
             if (!CONFIG.scriptUrl) return;
 
             try {
                 const res  = await fetch(`${CONFIG.scriptUrl}?action=getTodayTimeline&date=${todayStr}`);
                 const data = await res.json();
 
-                if (!data.success || !Array.isArray(data.entries)) return;
+                if (!data.success || !data.entries) return;
 
-                // حوّل entries من GAS إلى صيغة محلية
+                // حوّل entries من GAS إلى نفس صيغة _quickLogs المحلية
                 const gasLogs = data.entries.map(e => ({
                     timestamp:    `${todayStr}T${e.time || '00:00'}:00`,
                     type:         e.type  || 'تسجيل سريع',
@@ -5739,20 +5777,17 @@
                     emotionLabel: '',
                     intensity:    e.intensity || '',
                     summary:      e.summary   || '',
-                    _synced:      true,
                     _fromGAS:     true
                 }));
 
-                // الدمج الآمن: ابدأ بكل السجلات المحلية (بغض النظر عن _synced)
-                // ثم أضف سجلات GAS التي لا تُوجد محلياً (من أجهزة أخرى)
-                const merged = deduplicateLogs([...window._quickLogs, ...gasLogs]);
+                // ادمج: احتفظ بالسجلات المحلية غير المرسلة + سجلات GAS
+                const localUnsent = window._quickLogs.filter(l => !l._synced);
+                const merged = deduplicateLogs([...gasLogs, ...localUnsent]);
 
-                // تحديث الـ cache فقط إذا فعلاً أضفنا شيئاً جديداً من GAS
-                if (merged.length !== window._quickLogs.length) {
-                    window._quickLogs = merged;
-                    try { localStorage.setItem('_quickLogs', JSON.stringify(merged)); } catch(e) {}
-                    renderTimeline(merged, todayStr);
-                }
+                window._quickLogs = merged;
+                try { localStorage.setItem('_quickLogs', JSON.stringify(merged)); } catch(e) {}
+
+                renderTimeline(merged, todayStr);
 
             } catch (err) {
                 console.warn('Timeline GAS fetch failed, showing cache:', err);
@@ -6249,243 +6284,352 @@
         // =============================================
         let _readCurrentType   = 'Form responses 1';
         let _readCurrentFilter = 'all';
+        const _readCache = {}; // session cache: type::date → data
 
-        // Journal types that use date-picker (filled daily/regularly):
         const READ_DATE_PICKER_TYPES = new Set(['Form responses 1', 'Habit Lab', 'Quick Logs']);
+
+        // ── CSS for group cards (injected once) ──────────────────
+        (function injectRJStyles() {
+            if (document.getElementById('rj-styles')) return;
+            const s = document.createElement('style');
+            s.id = 'rj-styles';
+            s.textContent = `
+                @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+                .rj-group-card {
+                    background: white; border-radius: 14px; padding: 1rem 1.1rem;
+                    border: 1px solid var(--border-soft); margin-bottom: .75rem;
+                    border-right-width: 4px;
+                }
+                .rj-group-title {
+                    font-family: 'Amiri', serif; font-size: .95rem; font-weight: 700;
+                    color: var(--text-secondary); margin-bottom: .7rem;
+                    padding-bottom: .5rem; border-bottom: 1px solid var(--bg-primary);
+                }
+                .rj-field { margin-bottom: .65rem; }
+                .rj-field:last-child { margin-bottom: 0; }
+                .rj-field-label {
+                    font-size: .72rem; font-weight: 700; color: var(--text-secondary);
+                    margin-bottom: .2rem; text-transform: uppercase; letter-spacing: .04em;
+                }
+                .rj-field-value { font-size: .9rem; color: var(--text-primary); line-height: 1.7; }
+                .read-field-card.monthly .read-field-toggle { background: linear-gradient(135deg,rgba(253,203,110,.1),rgba(250,177,160,.1)); }
+                .read-field-card.monthly .read-field-key { color: #c07000; }
+            `;
+            document.head.appendChild(s);
+        })();
 
         function switchReadTab(btn) {
             document.querySelectorAll('.read-tab').forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
             _readCurrentType = btn.dataset.type;
 
-            // Show/hide filter pills
             const pillsRow = document.getElementById('read-filter-pills');
-            if (_readCurrentType === 'Form responses 1') {
-                pillsRow.style.display = 'flex';
-            } else {
-                pillsRow.style.display = 'none';
-            }
+            pillsRow.style.display = _readCurrentType === 'Form responses 1' ? 'flex' : 'none';
 
-            // Toggle date picker vs date browser
             const usePicker = READ_DATE_PICKER_TYPES.has(_readCurrentType);
             document.getElementById('read-date-picker-row').classList.toggle('hidden', !usePicker);
             document.getElementById('read-date-browser').classList.toggle('hidden', usePicker);
 
-            // Reset date browser state when switching
             if (!usePicker) {
                 document.getElementById('read-date-list').innerHTML = '';
-                document.getElementById('read-load-dates-btn').textContent = '📋 تحميل السجلات المتاحة';
-                document.getElementById('read-load-dates-btn').disabled = false;
+                const btn2 = document.getElementById('read-load-dates-btn');
+                btn2.textContent = '📋 تحميل السجلات المتاحة';
+                btn2.disabled = false;
             }
-
-            // Clear results
             document.getElementById('read-entry-area').innerHTML = `
-                <div class="read-empty">
-                    <div class="read-empty-icon">🗓️</div>
-                    <div class="read-empty-title">اختر تاريخاً لعرض مدخلاته</div>
-                    <div class="read-empty-sub">اضغط "عرض" بعد اختيار التاريخ</div>
-                </div>`;
+                <div class="read-empty"><div class="read-empty-icon">🗓️</div>
+                <div class="read-empty-title">اختر تاريخاً لعرض مدخلاته</div>
+                <div class="read-empty-sub">اضغط "عرض" بعد اختيار التاريخ</div></div>`;
             document.getElementById('read-message-new').innerHTML = '';
         }
 
         function onReadDateChange() {
-            // Show/hide weekly filter pill based on day
             const dateVal = document.getElementById('read-date-new').value;
             if (!dateVal) return;
-            // Parse date parts manually to avoid UTC-vs-local timezone shift
             const [y, m, d] = dateVal.split('-').map(Number);
-            const dayOfWeek = new Date(y, m - 1, d).getDay();
-            const weeklyPill = document.querySelector('.filter-pill.weekly-only');
-            if (weeklyPill) weeklyPill.style.display = dayOfWeek === 5 ? 'inline-block' : 'none';
+            const dow = new Date(y, m - 1, d).getDay();
+            const wPill = document.querySelector('.filter-pill.weekly-only');
+            if (wPill) wPill.style.display = dow === 5 ? 'inline-block' : 'none';
         }
 
         function setReadFilter(btn) {
             document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
             btn.classList.add('active');
             _readCurrentFilter = btn.dataset.filter;
-            // Re-fetch if we already have a date selected
-            const dateVal = document.getElementById('read-date-new').value;
-            if (dateVal) fetchReadEntry();
+            const d = document.getElementById('read-date-new').value;
+            if (d) fetchReadEntry();
+        }
+
+        function _skeleton(area) {
+            area.innerHTML = [1,2,3].map(() => `
+                <div style="background:white;border-radius:12px;padding:1rem;border:1px solid var(--border-soft);margin-bottom:.7rem;">
+                    <div style="height:11px;background:var(--bg-primary);border-radius:6px;width:38%;margin-bottom:.65rem;animation:pulse 1.2s infinite;"></div>
+                    <div style="height:9px;background:var(--bg-primary);border-radius:6px;width:88%;margin-bottom:.35rem;animation:pulse 1.2s infinite;"></div>
+                    <div style="height:9px;background:var(--bg-primary);border-radius:6px;width:65%;animation:pulse 1.2s infinite;"></div>
+                </div>`).join('');
         }
 
         async function fetchReadEntry() {
-            const date = document.getElementById('read-date-new').value;
-            const area = document.getElementById('read-entry-area');
+            const date   = document.getElementById('read-date-new').value;
+            const area   = document.getElementById('read-entry-area');
             const msgBox = document.getElementById('read-message-new');
 
-            if (!date) {
-                msgBox.innerHTML = '<div class="message message-error">⚠️ الرجاء اختيار تاريخ أولاً</div>';
-                return;
-            }
+            if (!date) { msgBox.innerHTML = '<div class="message message-error">⚠️ الرجاء اختيار تاريخ أولاً</div>'; return; }
+            msgBox.innerHTML = '';
 
-            // Quick Logs and Habit Lab from local storage (if no GAS URL or as fallback)
-            if (_readCurrentType === 'Quick Logs') {
-                return renderQuickLogsForDate(date, area);
-            }
+            if (_readCurrentType === 'Quick Logs') return _fetchQLogs(date, area);
 
             if (!CONFIG.scriptUrl) {
                 msgBox.innerHTML = '<div class="message message-error">⚠️ الرجاء إعداد رابط Google Apps Script في الإعدادات أولاً</div>';
                 return;
             }
 
-            area.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--text-secondary);">
-                <div style="font-size:2rem;margin-bottom:0.5rem;">⏳</div>جارٍ التحميل...</div>`;
-            msgBox.innerHTML = '';
+            const cKey = `${_readCurrentType}::${date}`;
+            if (_readCache[cKey]) renderReadEntry(_readCache[cKey], area);
+            else _skeleton(area);
 
             try {
-                const url = `${CONFIG.scriptUrl}?action=get&date=${date}&sheet=${encodeURIComponent(_readCurrentType)}`;
-                const res  = await fetch(url);
-                const data = await res.json();
-
-                if (!data.success) {
-                    area.innerHTML = `
-                        <div class="read-empty">
-                            <div class="read-empty-icon">📭</div>
-                            <div class="read-empty-title">لا يوجد مدخل بهذا التاريخ</div>
-                            <div class="read-empty-sub">${data.message || 'جرّب تاريخاً آخر أو تأكد من اتصالك'}</div>
-                        </div>`;
+                const res  = await fetch(`${CONFIG.scriptUrl}?action=get&date=${date}&sheet=${encodeURIComponent(_readCurrentType)}`);
+                const json = await res.json();
+                if (!json.success) {
+                    area.innerHTML = `<div class="read-empty"><div class="read-empty-icon">📭</div>
+                        <div class="read-empty-title">لا يوجد مدخل بهذا التاريخ</div>
+                        <div class="read-empty-sub">${json.message || 'جرّب تاريخاً آخر'}</div></div>`;
                     return;
                 }
-
-                renderReadEntry(data.data, area);
-
-            } catch (err) {
-                area.innerHTML = `<div class="read-empty">
-                    <div class="read-empty-icon">⚠️</div>
-                    <div class="read-empty-title">خطأ في الاتصال</div>
-                    <div class="read-empty-sub">${err.message}</div>
-                </div>`;
+                _readCache[cKey] = json.data;
+                renderReadEntry(json.data, area);
+            } catch(err) {
+                if (!_readCache[cKey]) area.innerHTML = `<div class="read-empty"><div class="read-empty-icon">⚠️</div>
+                    <div class="read-empty-title">خطأ في الاتصال</div><div class="read-empty-sub">${err.message}</div></div>`;
             }
         }
 
-        function renderReadEntry(data, container) {
-            const type = _readCurrentType;
-            const filter = _readCurrentFilter;
-
-            // Find date field
-            const dateField = Object.keys(data).find(k =>
-                k === 'اليوم' || k === 'التاريخ' || k === 'Date' || k === 'date' ||
-                ((k.includes('اليوم') || k.includes('التاريخ')) && k.length < 15)
-            );
-
-            // Keys to skip in display
-            const skipKeys = new Set(['Timestamp', 'timestamp', dateField]);
-
-            // Analysis key groups
-            const analysisKeys  = ['تحليل AI يومي', 'تحليل داخلي', 'تقرير أسبوعي'];
-            const cbtAfterKeys  = ['التحدي', 'خطة العمل', 'المشاعر بعد', 'مستوى الضيق بعد', 'أفخاخ التفكير'];
-            const habitKeys     = ['trigger', 'needs', 'body', 'traps', 'alt_thought', 'escape', 'reward', 'alt_behavior', 'halt'];
-
-            // Entry header
-            let html = `<div class="read-entry-container">
-                <div class="read-entry-header">
-                    <span class="read-entry-date-badge">📅 ${dateField ? formatArabicDate(data[dateField]) : 'بدون تاريخ'}</span>
-                    <span class="read-entry-type-badge">${_readCurrentType}</span>
-                </div>`;
-
-            let fieldCount = 0;
-
-            Object.entries(data).forEach(([key, val]) => {
-                if (skipKeys.has(key) || !val || String(val).trim() === '') return;
-
-                // Apply filter logic
-                if (type === 'Form responses 1') {
-                    const isDailyAnalysis   = analysisKeys.some(k => key.includes(k));
-                    const isWeeklyAnalysis  = key.includes('تقرير أسبوعي');
-                    if (filter === 'analysis_only'   && !isDailyAnalysis)  return;
-                    if (filter === 'weekly_analysis' && !isWeeklyAnalysis) return;
-                }
-
-                // Determine card style
-                let cardClass = 'read-field-card';
-                if (analysisKeys.some(k => key.includes(k)))        cardClass += ' analysis';
-                else if (cbtAfterKeys.some(k => key.includes(k)))   cardClass += ' cbt-after';
-                else if (habitKeys.includes(key))                    cardClass += ' habit';
-
-                // Format value
-                let formattedVal = '';
-                try { formattedVal = marked.parse(String(val)); } catch(e) { formattedVal = String(val); }
-
-                const preview = String(val).replace(/<[^>]*>/g,'').substring(0,45);
-
-                html += `
-                    <div class="${cardClass}">
-                        <button class="read-field-toggle" onclick="toggleReadField(this)">
-                            <span class="read-field-key">${key}</span>
-                            <span class="read-field-preview">${preview}…</span>
-                            <span class="read-field-chevron">▼</span>
-                        </button>
-                        <div class="read-field-body">
-                            <div class="read-field-value markdown-content">${formattedVal}</div>
-                        </div>
-                    </div>`;
-                fieldCount++;
+        // ── Quick Logs: merge local cache + GAS ──────────────────
+        async function _fetchQLogs(date, area) {
+            const local = (window._quickLogs || []).filter(l => {
+                const d = new Date(l.timestamp);
+                return !isNaN(d) && d.toISOString().split('T')[0] === date;
             });
+            if (local.length) _renderQLogs(date, area, local);
+            else _skeleton(area);
 
-            if (fieldCount === 0) {
-                html += `<div class="read-empty" style="padding:1.5rem 0;">
-                    <div class="read-empty-icon">🔍</div>
-                    <div class="read-empty-title">لا توجد بيانات للفلتر المحدد</div>
-                    <div class="read-empty-sub">جرّب تغيير الفلتر من الأزرار أعلاه</div>
-                </div>`;
-            }
-
-            // Expand first field automatically
-            html += '</div>';
-            container.innerHTML = html;
-
-            // Auto-open first card
-            const firstToggle = container.querySelector('.read-field-toggle');
-            if (firstToggle) toggleReadField(firstToggle);
-        }
-
-        function toggleReadField(btn) {
-            const body = btn.nextElementSibling;
-            const isOpen = body.classList.contains('open');
-            body.classList.toggle('open', !isOpen);
-            btn.classList.toggle('expanded', !isOpen);
-        }
-
-        function renderQuickLogsForDate(date, container) {
-            const today     = new Date(date).toDateString();
-            const logs      = (window._quickLogs || []).filter(l => new Date(l.timestamp).toDateString() === today);
-
-            if (logs.length === 0) {
-                container.innerHTML = `
-                    <div class="read-empty">
-                        <div class="read-empty-icon">⚡</div>
-                        <div class="read-empty-title">لا سجلات سريعة في هذا اليوم</div>
-                        <div class="read-empty-sub">ابدأ يومك بتسجيل سريع من الصفحة الرئيسية</div>
-                    </div>`;
+            if (!CONFIG.scriptUrl) {
+                if (!local.length) area.innerHTML = `<div class="read-empty"><div class="read-empty-icon">⚡</div>
+                    <div class="read-empty-title">لا سجلات سريعة في هذا اليوم</div></div>`;
                 return;
             }
+            try {
+                const res  = await fetch(`${CONFIG.scriptUrl}?action=getTodayTimeline&date=${date}`);
+                const json = await res.json();
+                if (!json.success || !Array.isArray(json.entries)) return;
 
+                const gasLogs = json.entries.map(e => ({
+                    timestamp: `${date}T${e.time || '00:00'}:00`,
+                    emotion: e.emoji || '😐', emotionLabel: '',
+                    intensity: e.intensity || '', summary: e.summary || '',
+                    _synced: true, _fromGAS: true
+                }));
+                const merged = deduplicateLogs([...window._quickLogs, ...gasLogs]);
+                window._quickLogs = merged;
+                try { localStorage.setItem('_quickLogs', JSON.stringify(merged)); } catch(e) {}
+
+                const dated = merged.filter(l => {
+                    const d2 = new Date(l.timestamp);
+                    return !isNaN(d2) && d2.toISOString().split('T')[0] === date;
+                });
+                _renderQLogs(date, area, dated);
+            } catch(err) { console.warn('QL GAS fetch failed:', err); }
+        }
+
+        function _renderQLogs(date, container, logs) {
+            if (!logs || !logs.length) {
+                container.innerHTML = `<div class="read-empty"><div class="read-empty-icon">⚡</div>
+                    <div class="read-empty-title">لا سجلات سريعة في هذا اليوم</div>
+                    <div class="read-empty-sub">ابدأ يومك بتسجيل سريع من الصفحة الرئيسية</div></div>`;
+                return;
+            }
             const sorted = [...logs].sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
-
-            let html = `<div class="read-entry-container">
-                <div class="read-entry-header">
-                    <span class="read-entry-date-badge">📅 ${formatArabicDate(date)}</span>
-                    <span class="read-entry-type-badge">${sorted.length} تسجيل</span>
-                </div>`;
-
+            let html = `<div class="read-entry-container"><div class="read-entry-header">
+                <span class="read-entry-date-badge">📅 ${formatArabicDate(date)}</span>
+                <span class="read-entry-type-badge">${sorted.length} تسجيل</span></div>`;
             sorted.forEach(log => {
                 const t = new Date(log.timestamp);
                 const hh = String(t.getHours()).padStart(2,'0');
                 const mm = String(t.getMinutes()).padStart(2,'0');
-                html += `
-                    <div class="ql-read-card">
-                        <div class="ql-read-emoji">${log.emotion || '😐'}</div>
-                        <div class="ql-read-body">
-                            <div class="ql-read-meta">${hh}:${mm} · ${log.emotionLabel || ''} · <span class="ql-read-intensity">شدة ${log.intensity}/10</span></div>
-                            <div class="ql-read-text">${log.summary}</div>
-                        </div>
-                    </div>`;
+                html += `<div class="ql-read-card">
+                    <div class="ql-read-emoji">${log.emotion || '😐'}</div>
+                    <div class="ql-read-body">
+                        <div class="ql-read-meta">${hh}:${mm} · ${log.emotionLabel || ''} · <span class="ql-read-intensity">شدة ${log.intensity}/10</span></div>
+                        <div class="ql-read-text">${log.summary}</div>
+                    </div></div>`;
             });
-            html += '</div>';
-            container.innerHTML = html;
+            container.innerHTML = html + '</div>';
         }
 
-        // Legacy wrappers — keep old fetchEntry working for anything that still calls it
+        // ── Main render dispatcher ───────────────────────────────
+        function renderReadEntry(data, container) {
+            switch (_readCurrentType) {
+                case 'Form responses 1': return _renderMain(data, container);
+                case 'CBT':             return _renderCBT(data, container);
+                case 'Scenarios':       return _renderScenarios(data, container);
+                case 'Exposure':        return _renderExposure(data, container);
+                case 'Habit Lab':       return _renderHabitLab(data, container);
+                default:                return _renderGeneric(data, container);
+            }
+        }
+
+        // ── Shared helpers ───────────────────────────────────────
+        function _dateHdr(data, label) {
+            const df = Object.keys(data).find(k =>
+                ['اليوم','التاريخ','Date','date'].includes(k) ||
+                ((k.includes('اليوم') || k.includes('التاريخ')) && k.length < 15));
+            return `<div class="read-entry-header">
+                <span class="read-entry-date-badge">📅 ${df ? formatArabicDate(data[df]) : 'بدون تاريخ'}</span>
+                <span class="read-entry-type-badge">${label}</span></div>`;
+        }
+
+        function _fRow(key, val) {
+            if (!val || !String(val).trim()) return '';
+            let v = ''; try { v = marked.parse(String(val)); } catch(e) { v = String(val); }
+            return `<div class="rj-field"><div class="rj-field-label">${key}</div>
+                <div class="rj-field-value markdown-content">${v}</div></div>`;
+        }
+
+        function _groupCard(title, icon, keys, data, color) {
+            const rows = keys.map(k => _fRow(k, data[k])).filter(Boolean).join('');
+            if (!rows) return '';
+            return `<div class="rj-group-card" style="border-right-color:${color}">
+                <div class="rj-group-title">${icon} ${title}</div>${rows}</div>`;
+        }
+
+        function _analysisCard(key, val, extraClass) {
+            if (!val || !String(val).trim()) return '';
+            let v = ''; try { v = marked.parse(String(val)); } catch(e) { v = String(val); }
+            return `<div class="read-field-card analysis ${extraClass || ''}">
+                <button class="read-field-toggle" onclick="toggleReadField(this)">
+                    <span class="read-field-key">${key}</span>
+                    <span class="read-field-chevron">▼</span>
+                </button>
+                <div class="read-field-body open">
+                    <div class="read-field-value markdown-content">${v}</div>
+                </div></div>`;
+        }
+
+        // ── Main journal ─────────────────────────────────────────
+        function _renderMain(data, container) {
+            const f = _readCurrentFilter;
+            const isAnalysis = k => /تحليل AI يومي|تحليل داخلي|تقرير أسبوعي|تقرير شهري/.test(k);
+            const isWeekly   = k => k.includes('تقرير أسبوعي');
+            const isMonthly  = k => k.includes('تقرير شهري');
+            const isDailyAI  = k => /تحليل AI يومي|تحليل داخلي/.test(k);
+            const SKIP = new Set(['Timestamp','timestamp','اليوم','التاريخ','Date','date']);
+
+            let html = `<div class="read-entry-container">${_dateHdr(data,'اليوميات الرئيسية')}`;
+
+            if (f === 'all') {
+                const rows = Object.entries(data)
+                    .filter(([k,v]) => !SKIP.has(k) && !isAnalysis(k) && v && String(v).trim())
+                    .map(([k,v]) => _fRow(k,v)).join('');
+                if (rows) html += `<div class="rj-group-card" style="border-right-color:var(--accent-warm)">
+                    <div class="rj-group-title">📝 التدوين اليومي</div>${rows}</div>`;
+                Object.entries(data).forEach(([k,v]) => {
+                    if (!isAnalysis(k) || !v || !String(v).trim()) return;
+                    html += _analysisCard(k, v, isMonthly(k) ? 'monthly' : isWeekly(k) ? 'weekly' : '');
+                });
+            } else if (f === 'analysis_only') {
+                Object.entries(data).forEach(([k,v]) => {
+                    if (isDailyAI(k) && v && String(v).trim()) html += _analysisCard(k, v, '');
+                });
+            } else if (f === 'weekly_analysis') {
+                Object.entries(data).forEach(([k,v]) => {
+                    if (isWeekly(k) && v && String(v).trim()) html += _analysisCard(k, v, 'weekly');
+                });
+            } else if (f === 'monthly_analysis') {
+                Object.entries(data).forEach(([k,v]) => {
+                    if (isMonthly(k) && v && String(v).trim()) html += _analysisCard(k, v, 'monthly');
+                });
+            }
+
+            container.innerHTML = html + '</div>';
+            container.querySelector('.read-field-toggle')?.click();
+        }
+
+        // ── CBT journal ──────────────────────────────────────────
+        function _renderCBT(data, container) {
+            const C1 = ['التاريخ','الموقف','المشاعر','السلوكيات','الأفكار','مستوى الضيق قبل'];
+            const C2 = ['أفخاخ التفكير','التحدي','خطة العمل','المشاعر بعد الكتابة','مستوى الضيق بعد'];
+            const handled = new Set([...C1,...C2,'Timestamp','timestamp']);
+            let html = `<div class="read-entry-container">${_dateHdr(data,'يوميات CBT')}`;
+            html += _groupCard('التقاط التجربة', '🪤', C1, data, 'var(--accent-gentle)');
+            html += _groupCard('فحص وتغيير', '🔬', C2, data, 'var(--accent-calm)');
+            Object.entries(data).forEach(([k,v]) => {
+                if (!handled.has(k) && v && String(v).trim()) html += _analysisCard(k, v, '');
+            });
+            container.innerHTML = html + '</div>';
+            container.querySelector('.read-field-toggle')?.click();
+        }
+
+        // ── Scenarios journal ────────────────────────────────────
+        function _renderScenarios(data, container) {
+            const C1 = ['التاريخ','السيناريو','مستوى الضيق قبل'];
+            const C2 = ['كيفية التعامل','تقييم AI'];
+            const C3 = ['مستوى الضيق بعد','الأفكار الإيجابية / الإنجازات','الخطوة التالية','ملاحظات شخصية'];
+            let html = `<div class="read-entry-container">${_dateHdr(data,'السيناريوهات')}`;
+            html += _groupCard('الموقف', '🎯', C1, data, 'var(--accent-cool)');
+            html += _groupCard('التعامل والتقييم', '🤖', C2, data, 'var(--accent-warm)');
+            html += _groupCard('النتائج', '📊', C3, data, 'var(--accent-nature)');
+            container.innerHTML = html + '</div>';
+        }
+
+        // ── Exposure journal ─────────────────────────────────────
+        function _renderExposure(data, container) {
+            const C1 = ['التاريخ','المخوف','القلق قبل','الأفكار قبل'];
+            const C2 = ['وصف التجربة','القلق أثناء','القلق بعد','ماذا حدث فعلاً','الإيجابيات','الخطوة التالية'];
+            let html = `<div class="read-entry-container">${_dateHdr(data,'يوميات المواجهة')}`;
+            html += _groupCard('قبل المواجهة', '😰', C1, data, 'var(--accent-gentle)');
+            html += _groupCard('التجربة والنتائج', '💪', C2, data, 'var(--accent-nature)');
+            container.innerHTML = html + '</div>';
+        }
+
+        // ── Habit Lab journal ────────────────────────────────────
+        function _renderHabitLab(data, container) {
+            const LBL = {
+                date:'التاريخ',time:'الوقت',habit:'العادة',category:'الفئة',
+                occurred:'حدثت؟',frequency:'التكرار',ctx_time:'وقت السياق',
+                ctx_place:'المكان',ctx_with:'مع من',halt:'HALT',intensity:'الشدة',
+                trigger:'المحفز',needs:'الاحتياجات',body:'الجسد',
+                traps:'أفخاخ التفكير',alt_thought:'الفكرة البديلة',
+                escape:'مشاعر الهروب',reward:'المكافأة الوهمية',alt_behavior:'السلوك البديل'
+            };
+            const remap = {};
+            Object.entries(data).forEach(([k,v]) => { remap[LBL[k]||k] = v; });
+            const C1 = ['التاريخ','الوقت','العادة','الفئة','حدثت؟','التكرار','وقت السياق','المكان','مع من','HALT','الشدة'];
+            const C2 = ['المحفز','الاحتياجات','الجسد','أفخاخ التفكير','الفكرة البديلة','مشاعر الهروب','المكافأة الوهمية','السلوك البديل'];
+            let html = `<div class="read-entry-container">${_dateHdr(data,'مختبر العادات')}`;
+            html += _groupCard('السياق', '📋', C1, remap, 'var(--accent-calm)');
+            html += _groupCard('التحليل والبدائل', '🧪', C2, remap, '#00b894');
+            container.innerHTML = html + '</div>';
+        }
+
+        // ── Generic fallback ─────────────────────────────────────
+        function _renderGeneric(data, container) {
+            const SKIP = new Set(['Timestamp','timestamp']);
+            let rows = Object.entries(data)
+                .filter(([k,v]) => !SKIP.has(k) && v && String(v).trim())
+                .map(([k,v]) => _fRow(k,v)).join('');
+            container.innerHTML = `<div class="read-entry-container">${_dateHdr(data,_readCurrentType)}
+                <div class="rj-group-card" style="border-right-color:var(--border-soft)">${rows}</div></div>`;
+        }
+
+        function toggleReadField(btn) {
+            const body = btn.nextElementSibling;
+            const open = body.classList.contains('open');
+            body.classList.toggle('open', !open);
+            btn.classList.toggle('expanded', !open);
+        }
+
+        // Legacy wrappers
         function fetchEntry() { fetchReadEntry(); }
         function checkDateForFilter() { onReadDateChange(); }
         function displayEntry(data) { renderReadEntry(data, document.getElementById('read-entry-area')); }
@@ -6611,52 +6755,35 @@
             'المشاعر الصعبة مؤقتة. إنها موجات تأتي وتذهب، وأنت الشاطئ.'
         ];
 
-        // ── AFFIRMATIONS — with GAS sync ──
         async function syncAffirmationsFromGAS() {
             if (!CONFIG.scriptUrl) return;
             try {
                 const res  = await fetch(`${CONFIG.scriptUrl}?action=getAll&sheet=Affirmations`);
-                const data = await res.json();
-                if (!data.success || !Array.isArray(data.data) || data.data.length < 2) return;
-
-                const headers = data.data[0];
-                const textIdx = headers.indexOf('text');
+                const json = await res.json();
+                if (!json.success || !Array.isArray(json.data) || json.data.length < 2) return;
+                const headers  = json.data[0];
+                const textIdx  = headers.indexOf('text');
                 if (textIdx === -1) return;
-
-                const gasTexts = data.data.slice(1)
-                    .map(row => String(row[textIdx] || '').trim())
-                    .filter(t => t.length > 0);
-
-                if (gasTexts.length === 0) return;
-
-                // Merge: local + GAS, deduplicate by text
+                const gasTexts = json.data.slice(1)
+                    .map(r => String(r[textIdx] || '').trim()).filter(Boolean);
+                if (!gasTexts.length) return;
                 const local  = JSON.parse(localStorage.getItem('_affirmations') || '[]');
                 const merged = [...new Set([...local, ...gasTexts])];
-
                 if (merged.length !== local.length) {
                     localStorage.setItem('_affirmations', JSON.stringify(merged));
                     loadAffirmationsList();
                 }
-            } catch(e) {
-                console.warn('Affirmations GAS sync failed:', e);
-            }
+            } catch(e) { console.warn('Affirmations sync failed:', e); }
         }
 
         function loadAffirmationsList() {
-            const aff    = JSON.parse(localStorage.getItem('_affirmations') || '[]');
-            const list   = document.getElementById('affirmations-list');
-            const empty  = document.getElementById('aff-empty-msg');
+            const aff   = JSON.parse(localStorage.getItem('_affirmations') || '[]');
+            const list  = document.getElementById('affirmations-list');
+            const empty = document.getElementById('aff-empty-msg');
             if (!list) return;
-
-            // Remove old items (keep empty message)
             list.querySelectorAll('.affirmation-item').forEach(el => el.remove());
-
-            if (aff.length === 0) {
-                if (empty) empty.style.display = '';
-                return;
-            }
+            if (!aff.length) { if (empty) empty.style.display = ''; return; }
             if (empty) empty.style.display = 'none';
-
             aff.forEach((text, idx) => {
                 const item = document.createElement('div');
                 item.className = 'affirmation-item';
@@ -6670,35 +6797,36 @@
             const ta   = document.getElementById('new-affirmation-text');
             const text = ta.value.trim();
             if (!text) { ta.focus(); return; }
-
             const aff = JSON.parse(localStorage.getItem('_affirmations') || '[]');
             aff.push(text);
             localStorage.setItem('_affirmations', JSON.stringify(aff));
             ta.value = '';
             loadAffirmationsList();
             showMessage('aff-message', '✅ تمت الإضافة!', 'success');
-
             if (CONFIG.scriptUrl) {
                 try {
                     await fetch(CONFIG.scriptUrl, {
                         method: 'POST',
-                        body: JSON.stringify({
-                            sheetName: 'Affirmations',
-                            text,
-                            date:      new Date().toISOString().split('T')[0],
-                            timestamp: new Date().toISOString()
-                        })
+                        body: JSON.stringify({ sheetName: 'Affirmations', text,
+                            date: new Date().toISOString().split('T')[0],
+                            timestamp: new Date().toISOString() })
                     });
                 } catch(e) { /* silent — saved locally */ }
             }
         }
 
-        function deleteAffirmation(idx) {
-            const aff = JSON.parse(localStorage.getItem('_affirmations') || '[]');
+        async function deleteAffirmation(idx) {
+            const aff  = JSON.parse(localStorage.getItem('_affirmations') || '[]');
+            const text = aff[idx];
             aff.splice(idx, 1);
             localStorage.setItem('_affirmations', JSON.stringify(aff));
             loadAffirmationsList();
-            // GAS deletion not supported (append-only sheet) — removed only locally
+            // Delete from GAS sheet (mark as deleted by overwriting with empty or use deleteRow action)
+            if (CONFIG.scriptUrl && text) {
+                try {
+                    await fetch(`${CONFIG.scriptUrl}?action=deleteAffirmation&text=${encodeURIComponent(text)}`);
+                } catch(e) { /* silent */ }
+            }
         }
 
         function renderSOSAffirmations() {
