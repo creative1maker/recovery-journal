@@ -584,46 +584,85 @@
         /* Dashboard */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.2rem;
         }
         
         .stat-card {
             background: linear-gradient(135deg, var(--bg-card), var(--bg-primary));
-            padding: 1.5rem;
-            border-radius: 12px;
+            padding: 1.1rem 1rem;
+            border-radius: 14px;
             border-right: 4px solid var(--accent-warm);
             box-shadow: var(--shadow-sm);
         }
         
         .stat-label {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: var(--text-secondary);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
         }
         
         .stat-value {
             font-family: 'Amiri', serif;
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 700;
             color: var(--text-primary);
         }
         
         .chart-container {
             background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
+            padding: 1.2rem 1rem 1rem;
+            border-radius: 14px;
             box-shadow: var(--shadow-sm);
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
         }
         
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
+            flex-wrap: wrap;
+        }
+
         .chart-title {
             font-family: 'Amiri', serif;
-            font-size: 1.2rem;
+            font-size: 1.05rem;
             font-weight: 700;
-            margin-bottom: 1rem;
             color: var(--text-primary);
+            margin: 0;
+        }
+
+        .chart-filters {
+            display: flex;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+        }
+
+        .cf-btn {
+            padding: 0.25rem 0.65rem;
+            border: 1.5px solid var(--border-soft);
+            border-radius: 14px;
+            background: white;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .cf-btn:hover   { border-color: var(--accent-cool); color: var(--accent-cool); }
+        .cf-btn.active  { background: var(--text-primary); border-color: var(--text-primary); color: white; }
+        .cf-btn.compare { border-color: var(--accent-calm); color: var(--accent-calm); }
+        .cf-btn.compare.active { background: var(--accent-calm); border-color: var(--accent-calm); color: white; }
+
+        .chart-subtitle {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.6rem;
+            font-style: italic;
         }
         
         /* Entry Display */
@@ -3918,7 +3957,7 @@
                     <button class="filter-pill active" data-filter="all" onclick="setReadFilter(this)">كل شيء</button>
                     <button class="filter-pill" data-filter="analysis_only" onclick="setReadFilter(this)">تحليل يومي</button>
                     <button class="filter-pill weekly-only" data-filter="weekly_analysis" onclick="setReadFilter(this)" style="display:none;">تقرير أسبوعي</button>
-                    <button class="filter-pill" data-filter="monthly_analysis" onclick="setReadFilter(this)">تقرير شهري</button>
+                    <button class="filter-pill monthly-only" data-filter="monthly_analysis" onclick="setReadFilter(this)" style="display:none;">تقرير شهري</button>
                 </div>
 
                 <!-- Messages -->
@@ -3938,47 +3977,93 @@
         
         <!-- Dashboard -->
         <div id="content-dashboard" class="tab-content">
-            <div class="card">
-                <h2 class="card-title">📊 لوحة التحكم</h2>
-                
+            <div class="card" style="padding-bottom:0.5rem;">
+
+                <!-- Stat Cards -->
                 <div class="dashboard-grid">
                     <div class="stat-card">
                         <div class="stat-label">إجمالي المدخلات</div>
                         <div class="stat-value" id="total-entries">0</div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card" style="border-right-color:var(--accent-cool)">
                         <div class="stat-label">متوسط جودة اليوم</div>
                         <div class="stat-value" id="avg-quality">-</div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card" style="border-right-color:var(--accent-gentle)">
                         <div class="stat-label">المشاعر الأكثر تكراراً</div>
-                        <div class="stat-value" id="top-emotion" style="font-size: 1.2rem;">-</div>
+                        <div class="stat-value" id="top-emotion" style="font-size:1rem;font-family:'IBM Plex Sans Arabic',sans-serif;direction:rtl;">-</div>
                     </div>
-                </div>
-                
-                <div class="chart-container" style="margin-bottom: 1.5rem; padding: 1.5rem 1rem;">
-                    <h3 class="chart-title" style="margin-bottom: 1rem;">☁️ سحابة المشاعر</h3>
-                    <div id="emotion-cloud" style="display: flex; flex-wrap: wrap; gap: 10px 15px; justify-content: center; align-items: center; max-width: 450px; margin: 0 auto; line-height: 1.4;">
-                        <span style="color:var(--text-secondary)">جاري تحليل المشاعر...</span>
+                    <div class="stat-card" style="border-right-color:var(--accent-calm)">
+                        <div class="stat-label">متوسط الإيجابية</div>
+                        <div class="stat-value" id="avg-positivity">-</div>
                     </div>
                 </div>
 
+                <!-- Word Cloud -->
                 <div class="chart-container">
-                    <h3 class="chart-title">📈 جودة اليوم عبر الوقت</h3>
-                    <canvas id="quality-chart" style="max-height: 300px;"></canvas>
+                    <div class="chart-header">
+                        <h3 class="chart-title">☁️ سحابة المشاعر</h3>
+                    </div>
+                    <div id="word-cloud-wrap" style="position:relative;width:100%;overflow:hidden;direction:rtl;">
+                        <div id="word-cloud-tooltip" style="display:none;position:fixed;background:rgba(45,52,54,0.88);color:white;font-size:0.75rem;padding:0.3rem 0.65rem;border-radius:8px;pointer-events:none;font-family:'IBM Plex Sans Arabic',sans-serif;z-index:9999;"></div>
+                        <div id="emotion-cloud" style="position:relative;width:100%;min-height:260px;"></div>
+                    </div>
                 </div>
-                
+
+                <!-- Day Quality Chart -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">📈 جودة اليوم</h3>
+                        <div class="chart-filters" id="quality-filters">
+                            <button class="cf-btn active" onclick="setQualityView('all',this)">الكل</button>
+                            <button class="cf-btn" onclick="setQualityView('3m',this)">٣ أشهر</button>
+                            <button class="cf-btn" onclick="setQualityView('month',this)">شهر</button>
+                            <button class="cf-btn" onclick="setQualityView('week',this)">أسبوع</button>
+                            <button class="cf-btn compare" id="quality-compare-btn" onclick="toggleQualityCompare(this)">مقارنة</button>
+                        </div>
+                    </div>
+                    <div class="chart-subtitle" id="quality-subtitle" style="display:none;"></div>
+                    <canvas id="quality-chart" style="max-height:260px;"></canvas>
+                </div>
+
+                <!-- Energy Level Chart (from Analysis sheet) -->
+                <div class="chart-container" id="energy-container" style="display:none;">
+                    <div class="chart-header">
+                        <h3 class="chart-title">⚡ مستوى الطاقة</h3>
+                        <div class="chart-filters">
+                            <button class="cf-btn active" onclick="setEnergyView('all',this)">الكل</button>
+                            <button class="cf-btn" onclick="setEnergyView('3m',this)">٣ أشهر</button>
+                            <button class="cf-btn" onclick="setEnergyView('month',this)">شهر</button>
+                        </div>
+                    </div>
+                    <canvas id="energy-chart" style="max-height:220px;"></canvas>
+                </div>
+
+                <!-- Positivity Index Chart (from Analysis sheet) -->
+                <div class="chart-container" id="positivity-container" style="display:none;">
+                    <div class="chart-header">
+                        <h3 class="chart-title">🌡️ مؤشر الإيجابية</h3>
+                        <div class="chart-filters">
+                            <button class="cf-btn active" onclick="setPositivityView('all',this)">الكل</button>
+                            <button class="cf-btn" onclick="setPositivityView('3m',this)">٣ أشهر</button>
+                            <button class="cf-btn" onclick="setPositivityView('month',this)">شهر</button>
+                        </div>
+                    </div>
+                    <div class="chart-subtitle">الأعمدة الخضراء = إيجابية · الحمراء = سلبية · الخط = الاتجاه العام</div>
+                    <canvas id="positivity-chart" style="max-height:260px;"></canvas>
+                </div>
+
+                <!-- Looker -->
                 <div class="form-group">
                     <label class="form-label">رابط لوحة Google Looker (اختياري)</label>
                     <input type="text" id="looker-url" placeholder="https://lookerstudio.google.com/embed/...">
-                    <button onclick="embedLooker()" class="btn btn-secondary" style="margin-top: 0.5rem;">📊 عرض اللوحة</button>
+                    <button onclick="embedLooker()" class="btn btn-secondary" style="margin-top:0.5rem;">📊 عرض اللوحة</button>
                 </div>
-                
-                <div id="looker-container" class="hidden" style="margin-top: 1rem;">
-                    <iframe id="looker-iframe" style="width: 100%; height: 600px; border: none; border-radius: 12px;"></iframe>
+                <div id="looker-container" class="hidden" style="margin-top:1rem;">
+                    <iframe id="looker-iframe" style="width:100%;height:600px;border:none;border-radius:12px;"></iframe>
                 </div>
-                
-                <button onclick="loadDashboard()" class="btn btn-primary btn-full" style="margin-top: 1rem;">🔄 تحديث البيانات</button>
+
+                <button onclick="loadDashboard()" class="btn btn-primary btn-full" style="margin-top:1rem;">🔄 تحديث البيانات</button>
             </div>
         </div>
         
@@ -4836,13 +4921,6 @@
                 showMessage(`write-${journalType}-message`, 'الرجاء إعداد الاتصال بـ Google Sheets أولاً من الإعدادات', 'error');
                 return;
             }
-
-            // For daily journal: block if analysis mode = none (must pick at least one)
-            if (journalType === 'daily' && getAnalysisMode() === 'none') {
-                showMessage('write-daily-message', '⚠️ يرجى اختيار نوع تحليل واحد على الأقل قبل الحفظ', 'error');
-                document.querySelector('.analysis-mode-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                return;
-            }
             
             let formData = {};
             let sheetName = '';
@@ -4908,15 +4986,20 @@
                 
                 if (result.success) {
                     if (journalType === 'daily') {
-                        // إظهار رسالة تفاعلية
                         const mode = getAnalysisMode();
-                        const modeLabel = { both: 'عام + عميق', general: 'عام فقط', deep: 'عميق فقط', none: 'بدون تحليل' }[mode];
-                        showMessage(`write-${journalType}-message`, `✅ تم الحفظ! جاري التحليل النفسي (${modeLabel}) 🤖...`, 'success');
-
-                        if (mode !== 'none') {
-                            fetch(`${CONFIG.scriptUrl}?action=analyze&sheet=Form responses 1&mode=${mode}`)
-                                .catch(err => console.error("AI Analysis error:", err));
+                        
+                        // تعديل الرسالة لتبدو منطقية إذا كان التحليل معطلاً
+                        if (mode === 'none') {
+                            showMessage(`write-${journalType}-message`, `✅ تم الحفظ! جاري استخراج البيانات الإحصائية في الخلفية 📊...`, 'success');
+                        } else {
+                            const modeLabel = { both: 'عام + عميق', general: 'عام فقط', deep: 'عميق فقط' }[mode];
+                            showMessage(`write-${journalType}-message`, `✅ تم الحفظ! جاري التحليل النفسي (${modeLabel}) 🤖...`, 'success');
                         }
+                        
+                        // التعديل الأهم: نقوم دائماً باستدعاء التحليل، حتى لو mode=none، لكي يعمل ملف الـ Analysis
+                        fetch(`${CONFIG.scriptUrl}?action=analyze&sheet=Form responses 1&mode=${mode}`)
+                            .catch(err => console.error("AI Analysis error:", err));
+                            
                     } else {
                         showMessage(`write-${journalType}-message`, '✅ تم الحفظ بنجاح!', 'success');
                     }
@@ -5465,219 +5548,516 @@
         function checkDateForFilter() { onReadDateChange(); }
 
         // ============= DASHBOARD =============
+        // ─── DASHBOARD STATE ─────────────────────────────────────────
+        let _dash = {
+            // Main journal data
+            dates: [], qualities: [],
+            // Analysis sheet data
+            analysisDates: [], energyData: [], positivityData: [],
+            // chart instances
+            qualityChart: null, energyChart: null, positivityChart: null,
+            // filters
+            qualityView: 'all', compareMode: false,
+            energyView: 'all', positivityView: 'all'
+        };
+
+        // Theme palette (matches CSS vars exactly)
+        const THEME = {
+            warm:    [253, 203, 110], // #fdcb6e
+            cool:    [116, 185, 255], // #74b9ff
+            gentle:  [250, 177, 160], // #fab1a0
+            calm:    [162, 155, 254], // #a29bfe
+            nature:  [ 85, 239, 196], // #55efc4
+            purple:  [108,  92, 231], // #6c5ce7
+            teal:    [  0, 184, 148], // #00b894
+            red:     [214,  48,  49], // #d63031
+            orange:  [225, 112,  85], // #e17055
+            dark:    [ 45,  52,  54], // #2d3436
+            grey:    [ 99, 110, 114], // #636e72
+        };
+        const rgba = ([r,g,b], a=1) => `rgba(${r},${g},${b},${a})`;
+        const hex  = ([r,g,b]) => `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+
+        const CLOUD_COLORS = [
+            THEME.calm, THEME.warm, THEME.cool, THEME.gentle,
+            THEME.nature, THEME.purple, THEME.teal, THEME.orange
+        ];
+
+        // ─── LOAD DASHBOARD ──────────────────────────────────────────
         async function loadDashboard() {
             if (!CONFIG.scriptUrl) return;
-            
             try {
-                const response = await fetch(`${CONFIG.scriptUrl}?action=getAll&sheet=Form responses 1`);
-                const result = await response.json();
-                
-                if (result.success) {
-                    const data = result.data;
-                    const headers = data[0];
-                    
-                    // 1. إصلاح بحث التاريخ (لتجنب سؤال الأمور السلبية)
-                    let dateIdx = -1;
-                    const priorityNames = ['اليوم', 'التاريخ', 'Date', 'date', 'Timestamp', 'timestamp'];
-                    for (let name of priorityNames) {
-                        dateIdx = headers.indexOf(name);
-                        if (dateIdx !== -1) break;
-                    }
-                    if (dateIdx === -1) { // كحل أخير
-                        dateIdx = headers.findIndex(h => h === 'اليوم' || h === 'التاريخ');
-                    }
+                // Fetch both sheets in parallel
+                const [mainRes, analysisRes] = await Promise.all([
+                    fetch(`${CONFIG.scriptUrl}?action=getAll&sheet=Form%20responses%201`),
+                    fetch(`${CONFIG.scriptUrl}?action=getAll&sheet=Analysis`).catch(() => null)
+                ]);
+                const mainJson = await mainRes.json();
 
-                    const qualityIdx = headers.findIndex(h => h.includes('كيف تقيم') || h.includes('جودة'));
-                    
-                    // 2. العثور على جميع أعمدة المشاعر
-                    const emotionColIndices = headers
-                        .map((h, i) => h.includes('المشاعر المسيطرة') ? i : -1)
-                        .filter(i => i !== -1);
-
-                    let totalEntries = data.length - 1;
-                    let totalQuality = 0;
-                    let qualityCount = 0;
-                    let emotionCounts = {}; // قاموس لتخزين تكرار كل شعور
-                    
-                    const chartDates = [];
-                    const chartQualities = [];
-                    
-                    // قراءة البيانات صفاً صفاً
-                        for (let i = 1; i < data.length; i++) {
-                            const row = data[i];
-                            
-                            // حساب الجودة والرسم البياني
-                            const quality = parseFloat(row[qualityIdx]);
-                            if (!isNaN(quality)) {
-                                totalQuality += quality;
-                                qualityCount++;
-                                
-                                let cleanDate = row[dateIdx];
-                                let displayDate = cleanDate;
-                                
-                                // إصلاح مشكلة "التاريخ المتأخر بيوم"
-                                try {
-                                    let d = new Date(cleanDate);
-                                    if (!isNaN(d)) {
-                                        d.setHours(d.getHours() + 12); // إضافة 12 ساعة لتجنب فرق التوقيت
-                                        displayDate = `${d.getDate()}/${d.getMonth() + 1}`; // عرض اليوم/الشهر فقط ليكون أجمل في الرسم
-                                    } else {
-                                        displayDate = String(cleanDate).substring(0, 10);
-                                    }
-                                } catch(e) {
-                                    displayDate = String(cleanDate).substring(0, 10);
-                                }
-                                
-                                chartDates.push(displayDate);
-                                chartQualities.push(quality);
-                            }
-
-                            // حساب المشاعر
-                            emotionColIndices.forEach(idx => {
-                                if (row[idx]) {
-                                    let ems = String(row[idx]).split(/[,،|]/).map(e => e.trim()).filter(e => e !== '');
-                                    ems.forEach(em => {
-                                        emotionCounts[em] = (emotionCounts[em] || 0) + 1;
-                                    });
-                                }
-                            });
-                        }
-                        
-                        // تحديث الإحصاءات السريعة
-                        document.getElementById('total-entries').textContent = totalEntries;
-                        document.getElementById('avg-quality').textContent = qualityCount > 0 
-                            ? (totalQuality / qualityCount).toFixed(1) 
-                            : '-';
-                        
-                        // ترتيب المشاعر من الأكثر للأقل ورسم السحابة
-                        let sortedEmotions = Object.entries(emotionCounts).sort((a, b) => b[1] - a[1]);
-                        if (sortedEmotions.length > 0) {
-                            // التعديل هنا: إضافة الرقم بجانب الكلمة (مثلاً: ضغط نفسي (5))
-                            document.getElementById('top-emotion').textContent = `${sortedEmotions[0][0]} | ${sortedEmotions[0][1]}`;
-                            drawEmotionCloud(sortedEmotions);
-                        } else {
-                            document.getElementById('top-emotion').textContent = '-';
-                            document.getElementById('emotion-cloud').innerHTML = '<span style="color:var(--text-secondary)">لا توجد بيانات كافية</span>';
-                        }
-                    
-                    // رسم الشارت (آخر 15 يوم)
-                    drawQualityChart(chartDates.slice(-15), chartQualities.slice(-15));
+                if (mainJson.success) {
+                    _processMainData(mainJson.data);
                 }
-            } catch (error) {
-                console.error('Dashboard error:', error);
+                if (analysisRes) {
+                    const aJson = await analysisRes.json().catch(() => null);
+                    if (aJson?.success) _processAnalysisData(aJson.data);
+                }
+            } catch(err) { console.error('Dashboard error:', err); }
+        }
+
+        function _processMainData(data) {
+            const headers = data[0];
+            let dateIdx    = -1;
+            for (const n of ['اليوم','التاريخ','Date','date']) {
+                dateIdx = headers.indexOf(n);
+                if (dateIdx !== -1) break;
+            }
+            const qualityIdx = headers.findIndex(h => h.includes('كيف تقيم') || h.includes('جودة'));
+            const emotionCols = headers.map((h,i) => h.includes('المشاعر المسيطرة') ? i : -1).filter(i => i !== -1);
+
+            let totalQ = 0, qCount = 0;
+            const emotionCounts = {};
+            _dash.dates = []; _dash.qualities = [];
+
+            for (let i = 1; i < data.length; i++) {
+                const row = data[i];
+                const q = parseFloat(row[qualityIdx]);
+                if (!isNaN(q)) {
+                    totalQ += q; qCount++;
+                    let raw = row[dateIdx];
+                    let label;
+                    try {
+                        const d = new Date(raw);
+                        d.setHours(d.getHours() + 12);
+                        label = `${d.getDate()}/${d.getMonth()+1}`;
+                    } catch(e) { label = String(raw).substring(0,10); }
+                    _dash.dates.push(label);
+                    _dash.qualities.push(q);
+                }
+                emotionCols.forEach(ci => {
+                    if (!row[ci]) return;
+                    String(row[ci]).split(/[,،|]/).map(e => e.trim()).filter(Boolean)
+                        .forEach(em => { emotionCounts[em] = (emotionCounts[em] || 0) + 1; });
+                });
+            }
+
+            document.getElementById('total-entries').textContent = data.length - 1;
+            document.getElementById('avg-quality').textContent   = qCount ? (totalQ/qCount).toFixed(1) : '-';
+
+            const sorted = Object.entries(emotionCounts).sort((a,b) => b[1]-a[1]);
+            document.getElementById('top-emotion').textContent = sorted[0] ? `${sorted[0][0]} | ${sorted[0][1]}` : '-';
+
+            if (sorted.length) drawWordCloud(sorted);
+            _applyQualityView();
+        }
+
+        function _processAnalysisData(data) {
+            if (!data || data.length < 2) return;
+            const headers = data[0];
+            let dateIdx = -1;
+            for (const n of ['اليوم','التاريخ','Date','date','Timestamp','timestamp']) {
+                dateIdx = headers.indexOf(n);
+                if (dateIdx !== -1) break;
+            }
+            const energyIdx     = headers.findIndex(h => h.includes('مستوى الطاقة'));
+            const positivityIdx = headers.findIndex(h => h.includes('مؤشر الإيجابية'));
+
+            _dash.analysisDates = []; _dash.energyData = []; _dash.positivityData = [];
+
+            for (let i = 1; i < data.length; i++) {
+                const row = data[i];
+                let label = '';
+                try {
+                    const d = new Date(row[dateIdx]);
+                    d.setHours(d.getHours() + 12);
+                    label = `${d.getDate()}/${d.getMonth()+1}`;
+                } catch(e) { label = String(row[dateIdx] || '').substring(0,10); }
+                _dash.analysisDates.push(label);
+                _dash.energyData.push(energyIdx !== -1 ? parseFloat(row[energyIdx]) || null : null);
+                _dash.positivityData.push(positivityIdx !== -1 ? parseFloat(row[positivityIdx]) || null : null);
+            }
+
+            // Avg positivity stat
+            const vals = _dash.positivityData.filter(v => v !== null);
+            document.getElementById('avg-positivity').textContent = vals.length
+                ? (vals.reduce((a,b) => a+b, 0) / vals.length).toFixed(1) : '-';
+
+            if (energyIdx !== -1)     { document.getElementById('energy-container').style.display = '';     _applyEnergyView(); }
+            if (positivityIdx !== -1) { document.getElementById('positivity-container').style.display = ''; _applyPositivityView(); }
+        }
+
+        // ─── FILTER HELPERS ─────────────────────────────────────────
+        function _filterByView(dates, vals, view) {
+            const n = dates.length;
+            if (view === 'all') return { dates, vals };
+            const cutoff = view === 'week' ? 7 : view === 'month' ? 30 : 90;
+            const sliced = Math.max(0, n - cutoff);
+            return { dates: dates.slice(sliced), vals: vals.slice(sliced) };
+        }
+
+        function _setActiveBtn(containerOrId, clickedBtn) {
+            const parent = typeof containerOrId === 'string'
+                ? document.getElementById(containerOrId) : containerOrId;
+            if (parent) parent.querySelectorAll('.cf-btn:not(.compare)').forEach(b => b.classList.remove('active'));
+            clickedBtn.classList.add('active');
+        }
+
+        // ─── QUALITY CHART ───────────────────────────────────────────
+        function setQualityView(view, btn) {
+            _dash.qualityView = view;
+            _setActiveBtn('quality-filters', btn);
+            _applyQualityView();
+        }
+
+        function toggleQualityCompare(btn) {
+            _dash.compareMode = !_dash.compareMode;
+            btn.classList.toggle('active', _dash.compareMode);
+            _applyQualityView();
+        }
+
+        function _applyQualityView() {
+            if (!_dash.dates.length) return;
+            const { dates, vals } = _filterByView(_dash.dates, _dash.qualities, _dash.qualityView);
+            if (_dash.compareMode) {
+                _drawQualityCompare(dates, vals, _dash.qualityView);
+            } else {
+                _drawQualityLine(dates, vals);
+                document.getElementById('quality-subtitle').style.display = 'none';
             }
         }
 
-        // دالة رسم سحابة المشاعر
-        function drawEmotionCloud(sortedEmotions) {
+        function _drawQualityLine(dates, vals) {
+            const ctx = document.getElementById('quality-chart').getContext('2d');
+            if (_dash.qualityChart) _dash.qualityChart.destroy();
+            _dash.qualityChart = new Chart(ctx, {
+                type: 'line',
+                data: { labels: dates, datasets: [{
+                    label: 'جودة اليوم',
+                    data: vals,
+                    borderColor: rgba(THEME.warm),
+                    backgroundColor: rgba(THEME.warm, 0.15),
+                    tension: 0.4, fill: true,
+                    pointBackgroundColor: vals.map(v => v >= 7 ? rgba(THEME.teal) : v >= 5 ? rgba(THEME.warm) : rgba(THEME.orange)),
+                    pointBorderColor: 'white',
+                    pointBorderWidth: 2,
+                    pointRadius: 4
+                }]},
+                options: _qualityOpts(1, 10)
+            });
+        }
+
+        function _drawQualityCompare(dates, vals, view) {
+            const n = dates.length;
+            const half = Math.floor(n / 2);
+            const p1d = dates.slice(0, half), p1v = vals.slice(0, half);
+            const p2d = dates.slice(half),   p2v = vals.slice(half);
+            const label1 = view === 'week' ? 'الأسبوع السابق' : view === 'month' ? 'الشهر السابق' : 'الفترة الأولى';
+            const label2 = view === 'week' ? 'الأسبوع الحالي' : view === 'month' ? 'الشهر الحالي' : 'الفترة الثانية';
+            // Use common x-axis of max length
+            const maxLen = Math.max(p1d.length, p2d.length);
+            const labels = Array.from({length: maxLen}, (_,i) => `يوم ${i+1}`);
+            const pad = (arr) => { const a = [...arr]; while (a.length < maxLen) a.push(null); return a; };
+
+            const sub = document.getElementById('quality-subtitle');
+            sub.style.display = '';
+            sub.textContent = `مقارنة: ${p1d[0] || ''} → ${p1d[p1d.length-1] || ''}  vs  ${p2d[0] || ''} → ${p2d[p2d.length-1] || ''}`;
+
+            const ctx = document.getElementById('quality-chart').getContext('2d');
+            if (_dash.qualityChart) _dash.qualityChart.destroy();
+            _dash.qualityChart = new Chart(ctx, {
+                type: 'line',
+                data: { labels, datasets: [
+                    { label: label1, data: pad(p1v), borderColor: rgba(THEME.cool), backgroundColor: rgba(THEME.cool, 0.1), tension: 0.4, fill: false, pointRadius: 3 },
+                    { label: label2, data: pad(p2v), borderColor: rgba(THEME.warm), backgroundColor: rgba(THEME.warm, 0.1), tension: 0.4, fill: false, pointRadius: 3 }
+                ]},
+                options: { ..._qualityOpts(1, 10), plugins: { legend: { display: true, labels: { font: { family: 'IBM Plex Sans Arabic' }, color: '#636e72' } } } }
+            });
+        }
+
+        function _qualityOpts(min, max) {
+            return {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false }, tooltip: { titleFont: { family: 'IBM Plex Sans Arabic' }, bodyFont: { family: 'IBM Plex Sans Arabic' } } },
+                scales: {
+                    x: { ticks: { maxRotation: 45, minRotation: 0, font: { family: 'IBM Plex Sans Arabic', size: 11 }, color: '#636e72', maxTicksLimit: 12 }, grid: { display: false } },
+                    y: { min, max, ticks: { font: { family: 'IBM Plex Sans Arabic', weight: 'bold', size: 12 },
+                        color: ctx => {
+                            const v = ctx.tick.value;
+                            if (v >= 8) return hex(THEME.teal);
+                            if (v >= 6) return hex(THEME.nature);
+                            if (v >= 4) return hex(THEME.warm);
+                            if (v >= 2) return hex(THEME.orange);
+                            return hex(THEME.red);
+                        }
+                    }, grid: { color: 'rgba(0,0,0,0.04)' } }
+                }
+            };
+        }
+
+        // ─── ENERGY CHART ────────────────────────────────────────────
+        function setEnergyView(view, btn) {
+            _dash.energyView = view;
+            _setActiveBtn(btn.parentElement, btn);
+            _applyEnergyView();
+        }
+
+        function _applyEnergyView() {
+            if (!_dash.analysisDates.length) return;
+            const { dates, vals } = _filterByView(_dash.analysisDates, _dash.energyData, _dash.energyView);
+            const ctx = document.getElementById('energy-chart').getContext('2d');
+            if (_dash.energyChart) _dash.energyChart.destroy();
+            _dash.energyChart = new Chart(ctx, {
+                type: 'line',
+                data: { labels: dates, datasets: [{
+                    label: 'مستوى الطاقة',
+                    data: vals,
+                    borderColor: rgba(THEME.cool),
+                    backgroundColor: rgba(THEME.cool, 0.12),
+                    tension: 0.4, fill: true,
+                    pointBackgroundColor: rgba(THEME.cool),
+                    pointBorderColor: 'white',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    spanGaps: true
+                }]},
+                options: _qualityOpts(0, 10)
+            });
+        }
+
+        // ─── POSITIVITY INDEX CHART (Bar + Line) ─────────────────────
+        function setPositivityView(view, btn) {
+            _dash.positivityView = view;
+            _setActiveBtn(btn.parentElement, btn);
+            _applyPositivityView();
+        }
+
+        function _applyPositivityView() {
+            if (!_dash.analysisDates.length) return;
+            const { dates, vals } = _filterByView(_dash.analysisDates, _dash.positivityData, _dash.positivityView);
+
+            // Bar colors: interpolate red → grey → green
+            const barColors = vals.map(v => {
+                if (v === null) return rgba(THEME.grey, 0.2);
+                if (v >= 7)  return rgba(THEME.teal, 0.85);
+                if (v >= 3)  return rgba(THEME.nature, 0.75);
+                if (v >= 0)  return rgba(THEME.nature, 0.4);
+                if (v >= -3) return rgba(THEME.orange, 0.5);
+                if (v >= -7) return rgba(THEME.orange, 0.8);
+                return rgba(THEME.red, 0.85);
+            });
+            const barBorders = vals.map(v => {
+                if (v === null) return rgba(THEME.grey, 0.3);
+                if (v >= 3)  return rgba(THEME.teal);
+                if (v >= 0)  return rgba(THEME.nature);
+                if (v >= -3) return rgba(THEME.orange);
+                return rgba(THEME.red);
+            });
+
+            // Moving average for trend line (window = 3)
+            const trend = vals.map((_, i) => {
+                const w = vals.slice(Math.max(0,i-2), i+1).filter(v => v !== null);
+                return w.length ? w.reduce((a,b) => a+b, 0) / w.length : null;
+            });
+
+            const ctx = document.getElementById('positivity-chart').getContext('2d');
+            if (_dash.positivityChart) _dash.positivityChart.destroy();
+            _dash.positivityChart = new Chart(ctx, {
+                data: {
+                    labels: dates,
+                    datasets: [
+                        {
+                            type: 'bar',
+                            label: 'مؤشر الإيجابية',
+                            data: vals,
+                            backgroundColor: barColors,
+                            borderColor: barBorders,
+                            borderWidth: 1.5,
+                            borderRadius: 4,
+                            order: 2
+                        },
+                        {
+                            type: 'line',
+                            label: 'الاتجاه',
+                            data: trend,
+                            borderColor: rgba(THEME.calm),
+                            backgroundColor: 'transparent',
+                            borderWidth: 2.5,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            borderDash: [4, 3],
+                            spanGaps: true,
+                            order: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true, labels: { font: { family: 'IBM Plex Sans Arabic', size: 11 }, color: '#636e72', boxWidth: 14 } },
+                        tooltip: { titleFont: { family: 'IBM Plex Sans Arabic' }, bodyFont: { family: 'IBM Plex Sans Arabic' } }
+                    },
+                    scales: {
+                        x: { ticks: { maxRotation: 45, minRotation: 0, font: { family: 'IBM Plex Sans Arabic', size: 11 }, color: '#636e72', maxTicksLimit: 12 }, grid: { display: false } },
+                        y: { min: -10, max: 10,
+                            ticks: { stepSize: 2, font: { family: 'IBM Plex Sans Arabic', weight: 'bold', size: 12 },
+                                color: ctx => {
+                                    const v = ctx.tick.value;
+                                    if (v >= 7)  return hex(THEME.teal);
+                                    if (v >= 3)  return hex(THEME.nature);
+                                    if (v >= 0)  return hex(THEME.grey);
+                                    if (v >= -3) return hex(THEME.orange);
+                                    return hex(THEME.red);
+                                }
+                            },
+                            grid: { color: ctx => ctx.tick.value === 0 ? rgba(THEME.dark, 0.2) : 'rgba(0,0,0,0.04)', lineWidth: ctx => ctx.tick.value === 0 ? 2 : 1 }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ─── WORD CLOUD (Canvas spiral) ──────────────────────────────
+        // ─── WORD CLOUD (DOM absolute-positioned, crisp, interactive) ──
+        function drawWordCloud(sortedEmotions) {
             const container = document.getElementById('emotion-cloud');
+            const tooltip   = document.getElementById('word-cloud-tooltip');
+            if (!container) return;
             container.innerHTML = '';
-            
-            // نأخذ أعلى 15 شعوراً فقط لكي لا تزدحم السحابة
-            const topEms = sortedEmotions.slice(0, 15);
-            if(topEms.length === 0) return;
 
-            const maxCount = topEms[0][1];
-            const minCount = topEms[topEms.length - 1][1];
-            
-            // ألوان جذابة تتناسب مع تصميمك
-            const colors = ['#0984e3', '#fdcb6e', '#e17055', '#00b894', '#6c5ce7', '#e84393'];
+            const maxCount = sortedEmotions[0][1];
+            const minCount = sortedEmotions[sortedEmotions.length - 1][1];
 
-            // خلط ترتيب المشاعر عشوائياً لتبدو كـ "سحابة" حقيقية (اختياري)
-            topEms.sort(() => Math.random() - 0.5);
+            // Step 1: Create all spans and measure them in one DOM pass
+            // We place them off-screen first to get real pixel sizes
+            const offscreen = document.createElement('div');
+            offscreen.style.cssText = 'position:absolute;visibility:hidden;top:-9999px;left:-9999px;direction:rtl;';
+            document.body.appendChild(offscreen);
 
-            topEms.forEach((em, index) => {
+            const items = sortedEmotions.map(([word, count], i) => {
+                const ratio   = maxCount === minCount ? 1 : (count - minCount) / (maxCount - minCount);
+                const size    = Math.round(10 + ratio * 22); // 10–32px
+                const weight  = ratio > 0.55 ? '700' : '500';
+                const col     = CLOUD_COLORS[i % CLOUD_COLORS.length];
+                const alpha   = 0.55 + ratio * 0.45;
+
                 const span = document.createElement('span');
-                span.textContent = em[0];
+                span.textContent = word;
+                span.style.cssText = `
+                    font-family: 'IBM Plex Sans Arabic', sans-serif;
+                    font-size: ${size}px;
+                    font-weight: ${weight};
+                    color: ${rgba(col, alpha)};
+                    white-space: nowrap;
+                    cursor: default;
+                    user-select: none;
+                    transition: transform 0.18s ease, color 0.18s ease;
+                    display: inline-block;
+                `;
+                offscreen.appendChild(span);
+                return { span, word, count, ratio, col, size };
+            });
 
-                // حساب حجم الخط بناءً على التكرار (من 1rem إلى 2.5rem)
-                let ratio = maxCount === minCount ? 1 : (em[1] - minCount) / (maxCount - minCount);
-                let fontSize = 1 + (ratio * 1.5);
+            // Force layout so we can read real widths/heights
+            offscreen.getBoundingClientRect();
+            items.forEach(it => {
+                it.w = it.span.offsetWidth  + 8;
+                it.h = it.span.offsetHeight + 6;
+            });
+            document.body.removeChild(offscreen);
 
-                span.style.fontSize = fontSize + 'rem';
-                span.style.color = colors[index % colors.length];
-                span.style.fontWeight = ratio > 0.5 ? 'bold' : '500';
-                span.style.transition = 'transform 0.2s';
-                span.style.cursor = 'default';
-                span.title = `تكرر ${em[1]} مرات`; // يظهر العدد عند وضع الماوس
-                
-                span.onmouseover = () => span.style.transform = 'scale(1.1)';
-                span.onmouseout = () => span.style.transform = 'scale(1)';
+            // Step 2: Spiral placement (center → outward)
+            const CW = container.parentElement.clientWidth || 340;
+            const cx = CW / 2;
+
+            const placed = []; // {x1,y1,x2,y2}
+            const results = []; // items that got placed with {x,y}
+
+            function collides(x1, y1, x2, y2) {
+                for (const r of placed) {
+                    if (x1 < r.x2 + 4 && x2 > r.x1 - 4 && y1 < r.y2 + 4 && y2 > r.y1 - 4) return true;
+                }
+                return false;
+            }
+
+            let maxY = 0;
+            items.forEach((it, wordIdx) => {
+                const { w, h } = it;
+                let placed_ = false;
+                // Start each word at a slightly different initial angle so they don't all go right
+                let angle  = wordIdx * 2.2; // golden-angle-ish spread
+                let radius = 0;
+                const stepA = 0.3;
+                const stepR = 0.9;
+
+                for (let s = 0; s < 1200 && !placed_; s++) {
+                    const px = cx + radius * Math.cos(angle) - w / 2;
+                    const py = 10 + radius * Math.sin(angle) * 0.62; // flatten vertically
+
+                    // Clamp to container width
+                    const cx_ = Math.max(4, Math.min(CW - w - 4, px));
+                    const y1  = py;
+                    const y2  = py + h;
+
+                    if (!collides(cx_, y1, cx_ + w, y2)) {
+                        placed.push({ x1: cx_, y1, x2: cx_ + w, y2 });
+                        results.push({ ...it, x: cx_, y: py });
+                        if (y2 > maxY) maxY = y2;
+                        placed_ = true;
+                    }
+                    angle  += stepA;
+                    radius += stepR;
+                }
+            });
+
+            // Step 3: Set container height and render spans
+            const finalH = Math.max(200, maxY + 20);
+            container.style.minHeight = finalH + 'px';
+
+            results.forEach(({ span, word, count, col, x, y, ratio }) => {
+                span.style.position = 'absolute';
+                span.style.right = 'unset';
+                span.style.left  = x + 'px';
+                span.style.top   = y + 'px';
+
+                // Hover: slightly brighter + scale up
+                span.addEventListener('mouseenter', e => {
+                    span.style.transform = 'scale(1.12)';
+                    span.style.color     = rgba(col, 1);
+                    span.style.zIndex    = '10';
+                    // Show tooltip
+                    tooltip.textContent  = `${word} · تكرر ${count} مرة`;
+                    tooltip.style.display = 'block';
+                    tooltip.style.left    = (e.clientX + 10) + 'px';
+                    tooltip.style.top     = (e.clientY - 28) + 'px';
+                });
+                span.addEventListener('mousemove', e => {
+                    tooltip.style.left = (e.clientX + 10) + 'px';
+                    tooltip.style.top  = (e.clientY - 28) + 'px';
+                });
+                span.addEventListener('mouseleave', () => {
+                    span.style.transform = 'scale(1)';
+                    span.style.color     = rgba(col, 0.55 + ratio * 0.45);
+                    span.style.zIndex    = '';
+                    tooltip.style.display = 'none';
+                });
+                // Mobile tap
+                span.addEventListener('click', e => {
+                    tooltip.textContent   = `${word} · تكرر ${count} مرة`;
+                    tooltip.style.display = 'block';
+                    tooltip.style.left    = (e.clientX + 10) + 'px';
+                    tooltip.style.top     = (e.clientY - 28) + 'px';
+                    setTimeout(() => { tooltip.style.display = 'none'; }, 2000);
+                    e.stopPropagation();
+                });
 
                 container.appendChild(span);
             });
+
+            document.addEventListener('click', () => { tooltip.style.display = 'none'; }, { once: false });
         }
-        
-        let qualityChart = null;
-        function drawQualityChart(dates, qualities) {
-            const ctx = document.getElementById('quality-chart').getContext('2d');
-            
-            if (qualityChart) {
-                qualityChart.destroy();
-            }
-            
-            qualityChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: dates,
-                    datasets: [{
-                        label: 'جودة اليوم',
-                        data: qualities,
-                        borderColor: '#fdcb6e', // خط أصفر/برتقالي لطيف
-                        backgroundColor: 'rgba(253, 203, 110, 0.2)',
-                        tension: 0.4, // لجعل الخط منحنياً (Smooth)
-                        fill: true,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#fdcb6e',
-                        pointRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false, // ليتناسب مع الموبايل بشكل أفضل
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            titleFont: { family: 'Tajawal, sans-serif' },
-                            bodyFont: { family: 'Tajawal, sans-serif' }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            ticks: {
-                                maxRotation: 45,
-                                minRotation: 45,
-                                font: { family: 'IBM Plex Sans Arabic' }
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            max: 10,
-                            ticks: {
-                                font: {
-                                    weight: 'bold',
-                                    size: 14
-                                },
-                                // التلوين الديناميكي للأرقام (Gradient Hack)
-                                color: function(context) {
-                                    const val = context.tick.value;
-                                    if (val >= 8) return '#0984e3'; // أزرق ممتاز
-                                    if (val >= 6) return '#00b894'; // أخضر جيد
-                                    if (val >= 4) return '#fdcb6e'; // أصفر متوسط
-                                    if (val >= 2) return '#e17055'; // برتقالي سيء
-                                    return '#d63031';               // أحمر سيء جداً
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        
+
         function embedLooker() {
             const url = document.getElementById('looker-url').value;
             if (!url) return;
-            
             document.getElementById('looker-iframe').src = url;
             document.getElementById('looker-container').classList.remove('hidden');
         }
@@ -5755,39 +6135,84 @@
 
         // يعرض الـ cache فوراً، ثم يجلب من GAS ويحدّث
         async function loadTodayTimeline() {
-            const todayStr = new Date().toISOString().split('T')[0];
+            const now = new Date();
+            const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
 
-            // 1. اعرض الـ cache المحلي فوراً (تجربة سريعة)
             renderTimeline(window._quickLogs, todayStr);
 
-            // 2. إذا عنده رابط GAS، اجلب من السيرفر وحدّث
             if (!CONFIG.scriptUrl) return;
 
             try {
-                const res  = await fetch(`${CONFIG.scriptUrl}?action=getTodayTimeline&date=${todayStr}`);
+                const res  = await fetch(`${CONFIG.scriptUrl}?action=getAll&sheet=Quick%20Logs`);
                 const data = await res.json();
 
-                if (!data.success || !data.entries) return;
+                if (!data.success || !Array.isArray(data.data) || data.data.length < 2) return;
 
-                // حوّل entries من GAS إلى نفس صيغة _quickLogs المحلية
-                const gasLogs = data.entries.map(e => ({
-                    timestamp:    `${todayStr}T${e.time || '00:00'}:00`,
-                    type:         e.type  || 'تسجيل سريع',
-                    emotion:      e.emoji || '😐',
-                    emotionLabel: '',
-                    intensity:    e.intensity || '',
-                    summary:      e.summary   || '',
-                    _fromGAS:     true
-                }));
+                // التعديل: توحيد الحروف للبحث عن الأعمدة بدقة
+                const headers = data.data[0].map(h => String(h).toLowerCase().trim());
+                const idx = {
+                    date:         headers.indexOf('date'),
+                    time:         headers.indexOf('time'),
+                    emotion:      headers.indexOf('emotion'),
+                    emotionlabel: headers.indexOf('emotionlabel'), // إصلاح جلب كلمة الشعور
+                    intensity:    headers.indexOf('intensity'),
+                    summary:      headers.indexOf('summary'),
+                    timestamp:    headers.indexOf('timestamp'),
+                };
+                if (idx.summary === -1) return;
 
-                // ادمج: احتفظ بالسجلات المحلية غير المرسلة + سجلات GAS
-                const localUnsent = window._quickLogs.filter(l => !l._synced);
-                const merged = deduplicateLogs([...gasLogs, ...localUnsent]);
+                const gasLogs = data.data.slice(1).map(row => {
+                    // 1. تنظيف التاريخ بذكاء
+                    let dateVal = '';
+                    if (idx.date !== -1 && row[idx.date]) {
+                        let raw = String(row[idx.date]);
+                        if (raw.includes('T')) {
+                            let d = new Date(raw); d.setHours(d.getHours() + 12);
+                            dateVal = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+                        } else if (raw.includes('/')) {
+                            let p = raw.split('/');
+                            if (p[2]?.length === 4) dateVal = `${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
+                            else dateVal = raw.substring(0, 10);
+                        } else dateVal = raw.substring(0, 10);
+                    }
 
-                window._quickLogs = merged;
-                try { localStorage.setItem('_quickLogs', JSON.stringify(merged)); } catch(e) {}
+                    // 2. تنظيف الوقت وفك قنبلة 1899
+                    let timeVal = '00:00';
+                    if (idx.time !== -1 && row[idx.time]) {
+                        let raw = String(row[idx.time]);
+                        if (raw.includes('T')) {
+                            let d = new Date(raw);
+                            timeVal = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+                        } else if (raw.includes(':')) {
+                            let p = raw.split(':');
+                            timeVal = `${p[0].slice(-2).padStart(2,'0')}:${p[1].padStart(2,'0')}`;
+                        }
+                    }
 
-                renderTimeline(merged, todayStr);
+                    const tsVal = idx.timestamp !== -1 ? String(row[idx.timestamp] || '') : '';
+                    const ts = tsVal && tsVal.includes('T') ? tsVal : `${dateVal}T${timeVal}:00`;
+                    
+                    return {
+                        timestamp:    ts,
+                        date:         dateVal,
+                        time:         timeVal,
+                        type:         'تسجيل سريع',
+                        emotion:      idx.emotion !== -1 ? String(row[idx.emotion] || '😐') : '😐',
+                        emotionLabel: idx.emotionlabel !== -1 ? String(row[idx.emotionlabel] || '') : '',
+                        intensity:    idx.intensity !== -1 ? String(row[idx.intensity] || '') : '',
+                        summary:      String(row[idx.summary] || ''),
+                        _synced:      true,
+                        _fromGAS:     true
+                    };
+                }).filter(l => l.summary.trim());
+
+                const merged = deduplicateLogs([...window._quickLogs, ...gasLogs]);
+
+                if (merged.length !== window._quickLogs.length) {
+                    window._quickLogs = merged;
+                    try { localStorage.setItem('_quickLogs', JSON.stringify(merged)); } catch(e) {}
+                    renderTimeline(merged, todayStr);
+                }
 
             } catch (err) {
                 console.warn('Timeline GAS fetch failed, showing cache:', err);
@@ -5795,21 +6220,50 @@
         }
 
         // إزالة التكرارات بناءً على الوقت والملخص
+        // إزالة التكرارات بشكل ذكي يعتمد على النص لتجاوز مشاكل التوقيت
         function deduplicateLogs(logs) {
-            const seen = new Set();
-            return logs.filter(l => {
-                const key = `${l.summary}_${String(l.timestamp).substring(0,16)}`;
-                if (seen.has(key)) return false;
-                seen.add(key);
-                return true;
+            if (!Array.isArray(logs)) return [];
+            const seen = new Map();
+            
+            logs.forEach(l => {
+                if (!l || !l.summary) return;
+                
+                // مفتاح يعتمد على التاريخ وأول 25 حرف من النص
+                let dMatch = '';
+                if (l.date) dMatch = l.date.substring(0, 10);
+                else if (l.timestamp && l.timestamp.includes('T')) dMatch = String(l.timestamp).substring(0, 10);
+                
+                // إزالة المسافات الزائدة لضمان تطابق النصوص تماماً
+                const sumMatch = l.summary.trim().replace(/\s+/g, ' ').substring(0, 25);
+                const key = `${dMatch}_${sumMatch}`;
+                
+                // الأولوية لبيانات الخادم لتحديث الكاش، ولإضافة المشاعر المفقودة
+                if (!seen.has(key)) {
+                    seen.set(key, l);
+                } else {
+                    const existing = seen.get(key);
+                    // إذا كان السجل الجديد من السيرفر، أو يحتوي على اسم شعور مفقود في القديم
+                    if (l._fromGAS || (!existing.emotionLabel && l.emotionLabel)) {
+                        seen.set(key, l);
+                    }
+                }
+            });
+            
+            return Array.from(seen.values()).sort((a, b) => {
+                const timeA = new Date(a.timestamp).getTime();
+                const timeB = new Date(b.timestamp).getTime();
+                return (isNaN(timeB) ? 0 : timeB) - (isNaN(timeA) ? 0 : timeA);
             });
         }
 
         function renderTimeline(logs, todayStr) {
             const container = document.getElementById('timeline-list');
             const todayLogs = logs.filter(l => {
+                if (l.date) return l.date.substring(0,10) === todayStr;
                 const d = new Date(l.timestamp);
-                return !isNaN(d) && d.toISOString().split('T')[0] === todayStr;
+                if (isNaN(d)) return false;
+                const ld = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+                return ld === todayStr;
             });
 
             if (todayLogs.length === 0) {
@@ -5826,9 +6280,13 @@
             const colors = ['var(--accent-warm)','var(--accent-gentle)','var(--accent-cool)','var(--accent-calm)'];
 
             container.innerHTML = sorted.map((log, i) => {
-                const t = new Date(log.timestamp);
-                const hh = String(t.getHours()).padStart(2,'0');
-                const mm = String(t.getMinutes()).padStart(2,'0');
+                let hh = '00', mm = '00';
+                if (log.time && log.time.includes(':')) {
+                    const parts = log.time.split(':');
+                    hh = parts[0].slice(-2).padStart(2, '0');
+                    mm = parts[1].padStart(2, '0');
+                }
+
                 const syncDot = log._synced || log._fromGAS
                     ? '' 
                     : '<span title="لم يُرسل بعد" style="color:#e17055;font-size:0.6rem;margin-right:3px;">●</span>';
@@ -5868,9 +6326,11 @@
                 return;
             }
             const now = new Date();
+            // Use LOCAL date (not UTC) so date picker and stored date always match
+            const localDate = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
             const entry = {
                 timestamp:    now.toISOString(),
-                date:         now.toISOString().split('T')[0],
+                date:         localDate,
                 time:         `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,
                 type:         'تسجيل سريع',
                 emotion:      _qlEmotion.emoji  || '😐',
@@ -5878,26 +6338,22 @@
                 intensity:    document.getElementById('ql-intensity').value,
                 summary:      summary,
                 _synced:      false
-
             };
 
-            // Save locally
+            // Save locally first
             window._quickLogs.push(entry);
             try { localStorage.setItem('_quickLogs', JSON.stringify(window._quickLogs)); } catch(e) {}
 
-
-            // Reset form
+            // Reset form and show immediately
             document.getElementById('ql-summary').value = '';
             document.getElementById('ql-intensity').value = 5;
             document.getElementById('ql-intensity-val').textContent = '5';
             document.querySelectorAll('#ql-emotion-grid .ei-btn').forEach(b => b.classList.remove('selected'));
             _qlEmotion = { emoji: '', label: '' };
-
-            // Close modal and refresh timeline
             closeQuickLogModal();
-            renderTimeline(window._quickLogs, entry.date);
+            renderTimeline(window._quickLogs, localDate);
 
-            // 2. أرسل لـ GAS في الخلفية
+            // Sync to GAS in background
             if (CONFIG.scriptUrl) {
                 try {
                     const res = await fetch(CONFIG.scriptUrl, {
@@ -5906,11 +6362,10 @@
                     });
                     const result = await res.json();
                     if (result.success) {
-                        // علّم السجل كمرسل في الـ cache
                         const idx = window._quickLogs.findIndex(l => l.timestamp === entry.timestamp);
                         if (idx !== -1) window._quickLogs[idx]._synced = true;
                         try { localStorage.setItem('_quickLogs', JSON.stringify(window._quickLogs)); } catch(e) {}
-                        renderTimeline(window._quickLogs, entry.date);
+                        renderTimeline(window._quickLogs, localDate);
                     }
                 } catch(err) {
                     console.warn('Quick log GAS sync failed — saved locally:', err);
@@ -6296,22 +6751,16 @@
             s.textContent = `
                 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
                 .rj-group-card {
-                    background: white; border-radius: 14px; padding: 1rem 1.1rem;
+                    background: white; border-radius: 14px; padding: 0.5rem 1.1rem 0.2rem;
                     border: 1px solid var(--border-soft); margin-bottom: .75rem;
                     border-right-width: 4px;
                 }
                 .rj-group-title {
-                    font-family: 'Amiri', serif; font-size: .95rem; font-weight: 700;
-                    color: var(--text-secondary); margin-bottom: .7rem;
-                    padding-bottom: .5rem; border-bottom: 1px solid var(--bg-primary);
+                    font-family: 'Amiri', serif; font-size: 1rem; font-weight: 700;
+                    color: var(--text-secondary); margin-bottom: .2rem;
+                    padding: .6rem 0 .5rem; border-bottom: 1px solid var(--bg-primary);
                 }
-                .rj-field { margin-bottom: .65rem; }
-                .rj-field:last-child { margin-bottom: 0; }
-                .rj-field-label {
-                    font-size: .72rem; font-weight: 700; color: var(--text-secondary);
-                    margin-bottom: .2rem; text-transform: uppercase; letter-spacing: .04em;
-                }
-                .rj-field-value { font-size: .9rem; color: var(--text-primary); line-height: 1.7; }
+                .rj-group-card .entry-section:last-child { border-bottom: none; margin-bottom: 0.4rem; }
                 .read-field-card.monthly .read-field-toggle { background: linear-gradient(135deg,rgba(253,203,110,.1),rgba(250,177,160,.1)); }
                 .read-field-card.monthly .read-field-key { color: #c07000; }
             `;
@@ -6347,9 +6796,25 @@
             const dateVal = document.getElementById('read-date-new').value;
             if (!dateVal) return;
             const [y, m, d] = dateVal.split('-').map(Number);
-            const dow = new Date(y, m - 1, d).getDay();
+            const dow = new Date(y, m - 1, d).getDay(); // 5 = Friday
+
             const wPill = document.querySelector('.filter-pill.weekly-only');
+            const mPill = document.querySelector('.filter-pill.monthly-only');
+
+            // Both weekly and monthly reports are generated on Fridays
             if (wPill) wPill.style.display = dow === 5 ? 'inline-block' : 'none';
+
+            // Monthly: Fridays only — additionally check if it's a 4-week Friday
+            // First monthly was 7/3/2026 (a Friday). Show pill on any Friday (user can try it).
+            if (mPill) mPill.style.display = dow === 5 ? 'inline-block' : 'none';
+
+            // If a hidden filter was active, reset to 'all'
+            if (dow !== 5 && (_readCurrentFilter === 'weekly_analysis' || _readCurrentFilter === 'monthly_analysis')) {
+                _readCurrentFilter = 'all';
+                document.querySelectorAll('.filter-pill').forEach(p => {
+                    p.classList.toggle('active', p.dataset.filter === 'all');
+                });
+            }
         }
 
         function setReadFilter(btn) {
@@ -6404,42 +6869,132 @@
                     <div class="read-empty-title">خطأ في الاتصال</div><div class="read-empty-sub">${err.message}</div></div>`;
             }
         }
-
-        // ── Quick Logs: merge local cache + GAS ──────────────────
-        async function _fetchQLogs(date, area) {
-            const local = (window._quickLogs || []).filter(l => {
-                const d = new Date(l.timestamp);
-                return !isNaN(d) && d.toISOString().split('T')[0] === date;
+        
+        // =============================================
+        // دالة دمج السجلات (الأولوية دائماً لبيانات الخادم)
+        // =============================================
+        function deduplicateLogs(logs) {
+            if (!Array.isArray(logs)) return [];
+            const seen = new Map();
+            
+            logs.forEach(l => {
+                if (!l || !l.summary) return;
+                
+                // الاعتماد على أول 20 حرف من النص + التاريخ كمفتاح فريد
+                let dMatch = '';
+                if (l.date) dMatch = l.date.substring(0, 10);
+                else if (l.timestamp && l.timestamp.includes('T')) dMatch = String(l.timestamp).substring(0, 10);
+                
+                const sumMatch = l.summary.trim().substring(0, 20);
+                const key = `${dMatch}_${sumMatch}`;
+                
+                // الأولوية دائماً لبيانات الخادم
+                if (!seen.has(key) || l._fromGAS) {
+                    seen.set(key, l);
+                }
             });
-            if (local.length) _renderQLogs(date, area, local);
-            else _skeleton(area);
+            
+            // إعادة ترتيب السجلات من الأحدث للأقدم
+            return Array.from(seen.values()).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        }
 
-            if (!CONFIG.scriptUrl) {
-                if (!local.length) area.innerHTML = `<div class="read-empty"><div class="read-empty-icon">⚡</div>
-                    <div class="read-empty-title">لا سجلات سريعة في هذا اليوم</div></div>`;
-                return;
+        // ── Quick Logs read page: fetch ALL from GAS, filter by date client-side ──
+        async function _fetchQLogs(date, area) {
+            window._quickLogs = window._quickLogs || [];
+            if (!Array.isArray(window._quickLogs)) {
+                try { window._quickLogs = JSON.parse(localStorage.getItem('_quickLogs') || '[]'); } 
+                catch(e) { window._quickLogs = []; }
             }
-            try {
-                const res  = await fetch(`${CONFIG.scriptUrl}?action=getTodayTimeline&date=${date}`);
-                const json = await res.json();
-                if (!json.success || !Array.isArray(json.entries)) return;
+            
+            const localDated = window._quickLogs.filter(l => l.date === date || (l.timestamp && l.timestamp.startsWith(date)));
+            if (localDated.length > 0) {
+                _renderQLogs(date, area, localDated); 
+            } else {
+                area.innerHTML = `<div class="read-empty" style="opacity: 0.6;"><div class="read-empty-icon" style="animation: spin 2s linear infinite;">🔄</div><div class="read-empty-title">جاري المزامنة مع السحابة...</div></div>`;
+            }
 
-                const gasLogs = json.entries.map(e => ({
-                    timestamp: `${date}T${e.time || '00:00'}:00`,
-                    emotion: e.emoji || '😐', emotionLabel: '',
-                    intensity: e.intensity || '', summary: e.summary || '',
-                    _synced: true, _fromGAS: true
-                }));
+            if (!CONFIG.scriptUrl) return;
+
+            try {
+                const res  = await fetch(`${CONFIG.scriptUrl}?action=getAll&sheet=Quick%20Logs`);
+                const json = await res.json();
+                
+                if (!json.success || !Array.isArray(json.data) || json.data.length < 2) {
+                    if (localDated.length === 0) {
+                        area.innerHTML = `<div class="read-empty"><div class="read-empty-icon">⚡</div><div class="read-empty-title">لا توجد سجلات سريعة في هذا اليوم</div></div>`;
+                    }
+                    return;
+                }
+
+                const headers = json.data[0].map(h => String(h).toLowerCase().trim());
+                const idx = {
+                    date:         headers.indexOf('date'),
+                    time:         headers.indexOf('time'),
+                    emotion:      headers.indexOf('emotion'),
+                    emotionlabel: headers.indexOf('emotionlabel'),
+                    intensity:    headers.indexOf('intensity'),
+                    summary:      headers.indexOf('summary'),
+                    timestamp:    headers.indexOf('timestamp')
+                };
+                if (idx.summary === -1) return;
+
+                const gasLogs = json.data.slice(1).map(row => {
+                    let dateVal = '';
+                    if (idx.date !== -1 && row[idx.date]) {
+                        let raw = String(row[idx.date]);
+                        if (raw.includes('T')) {
+                            let d = new Date(raw); d.setHours(d.getHours() + 12);
+                            dateVal = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+                        } else if (raw.includes('/')) {
+                            let p = raw.split('/');
+                            if (p[2]?.length === 4) dateVal = `${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;
+                            else dateVal = raw.substring(0, 10);
+                        } else dateVal = raw.substring(0, 10);
+                    }
+
+                    let timeVal = '00:00';
+                    if (idx.time !== -1 && row[idx.time]) {
+                        let raw = String(row[idx.time]);
+                        if (raw.includes('T')) {
+                            let d = new Date(raw);
+                            timeVal = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+                        } else if (raw.includes(':')) {
+                            let p = raw.split(':');
+                            timeVal = `${p[0].slice(-2).padStart(2,'0')}:${p[1].padStart(2,'0')}`;
+                        }
+                    }
+
+                    const tsVal = idx.timestamp !== -1 ? String(row[idx.timestamp] || '') : '';
+                    const ts = tsVal && tsVal.includes('T') ? tsVal : `${dateVal}T${timeVal}:00`;
+                    
+                    return {
+                        timestamp: ts, 
+                        date: dateVal,
+                        time: timeVal,
+                        type: 'تسجيل سريع',
+                        emotion: idx.emotion !== -1 ? String(row[idx.emotion] || '😐') : '😐',
+                        emotionLabel: idx.emotionlabel !== -1 ? String(row[idx.emotionlabel] || '') : '',
+                        intensity: idx.intensity !== -1 ? String(row[idx.intensity] || '') : '',
+                        summary: String(row[idx.summary] || ''),
+                        _synced: true, _fromGAS: true
+                    };
+                }).filter(l => l.summary.trim());
+
                 const merged = deduplicateLogs([...window._quickLogs, ...gasLogs]);
                 window._quickLogs = merged;
                 try { localStorage.setItem('_quickLogs', JSON.stringify(merged)); } catch(e) {}
 
-                const dated = merged.filter(l => {
-                    const d2 = new Date(l.timestamp);
-                    return !isNaN(d2) && d2.toISOString().split('T')[0] === date;
-                });
-                _renderQLogs(date, area, dated);
-            } catch(err) { console.warn('QL GAS fetch failed:', err); }
+                const finalDated = merged.filter(l => l.date === date || (l.timestamp && l.timestamp.startsWith(date)));
+                
+                if (finalDated.length > 0) {
+                    _renderQLogs(date, area, finalDated);
+                } else {
+                     area.innerHTML = `<div class="read-empty"><div class="read-empty-icon">⚡</div><div class="read-empty-title">لا توجد سجلات سريعة في هذا اليوم</div></div>`;
+                }
+                
+            } catch(err) { 
+                console.warn('QL GAS fetch failed:', err); 
+            }
         }
 
         function _renderQLogs(date, container, logs) {
@@ -6449,14 +7004,31 @@
                     <div class="read-empty-sub">ابدأ يومك بتسجيل سريع من الصفحة الرئيسية</div></div>`;
                 return;
             }
-            const sorted = [...logs].sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+            // Sort by time
+            const sorted = [...logs].sort((a,b) => {
+                const ta = a.time || (a.timestamp ? String(a.timestamp).substring(11,16) : '00:00');
+                const tb = b.time || (b.timestamp ? String(b.timestamp).substring(11,16) : '00:00');
+                return ta.localeCompare(tb);
+            });
             let html = `<div class="read-entry-container"><div class="read-entry-header">
                 <span class="read-entry-date-badge">📅 ${formatArabicDate(date)}</span>
                 <span class="read-entry-type-badge">${sorted.length} تسجيل</span></div>`;
+            
             sorted.forEach(log => {
-                const t = new Date(log.timestamp);
-                const hh = String(t.getHours()).padStart(2,'0');
-                const mm = String(t.getMinutes()).padStart(2,'0');
+                // 🔴 استخراج الوقت بأمان لمنع ظهور NaN
+                let hh = '00', mm = '00';
+                if (log.time && log.time.includes(':')) {
+                    const parts = log.time.split(':');
+                    hh = parts[0].padStart(2, '0');
+                    mm = parts[1].padStart(2, '0');
+                } else if (log.timestamp && log.timestamp.includes('T')) {
+                    const t = new Date(log.timestamp);
+                    if (!isNaN(t)) {
+                        hh = String(t.getHours()).padStart(2,'0');
+                        mm = String(t.getMinutes()).padStart(2,'0');
+                    }
+                }
+
                 html += `<div class="ql-read-card">
                     <div class="ql-read-emoji">${log.emotion || '😐'}</div>
                     <div class="ql-read-body">
@@ -6489,15 +7061,36 @@
                 <span class="read-entry-type-badge">${label}</span></div>`;
         }
 
-        function _fRow(key, val) {
+        // Map CSS variable names used as group border colors → hex for rgba construction
+        const _COLOR_HEX = {
+            'var(--accent-warm)':   [253, 203, 110],
+            'var(--accent-cool)':   [116, 185, 255],
+            'var(--accent-gentle)': [250, 177, 160],
+            'var(--accent-calm)':   [162, 155, 254],
+            'var(--accent-nature)': [ 85, 239, 196],
+            '#00b894':              [  0, 184, 148],
+            '#fdcb6e':              [253, 203, 110],
+        };
+
+        function _fRow(key, val, color) {
             if (!val || !String(val).trim()) return '';
             let v = ''; try { v = marked.parse(String(val)); } catch(e) { v = String(val); }
-            return `<div class="rj-field"><div class="rj-field-label">${key}</div>
-                <div class="rj-field-value markdown-content">${v}</div></div>`;
+            let labelStyle = '';
+            if (color) {
+                const rgb = _COLOR_HEX[color];
+                if (rgb) {
+                    const [r,g,b] = rgb;
+                    labelStyle = ` style="border-right-color:${color};background-image:linear-gradient(to left,rgba(${r},${g},${b},0.85),rgba(${r},${g},${b},0.25))"`;
+                }
+            }
+            return `<div class="entry-section">
+                <div class="entry-label"${labelStyle}>${key}</div>
+                <div class="entry-value markdown-content">${v}</div>
+            </div>`;
         }
 
         function _groupCard(title, icon, keys, data, color) {
-            const rows = keys.map(k => _fRow(k, data[k])).filter(Boolean).join('');
+            const rows = keys.map(k => _fRow(k, data[k], color)).filter(Boolean).join('');
             if (!rows) return '';
             return `<div class="rj-group-card" style="border-right-color:${color}">
                 <div class="rj-group-title">${icon} ${title}</div>${rows}</div>`;
@@ -6530,7 +7123,7 @@
             if (f === 'all') {
                 const rows = Object.entries(data)
                     .filter(([k,v]) => !SKIP.has(k) && !isAnalysis(k) && v && String(v).trim())
-                    .map(([k,v]) => _fRow(k,v)).join('');
+                    .map(([k,v]) => _fRow(k,v,'var(--accent-warm)')).join('');
                 if (rows) html += `<div class="rj-group-card" style="border-right-color:var(--accent-warm)">
                     <div class="rj-group-title">📝 التدوين اليومي</div>${rows}</div>`;
                 Object.entries(data).forEach(([k,v]) => {
@@ -6617,9 +7210,9 @@
             const SKIP = new Set(['Timestamp','timestamp']);
             let rows = Object.entries(data)
                 .filter(([k,v]) => !SKIP.has(k) && v && String(v).trim())
-                .map(([k,v]) => _fRow(k,v)).join('');
+                .map(([k,v]) => _fRow(k,v,'var(--accent-warm)')).join('');
             container.innerHTML = `<div class="read-entry-container">${_dateHdr(data,_readCurrentType)}
-                <div class="rj-group-card" style="border-right-color:var(--border-soft)">${rows}</div></div>`;
+                <div class="rj-group-card" style="border-right-color:var(--accent-warm)">${rows}</div></div>`;
         }
 
         function toggleReadField(btn) {
