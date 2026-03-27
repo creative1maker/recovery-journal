@@ -1721,6 +1721,42 @@
             gap: 0.5rem;
         }
         .btn-vent-delete:hover { opacity: 0.9; transform: translateY(-1px); }
+        /* The burning animation sequence */
+        @keyframes paperBurn {
+            0% {
+                transform: scale(1) rotate(0deg);
+                filter: brightness(1) sepia(0);
+                box-shadow: 0 0 0px rgba(255, 69, 0, 0);
+                opacity: 1;
+            }
+            30% {
+                /* Catching fire: Glows orange and starts to warp */
+                transform: scale(0.98) rotate(-1deg);
+                filter: brightness(0.8) sepia(0.5) hue-rotate(-30deg);
+                box-shadow: 0 0 20px rgba(255, 69, 0, 0.6) inset, 0 0 15px rgba(255, 69, 0, 0.4);
+                color: rgba(0, 0, 0, 0.2); /* Text starts to fade into the fire */
+            }
+            70% {
+                /* Turning to ash: Darkens, crumbles, and shrinks */
+                transform: scale(0.85) rotate(3deg) skewX(2deg);
+                filter: brightness(0.3) sepia(1) contrast(2);
+                background-color: #2d2d2d;
+                box-shadow: 0 0 40px rgba(255, 69, 0, 0.8) inset, 0 0 20px rgba(225, 112, 85, 0.6);
+                opacity: 0.8;
+            }
+            100% {
+                /* Disappearing: Turns to pure ash and fades away */
+                transform: scale(0.6) rotate(-4deg) translateY(-20px);
+                filter: brightness(0) blur(4px);
+                opacity: 0;
+            }
+        }
+
+/* The class we will add using JavaScript */
+.burn-animation {
+    animation: paperBurn 1.2s ease-in forwards;
+    pointer-events: none; /* Prevents clicking/typing while it burns */
+}
 
         /* ── YES/NO TOGGLE QUESTION ─────────────────────── */
         .toggle-question-wrap {
@@ -3991,7 +4027,7 @@
                     </div>
                     <div class="stat-card" style="border-right-color:var(--accent-gentle)">
                         <div class="stat-label">المشاعر الأكثر تكراراً</div>
-                        <div class="stat-value" id="top-emotion" style="font-size:1rem;font-family:'IBM Plex Sans Arabic',sans-serif;direction:rtl;">-</div>
+                        <div class="stat-value" id="top-emotion">-</div>
                     </div>
                     <div class="stat-card" style="border-right-color:var(--accent-calm)">
                         <div class="stat-label">متوسط الإيجابية</div>
@@ -4034,6 +4070,7 @@
                             <button class="cf-btn active" onclick="setEnergyView('all',this)">الكل</button>
                             <button class="cf-btn" onclick="setEnergyView('3m',this)">٣ أشهر</button>
                             <button class="cf-btn" onclick="setEnergyView('month',this)">شهر</button>
+                            <button class="cf-btn" onclick="setEnergyView('week',this)">أسبوع</button>
                         </div>
                     </div>
                     <canvas id="energy-chart" style="max-height:220px;"></canvas>
@@ -4047,6 +4084,7 @@
                             <button class="cf-btn active" onclick="setPositivityView('all',this)">الكل</button>
                             <button class="cf-btn" onclick="setPositivityView('3m',this)">٣ أشهر</button>
                             <button class="cf-btn" onclick="setPositivityView('month',this)">شهر</button>
+                            <button class="cf-btn" onclick="setPositivityView('week',this)">أسبوع</button>
                         </div>
                     </div>
                     <div class="chart-subtitle">الأعمدة الخضراء = إيجابية · الحمراء = سلبية · الخط = الاتجاه العام</div>
@@ -5738,8 +5776,9 @@
                     tension: 0.4, fill: true,
                     pointBackgroundColor: vals.map(v => v >= 7 ? rgba(THEME.teal) : v >= 5 ? rgba(THEME.warm) : rgba(THEME.orange)),
                     pointBorderColor: 'white',
-                    pointBorderWidth: 2,
-                    pointRadius: 4
+                    borderWidth: 2,           // Adds explicit thinner line (default is usually 3)
+                    pointRadius: 2.5,         // Reduced from 4
+                    pointBorderWidth: 1.5     // Reduced from 2
                 }]},
                 options: _qualityOpts(1, 10)
             });
@@ -5766,8 +5805,26 @@
             _dash.qualityChart = new Chart(ctx, {
                 type: 'line',
                 data: { labels, datasets: [
-                    { label: label1, data: pad(p1v), borderColor: rgba(THEME.cool), backgroundColor: rgba(THEME.cool, 0.1), tension: 0.4, fill: false, pointRadius: 3 },
-                    { label: label2, data: pad(p2v), borderColor: rgba(THEME.warm), backgroundColor: rgba(THEME.warm, 0.1), tension: 0.4, fill: false, pointRadius: 3 }
+                    { 
+                        label: label1, 
+                        data: pad(p1v), 
+                        borderColor: rgba(THEME.cool), 
+                        backgroundColor: rgba(THEME.cool, 0.1), 
+                        tension: 0.4, 
+                        fill: false, 
+                        borderWidth: 2,       // Added
+                        pointRadius: 2        // Reduced from 3
+                    },
+                    { 
+                        label: label2, 
+                        data: pad(p2v), 
+                        borderColor: rgba(THEME.warm), 
+                        backgroundColor: rgba(THEME.warm, 0.1), 
+                        tension: 0.4, 
+                        fill: false, 
+                        borderWidth: 2,       // Added
+                        pointRadius: 2        // Reduced from 3
+                    }
                 ]},
                 options: { ..._qualityOpts(1, 10), plugins: { legend: { display: true, labels: { font: { family: 'IBM Plex Sans Arabic' }, color: '#636e72' } } } }
             });
@@ -5812,12 +5869,15 @@
                     data: vals,
                     borderColor: rgba(THEME.cool),
                     backgroundColor: rgba(THEME.cool, 0.12),
-                    tension: 0.4, fill: true,
+                    tension: 0.4, 
+                    fill: true,
                     pointBackgroundColor: rgba(THEME.cool),
                     pointBorderColor: 'white',
-                    pointBorderWidth: 2,
-                    pointRadius: 4,
-                    spanGaps: true
+                    spanGaps: true,
+                    // --- UPDATED PROPERTIES BELOW ---
+                    borderWidth: 2,           // Added explicit thinner line
+                    pointBorderWidth: 1.5,    // Reduced from 2
+                    pointRadius: 2.5          // Reduced from 4
                 }]},
                 options: _qualityOpts(0, 10)
             });
@@ -5880,7 +5940,7 @@
                             data: trend,
                             borderColor: rgba(THEME.calm),
                             backgroundColor: 'transparent',
-                            borderWidth: 2.5,
+                            borderWidth: 1.5,   // Reduced from 2.5 for a subtler trend line                            
                             tension: 0.4,
                             pointRadius: 0,
                             borderDash: [4, 3],
@@ -6452,13 +6512,21 @@
 
         function deleteVentText() {
             const ta = document.getElementById('vent-text');
-            // Animate deletion
-            ta.style.transition = 'opacity 0.4s ease';
-            ta.style.opacity = '0';
+            
+            // Don't burn if it's already empty
+            if (ta.value.trim() === '') return; 
+
+            // 1. Add the burning animation class
+            ta.classList.add('burn-animation');
+
+            // 2. Wait for the animation to finish (1.2 seconds = 1200ms)
             setTimeout(() => {
+                // Clear the text
                 ta.value = '';
-                ta.style.opacity = '1';
-            }, 400);
+                
+                // Remove the burning class to instantly reset to a "new paper" look
+                ta.classList.remove('burn-animation');
+            }, 1200); 
         }
 
         // =============================================
