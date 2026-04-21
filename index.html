@@ -581,6 +581,9 @@
             margin-top: 1rem;
         }
         
+        /* =========================================
+        DASHBOARD & FILTERS SPECIFIC CSS
+        ========================================= */
         /* Dashboard */
         .dashboard-grid {
             display: grid;
@@ -664,7 +667,150 @@
             margin-bottom: 0.6rem;
             font-style: italic;
         }
-        
+
+        /* --- Layout Wrappers --- */
+        .dash-card-wrap {
+            padding-bottom: 0.5rem;
+            position: relative;
+        }
+
+        /* --- Global Filters Container --- */
+        .global-filters-container {
+            background: linear-gradient(135deg, var(--bg-card), #f8f9ff);
+            margin-bottom: 1.5rem;
+            border: 2px solid var(--accent-calm);
+            position: sticky;
+            top: 110px;
+            z-index: 90;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        .clear-filters-btn {
+            margin-right: auto;
+            color: var(--text-secondary);
+            border-color: transparent;
+            text-decoration: underline;
+        }
+
+        /* --- Date Picking Sections --- */
+        .custom-date-wrapper {
+            margin-top: 1.2rem;
+            padding-top: 1rem;
+            border-top: 1px dashed var(--border-soft);
+        }
+
+        .date-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 0.8rem;
+        }
+
+        .compare-section-box {
+            /* Base styling, display state is managed by JS */
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 0.8rem;
+            background: rgba(162, 155, 254, 0.1);
+            padding: 0.8rem;
+            border-radius: 10px;
+            border: 1px solid rgba(162, 155, 254, 0.3);
+        }
+
+        .date-input {
+            padding: 0.35rem 0.6rem;
+            border-radius: 8px;
+            border: 1.5px solid var(--border-soft);
+            font-family: inherit;
+            font-size: 0.85rem;
+            flex: 1;
+            min-width: 110px;
+        }
+
+        /* Typography for date labels */
+        .filter-label { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); }
+        .filter-label-accent { font-size: 0.85rem; font-weight: 600; color: var(--accent-calm); }
+        .filter-text-sec { font-size: 0.85rem; color: var(--text-secondary); }
+        .filter-text-accent { font-size: 0.85rem; color: var(--accent-calm); }
+
+        .apply-filter-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- Sync Toggle --- */
+        .sync-toggle-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-top: 1rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid var(--border-soft);
+        }
+        .sync-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* --- Stat Cards Modifiers --- */
+        .stat-card-cool { border-right-color: var(--accent-cool); }
+        .stat-card-gentle { border-right-color: var(--accent-gentle); }
+        .stat-card-calm { border-right-color: var(--accent-calm); }
+
+        /* --- Word Cloud --- */
+        .word-cloud-wrap {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            direction: rtl;
+        }
+
+        .word-cloud-tooltip {
+            display: none;
+            position: fixed;
+            background: rgba(45, 52, 54, 0.88);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.3rem 0.65rem;
+            border-radius: 8px;
+            pointer-events: none;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            z-index: 9999;
+        }
+
+        .emotion-cloud-container {
+            position: relative;
+            width: 100%;
+            min-height: 260px;
+        }
+
+        /* --- Charts --- */
+        .chart-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-style: italic;
+        }
+
+        .canvas-md { max-height: 260px; }
+        .canvas-sm { max-height: 220px; }
+
+        /* --- Layout Utilities --- */
+        .mb-0 { margin-bottom: 0 !important; }
+        .mt-sm { margin-top: 0.5rem; }
+        .mt-md { margin-top: 1rem; }
+
+        .looker-iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 12px;
+        }
         /* Entry Display */
         .entry-display {
             background: var(--bg-primary);
@@ -1752,11 +1898,79 @@
             }
         }
 
-/* The class we will add using JavaScript */
-.burn-animation {
-    animation: paperBurn 1.2s ease-in forwards;
-    pointer-events: none; /* Prevents clicking/typing while it burns */
-}
+        /* The class we will add using JavaScript */
+        .burn-animation {
+            animation: paperBurn 1.2s ease-in forwards;
+            pointer-events: none; /* Prevents clicking/typing while it burns */
+        }
+        /* 🔥 نظام حرق النصوص في وضع الإفراغ (SOS) */
+        .fire-overlay, .char-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 14px;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 10;
+        }
+        .fire-field {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle closest-side, 
+                rgba(255,140,0,0.95) 0%, rgba(255,69,0,0.85) 30%, 
+                rgba(255,165,0,0.6) 60%, transparent 100%);
+            filter: blur(3px);
+            animation: fireFlicker 0.12s infinite alternate;
+            box-shadow: 0 0 20px rgba(255,107,0,0.8);
+        }
+        .fire-particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffd700 0%, #ff8c00 50%, transparent 80%);
+            filter: blur(1px);
+            pointer-events: none;
+            box-shadow: 0 0 8px rgba(255,215,0,0.8);
+        }
+        .fire-edge {
+            position: absolute;
+            height: 6px;
+            background: linear-gradient(90deg, 
+                transparent 0%, rgba(255,69,0,1) 15%, 
+                rgba(255,140,0,0.9) 40%, rgba(255,165,0,0.8) 60%, 
+                rgba(255,69,0,1) 85%, transparent 100%);
+            filter: blur(1.5px);
+            animation: edgeBurnGlow 0.25s infinite alternate;
+            box-shadow: 0 0 15px rgba(255,69,0,0.9);
+        }
+        .char-overlay {
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(64,32,16,0.9) 0%, transparent 40%),
+                radial-gradient(circle at 75% 60%, rgba(92,51,23,0.7) 0%, transparent 40%),
+                radial-gradient(circle at 50% 85%, rgba(139,69,19,0.5) 0%, transparent 40%);
+            opacity: 0;
+            z-index: 11;
+        }
+        .input-burning {
+            animation: paperBurnTransform 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards !important;
+            position: relative;
+            z-index: 5;
+            color: #333;
+        }
+
+        @keyframes paperBurnTransform {
+            0% { transform: scale(1) rotate(0deg); filter: brightness(1) sepia(0); box-shadow: 0 0 0 rgba(255,69,0,0); }
+            15% { transform: scale(1.02) rotate(0.3deg); filter: brightness(1.15) sepia(0.25); box-shadow: 0 0 25px rgba(255,107,0,0.6); }
+            40% { transform: scale(0.98) rotate(-1deg) skew(0.8deg, 0.3deg); filter: brightness(0.9) sepia(0.65) contrast(1.5); box-shadow: 0 0 50px rgba(255,69,0,0.9); background: linear-gradient(135deg, #f5d4a5 0%, #d4a76f 50%, #b5651d 100%); color: transparent; }
+            75% { transform: scale(0.9) rotate(2.5deg) skew(2deg, 0.8deg); filter: brightness(0.55) sepia(0.95) contrast(2.1) blur(0.6px); box-shadow: 0 0 40px rgba(139,69,19,0.8); background: linear-gradient(45deg, #4a2c15 0%, #6b4426 50%, #2f1a0f 100%); color: transparent; }
+            100% { transform: scale(0.72) rotate(-0.8deg) translateY(-12px) skew(-1deg); filter: brightness(0.25) sepia(1) contrast(1.6) blur(2px); opacity: 0; box-shadow: 0 0 20px rgba(139,69,19,0.5); color: transparent;}
+        }
+        @keyframes fireFlicker {
+            0% { transform: scale(1) rotate(-2deg); opacity: 0.85; }
+            100% { transform: scale(1.15) rotate(2deg); opacity: 1; }
+        }
+        @keyframes edgeBurnGlow {
+            0% { opacity: 0.75; filter: blur(1px); transform: scaleX(1); }
+            100% { opacity: 1; filter: blur(2px); transform: scaleX(1.1); }
+        }
 
         /* ── YES/NO TOGGLE QUESTION ─────────────────────── */
         .toggle-question-wrap {
@@ -2353,6 +2567,65 @@
         .date-list-item .dli-icon { font-size: 1rem; flex-shrink: 0; }
         .date-list-item .dli-date { flex: 1; font-weight: 500; }
         .date-list-item .dli-arrow { opacity: 0.4; font-size: 0.85rem; }
+
+        /* ===================================================
+           TOAST NOTIFICATION SYSTEM
+           =================================================== */
+        .toast-container {
+            position: fixed;
+            bottom: 80px; /* فوق شريط التنقل السفلي */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+            width: 90%;
+            max-width: 400px;
+        }
+        .toast-notification {
+            background: white;
+            border-radius: 12px;
+            padding: 12px 16px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-right: 4px solid var(--accent-calm);
+            animation: slideUpToast 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            pointer-events: auto;
+        }
+        .toast-notification.hide {
+            animation: fadeOutToast 0.4s forwards;
+        }
+        .toast-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        .toast-content {
+            flex: 1;
+        }
+        .toast-title {
+            font-family: 'Amiri', serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+        .toast-message {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+        @keyframes slideUpToast {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fadeOutToast {
+            to { transform: translateY(20px); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -3616,6 +3889,7 @@
                             <option value="anger">😤 الغضب</option>
                             <option value="anxiety">😰 التوتر</option>
                             <option value="stress">😩 القلق</option>
+                            <option value="lying">🤥 الكذب</option>
                         </optgroup>
                         <optgroup label="🟠 سلوكية / هروبية">
                             <option value="smoking">🚬 التدخين</option>
@@ -4011,100 +4285,116 @@
             </div>
         </div>
         
-        <!-- Dashboard -->
         <div id="content-dashboard" class="tab-content">
-            <div class="card" style="padding-bottom:0.5rem;">
+            <div class="card dash-card-wrap">
 
-                <!-- Stat Cards -->
+                <div class="chart-container global-filters-container" id="global-filters-container">
+                    <div class="chart-header mb-0">
+                        <h3 class="chart-title">🎛️ تصفية البيانات</h3>
+                        <div class="chart-filters" id="global-filters-btns">
+                            <button class="cf-btn active" onclick="setGlobalView('all',this)">الكل</button>
+                            <button class="cf-btn" onclick="setGlobalView('3m',this)">٣ أشهر</button>
+                            <button class="cf-btn" onclick="setGlobalView('month',this)">شهر</button>
+                            <button class="cf-btn" onclick="setGlobalView('week',this)">أسبوع</button>
+                            <button class="cf-btn" onclick="setGlobalView('custom',this)">مخصص</button>
+                            <button class="cf-btn clear-filters-btn" onclick="clearGlobalFilters()">مسح الفلاتر ✖</button>
+                        </div>
+                    </div>
+
+                    <div id="custom-date-section" class="hidden custom-date-wrapper">
+                        <div class="date-row">
+                            <span class="filter-label">الفترة:</span>
+                            <input type="date" id="filter-start" class="read-date-new date-input">
+                            <span class="filter-text-sec">إلى</span>
+                            <input type="date" id="filter-end" class="read-date-new date-input">
+                            
+                            <button class="cf-btn compare" id="global-compare-btn" onclick="toggleGlobalCompare(this)" style="margin-right: auto; padding: 0.4rem 0.8rem; font-size: 0.85rem;">مقارنة ⚖️</button>
+                        </div>
+
+                        <div id="compare-date-section" class="compare-section-box" style="display: none;">
+                            <span class="filter-label-accent">مقابل:</span>
+                            <input type="date" id="filter-comp-start" class="read-date-new date-input">
+                            <span class="filter-text-accent">إلى</span>
+                            <input type="date" id="filter-comp-end" class="read-date-new date-input">
+                        </div>
+                        
+                        <button class="btn btn-primary apply-filter-btn" onclick="applyGlobalFilters()">تطبيق الفلتر المخصص ✓</button>
+                    </div>
+
+                    <div class="sync-toggle-wrapper">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="sync-all-filters" checked onchange="applyGlobalFilters()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="sync-label">تطبيق الفلتر على البطاقات العلوية وسحابة المشاعر</span>
+                    </div>
+                </div>
+
                 <div class="dashboard-grid">
                     <div class="stat-card">
                         <div class="stat-label">إجمالي المدخلات</div>
                         <div class="stat-value" id="total-entries">0</div>
                     </div>
-                    <div class="stat-card" style="border-right-color:var(--accent-cool)">
+                    <div class="stat-card stat-card-cool">
                         <div class="stat-label">متوسط جودة اليوم</div>
                         <div class="stat-value" id="avg-quality">-</div>
                     </div>
-                    <div class="stat-card" style="border-right-color:var(--accent-gentle)">
+                    <div class="stat-card stat-card-gentle">
                         <div class="stat-label">المشاعر الأكثر تكراراً</div>
                         <div class="stat-value" id="top-emotion">-</div>
                     </div>
-                    <div class="stat-card" style="border-right-color:var(--accent-calm)">
+                    <div class="stat-card stat-card-calm">
                         <div class="stat-label">متوسط الإيجابية</div>
                         <div class="stat-value" id="avg-positivity">-</div>
                     </div>
                 </div>
 
-                <!-- Word Cloud -->
                 <div class="chart-container">
                     <div class="chart-header">
                         <h3 class="chart-title">☁️ سحابة المشاعر</h3>
                     </div>
-                    <div id="word-cloud-wrap" style="position:relative;width:100%;overflow:hidden;direction:rtl;">
-                        <div id="word-cloud-tooltip" style="display:none;position:fixed;background:rgba(45,52,54,0.88);color:white;font-size:0.75rem;padding:0.3rem 0.65rem;border-radius:8px;pointer-events:none;font-family:'IBM Plex Sans Arabic',sans-serif;z-index:9999;"></div>
-                        <div id="emotion-cloud" style="position:relative;width:100%;min-height:260px;"></div>
+                    <div id="word-cloud-wrap" class="word-cloud-wrap">
+                        <div id="word-cloud-tooltip" class="word-cloud-tooltip"></div>
+                        <div id="emotion-cloud" class="emotion-cloud-container"></div>
                     </div>
                 </div>
 
-                <!-- Day Quality Chart -->
                 <div class="chart-container">
                     <div class="chart-header">
                         <h3 class="chart-title">📈 جودة اليوم</h3>
-                        <div class="chart-filters" id="quality-filters">
-                            <button class="cf-btn active" onclick="setQualityView('all',this)">الكل</button>
-                            <button class="cf-btn" onclick="setQualityView('3m',this)">٣ أشهر</button>
-                            <button class="cf-btn" onclick="setQualityView('month',this)">شهر</button>
-                            <button class="cf-btn" onclick="setQualityView('week',this)">أسبوع</button>
-                            <button class="cf-btn compare" id="quality-compare-btn" onclick="toggleQualityCompare(this)">مقارنة</button>
-                        </div>
                     </div>
-                    <div class="chart-subtitle" id="quality-subtitle" style="display:none;"></div>
-                    <canvas id="quality-chart" style="max-height:260px;"></canvas>
+                    <div class="chart-subtitle" id="quality-chart-subtitle" style="display:none;"></div>
+                    <canvas id="quality-chart" class="canvas-md"></canvas>
                 </div>
 
-                <!-- Energy Level Chart (from Analysis sheet) -->
                 <div class="chart-container" id="energy-container" style="display:none;">
                     <div class="chart-header">
                         <h3 class="chart-title">⚡ مستوى الطاقة</h3>
-                        <div class="chart-filters">
-                            <button class="cf-btn active" onclick="setEnergyView('all',this)">الكل</button>
-                            <button class="cf-btn" onclick="setEnergyView('3m',this)">٣ أشهر</button>
-                            <button class="cf-btn" onclick="setEnergyView('month',this)">شهر</button>
-                            <button class="cf-btn" onclick="setEnergyView('week',this)">أسبوع</button>
-                        </div>
                     </div>
-                    <canvas id="energy-chart" style="max-height:220px;"></canvas>
+                    <div class="chart-subtitle" id="energy-chart-subtitle" style="display:none;"></div>
+                    <canvas id="energy-chart" class="canvas-sm"></canvas>
                 </div>
 
-                <!-- Positivity Index Chart (from Analysis sheet) -->
                 <div class="chart-container" id="positivity-container" style="display:none;">
                     <div class="chart-header">
                         <h3 class="chart-title">🌡️ مؤشر الإيجابية</h3>
-                        <div class="chart-filters">
-                            <button class="cf-btn active" onclick="setPositivityView('all',this)">الكل</button>
-                            <button class="cf-btn" onclick="setPositivityView('3m',this)">٣ أشهر</button>
-                            <button class="cf-btn" onclick="setPositivityView('month',this)">شهر</button>
-                            <button class="cf-btn" onclick="setPositivityView('week',this)">أسبوع</button>
-                        </div>
                     </div>
-                    <div class="chart-subtitle">الأعمدة الخضراء = إيجابية · الحمراء = سلبية · الخط = الاتجاه العام</div>
-                    <canvas id="positivity-chart" style="max-height:260px;"></canvas>
+                    <div class="chart-subtitle" id="positivity-chart-subtitle">الأعمدة الخضراء = إيجابية · الحمراء = سلبية · الخط = الاتجاه العام</div>
+                    <canvas id="positivity-chart" class="canvas-md"></canvas>
                 </div>
 
-                <!-- Looker -->
                 <div class="form-group">
                     <label class="form-label">رابط لوحة Google Looker (اختياري)</label>
                     <input type="text" id="looker-url" placeholder="https://lookerstudio.google.com/embed/...">
-                    <button onclick="embedLooker()" class="btn btn-secondary" style="margin-top:0.5rem;">📊 عرض اللوحة</button>
+                    <button onclick="embedLooker()" class="btn btn-secondary mt-sm">📊 عرض اللوحة</button>
                 </div>
-                <div id="looker-container" class="hidden" style="margin-top:1rem;">
-                    <iframe id="looker-iframe" style="width:100%;height:600px;border:none;border-radius:12px;"></iframe>
+                <div id="looker-container" class="hidden mt-md">
+                    <iframe id="looker-iframe" class="looker-iframe"></iframe>
                 </div>
 
-                <button onclick="loadDashboard()" class="btn btn-primary btn-full" style="margin-top:1rem;">🔄 تحديث البيانات</button>
+                <button onclick="loadDashboard()" class="btn btn-primary btn-full mt-md">🔄 تحديث البيانات</button>
             </div>
         </div>
-        
         <!-- Setup Page -->
         <div id="content-setup" class="tab-content">
             <div class="card">
@@ -4190,7 +4480,7 @@
             <div class="nav-item-label">الإحصائيات</div>
         </button>
         
-        <button class="nav-item" onclick="bottomNavTo('read')">
+        <button id="read_page" class="nav-item" onclick="bottomNavTo('read')">
             <div class="nav-item-icon">📖</div>
             <div class="nav-item-label">القراءة</div>
         </button>
@@ -4243,6 +4533,7 @@
             </button>
         </div>
     </div>
+    <div class="toast-container" id="toast-container"></div>
     
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -4369,7 +4660,51 @@
             traps: [],
             checkChangeSeen: false
         };
+        // ===================================================
+        // نظام الإشعارات الذكي (Toast & System Notifications)
+        // ===================================================
         
+        // 1. طلب صلاحية إشعارات النظام (للهاتف/الكمبيوتر) عند فتح التطبيق
+        document.addEventListener('DOMContentLoaded', () => {
+            if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+                Notification.requestPermission();
+            }
+        });
+
+        // 2. دالة إظهار الإشعار
+        function showToast(title, message, icon = '🔔', color = 'var(--accent-calm)') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.style.borderRightColor = color;
+            
+            toast.innerHTML = `
+                <div class="toast-icon">${icon}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            // إرسال إشعار للنظام (إذا كان التطبيق في الخلفية)
+            if (Notification.permission === 'granted' && document.hidden) {
+                new Notification(title, { 
+                    body: message, 
+                    icon: 'icon-192.png',
+                    badge: 'icon-192.png'
+                });
+            }
+            
+            // إخفاء الإشعار بعد 6 ثوانٍ
+            setTimeout(() => {
+                toast.classList.add('hide');
+                setTimeout(() => toast.remove(), 400);
+            }, 6000);
+        }
         // ============= INITIALIZATION =============
         document.addEventListener('DOMContentLoaded', () => {
             // Set dates
@@ -4950,7 +5285,120 @@
             document.getElementById('apill-deep').classList.add('selected');
             document.querySelector('.analysis-mode-card').style.borderColor = 'rgba(108,92,231,0.2)';
         }
+        // ============= DRAFT SYSTEM =============
 
+        // 1. Save current form state to local storage
+        function saveDailyDraft() {
+            const draft = {
+                date: document.getElementById('date-daily')?.value || '',
+                quality: document.getElementById('quality-daily')?.value || '5',
+                negative: document.getElementById('negative-daily')?.value || '',
+                positive: document.getElementById('positive-daily')?.value || '',
+                freeform: document.getElementById('freeform-daily')?.value || '',
+                
+                // Toggles
+                attractionToggle: document.getElementById('tq-attraction')?.classList.contains('active') || false,
+                attractionText: document.getElementById('attraction-daily')?.value || '',
+                relapseToggle: document.getElementById('tq-relapse')?.classList.contains('active') || false,
+                relapseText: document.getElementById('relapse-daily')?.value || '',
+                
+                // Analysis Mode Pills
+                analysisGeneral: document.getElementById('apill-general')?.classList.contains('selected') || false,
+                analysisDeep: document.getElementById('apill-deep')?.classList.contains('selected') || false,
+                
+                // Arrays for Chips (assuming these global variables exist in your code)
+                halt: typeof selectedHalt !== 'undefined' ? selectedHalt : [],
+                emotions: typeof selectedEmotions !== 'undefined' && selectedEmotions.daily ? selectedEmotions.daily : {}
+            };
+            
+            localStorage.setItem('journal_daily_draft', JSON.stringify(draft));
+        }
+
+        // 2. Load draft from local storage when the page opens
+        function loadDailyDraft() {
+            const draftJson = localStorage.getItem('journal_daily_draft');
+            if (!draftJson) return; // Exit if no draft exists
+            
+            try {
+                const draft = JSON.parse(draftJson);
+                
+                // Restore standard text/date/range inputs
+                if (draft.date) document.getElementById('date-daily').value = draft.date;
+                if (draft.quality) {
+                    document.getElementById('quality-daily').value = draft.quality;
+                    if (typeof updateDayQuality === 'function') updateDayQuality();
+                }
+                if (draft.negative) document.getElementById('negative-daily').value = draft.negative;
+                if (draft.positive) document.getElementById('positive-daily').value = draft.positive;
+                if (draft.freeform) document.getElementById('freeform-daily').value = draft.freeform;
+                
+                // Restore Yes/No Toggles
+                if (draft.attractionToggle && typeof setToggleQuestion === 'function') {
+                    setToggleQuestion('attraction', true);
+                }
+                if (draft.attractionText) document.getElementById('attraction-daily').value = draft.attractionText;
+                
+                if (draft.relapseToggle && typeof setToggleQuestion === 'function') {
+                    setToggleQuestion('relapse', true);
+                }
+                if (draft.relapseText) document.getElementById('relapse-daily').value = draft.relapseText;
+
+                // Restore Analysis Pills
+                if (!draft.analysisGeneral) toggleAnalysisPill('general'); // unselect if saved as false
+                if (!draft.analysisDeep) toggleAnalysisPill('deep');       // unselect if saved as false
+                
+                // Restore HALT Chips (Visuals & Data array)
+                if (draft.halt && draft.halt.length > 0) {
+                    selectedHalt = draft.halt;
+                    const haltChips = document.querySelectorAll('.halt-chip');
+                    haltChips.forEach(chip => {
+                        if (draft.halt.includes(chip.getAttribute('data-value'))) {
+                            chip.classList.add('selected');
+                        }
+                    });
+                }
+                
+                // Restore Emotion Chips (Visuals & Data object)
+                if (draft.emotions && Object.keys(draft.emotions).length > 0) {
+                    selectedEmotions.daily = draft.emotions;
+                    
+                    Object.keys(draft.emotions).forEach(category => {
+                        const selectedVals = draft.emotions[category];
+                        if (selectedVals && selectedVals.length > 0) {
+                            const container = document.getElementById(`emotion-${category}-daily`);
+                            if (container) {
+                                const chips = container.querySelectorAll('.emotion-chip');
+                                chips.forEach(chip => {
+                                    // Assuming emotion chips use text content or a data-value attribute
+                                    const val = chip.getAttribute('data-value') || chip.innerText.trim();
+                                    if (selectedVals.includes(val)) {
+                                        chip.classList.add('selected');
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error("Error loading journal draft:", e);
+            }
+        }
+
+        // 3. Initialize auto-save triggers on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const dailyForm = document.getElementById('journal-form-daily');
+            if (dailyForm) {
+                // Save automatically when typing or changing sliders/dates
+                dailyForm.addEventListener('input', saveDailyDraft);
+                
+                // Save automatically on clicks (captures chip selections and yes/no toggles)
+                // A slight timeout ensures the UI classes update before saving the draft
+                dailyForm.addEventListener('click', () => setTimeout(saveDailyDraft, 50));
+            }
+            
+            // Attempt to load any existing draft
+            loadDailyDraft();
+        });
         // ============= DAILY JOURNAL SUBMISSION =============
         async function submitEntry(event, journalType) {
             event.preventDefault();
@@ -5024,6 +5472,7 @@
                 
                 if (result.success) {
                     if (journalType === 'daily') {
+                        localStorage.removeItem('journal_daily_draft');
                         const mode = getAnalysisMode();
                         
                         // تعديل الرسالة لتبدو منطقية إذا كان التحليل معطلاً
@@ -5035,8 +5484,20 @@
                         }
                         
                         // التعديل الأهم: نقوم دائماً باستدعاء التحليل، حتى لو mode=none، لكي يعمل ملف الـ Analysis
+                        // التعديل الأهم: نقوم دائماً باستدعاء التحليل، ثم نظهر إشعاراً عند الانتهاء
                         fetch(`${CONFIG.scriptUrl}?action=analyze&sheet=Form responses 1&mode=${mode}`)
-                            .catch(err => console.error("AI Analysis error:", err));
+                            .then(res => res.json())
+                            .then(data => {
+                                if(data.success) {
+                                    showToast('✨ التحليل جاهز!', 'اكتمل تحليل يومياتك بنجاح. يمكنك قراءته الآن في قسم (قراءة المذكرات).', '🤖', '#00b894');
+                                } else {
+                                    showToast('⚠️ تنبيه', 'حدث خطأ أثناء إجراء التحليل: ' + (data.message || ''), '❌', '#e17055');
+                                }
+                            })
+                            .catch(err => {
+                                console.error("AI Analysis error:", err);
+                                showToast('❌ خطأ في الاتصال', 'لم نتمكن من إكمال التحليل بسبب مشكلة في الاتصال.', '📡', '#d63031');
+                            });
                             
                     } else {
                         showMessage(`write-${journalType}-message`, '✅ تم الحفظ بنجاح!', 'success');
@@ -5586,450 +6047,517 @@
         function checkDateForFilter() { onReadDateChange(); }
 
         // ============= DASHBOARD =============
+
         // ─── DASHBOARD STATE ─────────────────────────────────────────
         let _dash = {
-            // Main journal data
-            dates: [], qualities: [],
-            // Analysis sheet data
-            analysisDates: [], energyData: [], positivityData: [],
-            // chart instances
-            qualityChart: null, energyChart: null, positivityChart: null,
-            // filters
-            qualityView: 'all', compareMode: false,
-            energyView: 'all', positivityView: 'all'
+            // Storing structured object arrays instead of disconnected parallel arrays
+            mainData: [],     // { dateObj: Date, label: string, quality: number, emotions: string[] }
+            analysisData: [], // { dateObj: Date, label: string, energy: number, positivity: number }
+            
+            // Chart instances
+            charts: { quality: null, energy: null, positivity: null },
+            
+            // Global Filter State (Reflecting the new HTML Interface)
+            filters: {
+                view: 'all', 
+                compareMode: false,
+                syncCards: true,
+                customStart: null, customEnd: null,
+                compStart: null, compEnd: null
+            }
         };
 
-        // Theme palette (matches CSS vars exactly)
+        // Theme palette
         const THEME = {
-            warm:    [253, 203, 110], // #fdcb6e
-            cool:    [116, 185, 255], // #74b9ff
-            gentle:  [250, 177, 160], // #fab1a0
-            calm:    [162, 155, 254], // #a29bfe
-            nature:  [ 85, 239, 196], // #55efc4
-            purple:  [108,  92, 231], // #6c5ce7
-            teal:    [  0, 184, 148], // #00b894
-            red:     [214,  48,  49], // #d63031
-            orange:  [225, 112,  85], // #e17055
-            dark:    [ 45,  52,  54], // #2d3436
-            grey:    [ 99, 110, 114], // #636e72
+            warm:    [253, 203, 110], cool:    [116, 185, 255], gentle:  [250, 177, 160],
+            calm:    [162, 155, 254], nature:  [ 85, 239, 196], purple:  [108,  92, 231],
+            teal:    [  0, 184, 148], red:     [214,  48,  49], orange:  [225, 112,  85],
+            dark:    [ 45,  52,  54], grey:    [ 99, 110, 114],
         };
         const rgba = ([r,g,b], a=1) => `rgba(${r},${g},${b},${a})`;
         const hex  = ([r,g,b]) => `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+        const CLOUD_COLORS = [ THEME.calm, THEME.warm, THEME.cool, THEME.gentle, THEME.nature, THEME.purple, THEME.teal, THEME.orange ];
 
-        const CLOUD_COLORS = [
-            THEME.calm, THEME.warm, THEME.cool, THEME.gentle,
-            THEME.nature, THEME.purple, THEME.teal, THEME.orange
-        ];
-
-        // ─── LOAD DASHBOARD ──────────────────────────────────────────
+        // ─── DATA LOADING & PROCESSING ──────────────────────────────────
         async function loadDashboard() {
             if (!CONFIG.scriptUrl) return;
             try {
-                // Fetch both sheets in parallel
                 const [mainRes, analysisRes] = await Promise.all([
                     fetch(`${CONFIG.scriptUrl}?action=getAll&sheet=Form%20responses%201`),
                     fetch(`${CONFIG.scriptUrl}?action=getAll&sheet=Analysis`).catch(() => null)
                 ]);
+                
                 const mainJson = await mainRes.json();
+                if (mainJson.success) _processMainData(mainJson.data);
 
-                if (mainJson.success) {
-                    _processMainData(mainJson.data);
-                }
                 if (analysisRes) {
                     const aJson = await analysisRes.json().catch(() => null);
                     if (aJson?.success) _processAnalysisData(aJson.data);
                 }
+
+                // Initialize dashboard rendering based on default state
+                _updateDashboard();
+
             } catch(err) { console.error('Dashboard error:', err); }
+        }
+
+        function _parseDateString(raw) {
+            try {
+                const d = new Date(raw);
+                if (isNaN(d.getTime())) throw new Error("Invalid date");
+                d.setHours(12, 0, 0, 0); // Normalize time
+                return { dateObj: d, label: `${d.getDate()}/${d.getMonth()+1}` };
+            } catch(e) { 
+                return { dateObj: new Date(), label: String(raw).substring(0,10) }; 
+            }
         }
 
         function _processMainData(data) {
             const headers = data[0];
-            let dateIdx    = -1;
-            for (const n of ['اليوم','التاريخ','Date','date']) {
-                dateIdx = headers.indexOf(n);
-                if (dateIdx !== -1) break;
-            }
+            const dateIdx    = headers.findIndex(h => ['اليوم','التاريخ','Date','date'].includes(h));
             const qualityIdx = headers.findIndex(h => h.includes('كيف تقيم') || h.includes('جودة'));
             const emotionCols = headers.map((h,i) => h.includes('المشاعر المسيطرة') ? i : -1).filter(i => i !== -1);
 
-            let totalQ = 0, qCount = 0;
-            const emotionCounts = {};
-            _dash.dates = []; _dash.qualities = [];
-
+            _dash.mainData = [];
             for (let i = 1; i < data.length; i++) {
                 const row = data[i];
                 const q = parseFloat(row[qualityIdx]);
+                
                 if (!isNaN(q)) {
-                    totalQ += q; qCount++;
-                    let raw = row[dateIdx];
-                    let label;
-                    try {
-                        const d = new Date(raw);
-                        d.setHours(d.getHours() + 12);
-                        label = `${d.getDate()}/${d.getMonth()+1}`;
-                    } catch(e) { label = String(raw).substring(0,10); }
-                    _dash.dates.push(label);
-                    _dash.qualities.push(q);
+                    const { dateObj, label } = _parseDateString(row[dateIdx !== -1 ? dateIdx : 0]);
+                    let emotions = [];
+                    
+                    emotionCols.forEach(ci => {
+                        if (row[ci]) {
+                            emotions.push(...String(row[ci]).split(/[,،|]/).map(e => e.trim()).filter(Boolean));
+                        }
+                    });
+
+                    _dash.mainData.push({ dateObj, label, quality: q, emotions });
                 }
-                emotionCols.forEach(ci => {
-                    if (!row[ci]) return;
-                    String(row[ci]).split(/[,،|]/).map(e => e.trim()).filter(Boolean)
-                        .forEach(em => { emotionCounts[em] = (emotionCounts[em] || 0) + 1; });
-                });
             }
-
-            document.getElementById('total-entries').textContent = data.length - 1;
-            document.getElementById('avg-quality').textContent   = qCount ? (totalQ/qCount).toFixed(1) : '-';
-
-            const sorted = Object.entries(emotionCounts).sort((a,b) => b[1]-a[1]);
-            document.getElementById('top-emotion').textContent = sorted[0] ? `${sorted[0][0]} | ${sorted[0][1]}` : '-';
-
-            if (sorted.length) drawWordCloud(sorted);
-            _applyQualityView();
+            // Sort chronologically just in case
+            _dash.mainData.sort((a, b) => a.dateObj - b.dateObj);
         }
 
         function _processAnalysisData(data) {
             if (!data || data.length < 2) return;
             const headers = data[0];
-            let dateIdx = -1;
-            for (const n of ['اليوم','التاريخ','Date','date','Timestamp','timestamp']) {
-                dateIdx = headers.indexOf(n);
-                if (dateIdx !== -1) break;
-            }
+            const dateIdx       = headers.findIndex(h => ['اليوم','التاريخ','Date','date','Timestamp','timestamp'].includes(h));
             const energyIdx     = headers.findIndex(h => h.includes('مستوى الطاقة'));
             const positivityIdx = headers.findIndex(h => h.includes('مؤشر الإيجابية'));
 
-            _dash.analysisDates = []; _dash.energyData = []; _dash.positivityData = [];
-
+            _dash.analysisData = [];
             for (let i = 1; i < data.length; i++) {
                 const row = data[i];
-                let label = '';
-                try {
-                    const d = new Date(row[dateIdx]);
-                    d.setHours(d.getHours() + 12);
-                    label = `${d.getDate()}/${d.getMonth()+1}`;
-                } catch(e) { label = String(row[dateIdx] || '').substring(0,10); }
-                _dash.analysisDates.push(label);
-                _dash.energyData.push(energyIdx !== -1 ? parseFloat(row[energyIdx]) || null : null);
-                _dash.positivityData.push(positivityIdx !== -1 ? parseFloat(row[positivityIdx]) || null : null);
+                const { dateObj, label } = _parseDateString(row[dateIdx !== -1 ? dateIdx : 0]);
+                
+                _dash.analysisData.push({
+                    dateObj, label,
+                    energy: energyIdx !== -1 ? parseFloat(row[energyIdx]) : null,
+                    positivity: positivityIdx !== -1 ? parseFloat(row[positivityIdx]) : null
+                });
             }
+            _dash.analysisData.sort((a, b) => a.dateObj - b.dateObj);
 
-            // Avg positivity stat
-            const vals = _dash.positivityData.filter(v => v !== null);
-            document.getElementById('avg-positivity').textContent = vals.length
-                ? (vals.reduce((a,b) => a+b, 0) / vals.length).toFixed(1) : '-';
-
-            if (energyIdx !== -1)     { document.getElementById('energy-container').style.display = '';     _applyEnergyView(); }
-            if (positivityIdx !== -1) { document.getElementById('positivity-container').style.display = ''; _applyPositivityView(); }
+            if (energyIdx !== -1) document.getElementById('energy-container').style.display = '';
+            if (positivityIdx !== -1) document.getElementById('positivity-container').style.display = '';
         }
 
-        // ─── FILTER HELPERS ─────────────────────────────────────────
-        function _filterByView(dates, vals, view) {
-            const n = dates.length;
-            if (view === 'all') return { dates, vals };
-            const cutoff = view === 'week' ? 7 : view === 'month' ? 30 : 90;
-            const sliced = Math.max(0, n - cutoff);
-            return { dates: dates.slice(sliced), vals: vals.slice(sliced) };
-        }
 
-        function _setActiveBtn(containerOrId, clickedBtn) {
-            const parent = typeof containerOrId === 'string'
-                ? document.getElementById(containerOrId) : containerOrId;
-            if (parent) parent.querySelectorAll('.cf-btn:not(.compare)').forEach(b => b.classList.remove('active'));
-            clickedBtn.classList.add('active');
-        }
+        // ─── GLOBAL FILTERS CONTROLLER ──────────────────────────────────
+        function setGlobalView(view, btn) {
+            _dash.filters.view = view;
+            
+            // UI Updates
+            document.querySelectorAll('#global-filters-btns .cf-btn:not(.compare)').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
 
-        // ─── QUALITY CHART ───────────────────────────────────────────
-        function setQualityView(view, btn) {
-            _dash.qualityView = view;
-            _setActiveBtn('quality-filters', btn);
-            _applyQualityView();
-        }
+            const customSec = document.getElementById('custom-date-section');
+            const compSec = document.getElementById('compare-date-section');
 
-        function toggleQualityCompare(btn) {
-            _dash.compareMode = !_dash.compareMode;
-            btn.classList.toggle('active', _dash.compareMode);
-            _applyQualityView();
-        }
-
-        function _applyQualityView() {
-            if (!_dash.dates.length) return;
-            const { dates, vals } = _filterByView(_dash.dates, _dash.qualities, _dash.qualityView);
-            if (_dash.compareMode) {
-                _drawQualityCompare(dates, vals, _dash.qualityView);
+            if (view === 'custom') {
+                customSec.classList.remove('hidden');
+                // Enforce the display state based on the button toggle
+                if (_dash.filters.compareMode) {
+                    compSec.style.display = 'flex';
+                } else {
+                    compSec.style.display = 'none';
+                }
             } else {
-                _drawQualityLine(dates, vals);
-                document.getElementById('quality-subtitle').style.display = 'none';
+                customSec.classList.add('hidden');
+                _updateDashboard(); // Auto-update for preset views
+            }
+        }
+        // ─── UPDATED FUNCTION: TOGGLE COMPARE ───────────────────────────
+        function toggleGlobalCompare(btn) {
+            _dash.filters.compareMode = !_dash.filters.compareMode;
+            btn.classList.toggle('active', _dash.filters.compareMode);
+            
+            const compSec = document.getElementById('compare-date-section');
+            
+            // FIX: Directly change style.display because the inline 'display: flex' 
+            // in your HTML overrides the CSS '.hidden' class.
+            if (_dash.filters.compareMode) {
+                compSec.style.display = 'flex';
+            } else {
+                compSec.style.display = 'none';
+            }
+            
+            if (_dash.filters.view !== 'custom') _updateDashboard();
+        }
+
+        function applyGlobalFilters() {
+            _dash.filters.syncCards = document.getElementById('sync-all-filters').checked;
+            
+            if (_dash.filters.view === 'custom') {
+                _dash.filters.customStart = document.getElementById('filter-start').value;
+                _dash.filters.customEnd   = document.getElementById('filter-end').value;
+                
+                if (_dash.filters.compareMode) {
+                    _dash.filters.compStart = document.getElementById('filter-comp-start').value;
+                    _dash.filters.compEnd   = document.getElementById('filter-comp-end').value;
+                }
+            }
+            _updateDashboard();
+        }
+
+        // ─── CORE DASHBOARD PIPELINE ────────────────────────────────────
+        function _updateDashboard() {
+            const mainF     = _applyDateFilters(_dash.mainData);
+            const analysisF = _applyDateFilters(_dash.analysisData);
+            
+            // Update synced vs unsynced components
+            _dash.filters.syncCards = document.getElementById('sync-all-filters').checked;
+            _updateStatsCards(mainF.primary, analysisF.primary, _dash.filters.syncCards);
+
+            // Draw Charts (Unified logic)
+            if (mainF.primary.length) {
+                _drawLineChart('quality-chart', 'quality', mainF, 'quality', 'جودة اليوم', THEME.warm, 1, 10);
+            }
+            if (_dash.analysisData.length && analysisF.primary.length) {
+                _drawLineChart('energy-chart', 'energy', analysisF, 'energy', 'مستوى الطاقة', THEME.cool, 0, 10);
+                _drawPositivityChart(analysisF);
             }
         }
 
-        function _drawQualityLine(dates, vals) {
-            const ctx = document.getElementById('quality-chart').getContext('2d');
-            if (_dash.qualityChart) _dash.qualityChart.destroy();
-            _dash.qualityChart = new Chart(ctx, {
-                type: 'line',
-                data: { labels: dates, datasets: [{
-                    label: 'جودة اليوم',
-                    data: vals,
-                    borderColor: rgba(THEME.warm),
-                    backgroundColor: rgba(THEME.warm, 0.15),
-                    tension: 0.4, fill: true,
-                    pointBackgroundColor: vals.map(v => v >= 7 ? rgba(THEME.teal) : v >= 5 ? rgba(THEME.warm) : rgba(THEME.orange)),
-                    pointBorderColor: 'white',
-                    borderWidth: 2,           // Adds explicit thinner line (default is usually 3)
-                    pointRadius: 2.5,         // Reduced from 4
-                    pointBorderWidth: 1.5     // Reduced from 2
-                }]},
-                options: _qualityOpts(1, 10)
-            });
+        function _applyDateFilters(dataset) {
+            if (!dataset || !dataset.length) return { primary: [], secondary: [] };
+            
+            const view = _dash.filters.view;
+            let primary = [], secondary = [];
+
+            if (view === 'custom') {
+                const parseDt = d => d ? new Date(d).getTime() : 0;
+                const s1 = parseDt(_dash.filters.customStart);
+                const e1 = parseDt(_dash.filters.customEnd) + 86400000; // end of day
+                
+                primary = dataset.filter(d => d.dateObj.getTime() >= s1 && d.dateObj.getTime() < e1);
+
+                if (_dash.filters.compareMode) {
+                    const s2 = parseDt(_dash.filters.compStart);
+                    const e2 = parseDt(_dash.filters.compEnd) + 86400000;
+                    secondary = dataset.filter(d => d.dateObj.getTime() >= s2 && d.dateObj.getTime() < e2);
+                }
+            } else {
+                const days = view === 'week' ? 7 : view === 'month' ? 30 : view === '3m' ? 90 : dataset.length;
+                primary = dataset.slice(-days);
+                
+                if (_dash.filters.compareMode) {
+                    const secondaryStart = Math.max(0, dataset.length - (days * 2));
+                    const secondaryEnd = Math.max(0, dataset.length - days);
+                    secondary = dataset.slice(secondaryStart, secondaryEnd);
+                }
+            }
+
+            return { primary, secondary };
         }
 
-        function _drawQualityCompare(dates, vals, view) {
-            const n = dates.length;
-            const half = Math.floor(n / 2);
-            const p1d = dates.slice(0, half), p1v = vals.slice(0, half);
-            const p2d = dates.slice(half),   p2v = vals.slice(half);
-            const label1 = view === 'week' ? 'الأسبوع السابق' : view === 'month' ? 'الشهر السابق' : 'الفترة الأولى';
-            const label2 = view === 'week' ? 'الأسبوع الحالي' : view === 'month' ? 'الشهر الحالي' : 'الفترة الثانية';
-            // Use common x-axis of max length
-            const maxLen = Math.max(p1d.length, p2d.length);
-            const labels = Array.from({length: maxLen}, (_,i) => `يوم ${i+1}`);
-            const pad = (arr) => { const a = [...arr]; while (a.length < maxLen) a.push(null); return a; };
+        // ─── UNIFIED CARDS LOGIC ────────────────────────────────────────
+        const _calcAverage = arr => {
+            const valid = arr.filter(v => v !== null && v !== undefined && !isNaN(v));
+            return valid.length ? (valid.reduce((a,b) => a+b, 0) / valid.length).toFixed(1) : '-';
+        };
 
-            const sub = document.getElementById('quality-subtitle');
-            sub.style.display = '';
-            sub.textContent = `مقارنة: ${p1d[0] || ''} → ${p1d[p1d.length-1] || ''}  vs  ${p2d[0] || ''} → ${p2d[p2d.length-1] || ''}`;
+        function _updateStatsCards(mainFiltered, analysisFiltered, isSynced) {
+            const mData = isSynced ? mainFiltered : _dash.mainData;
+            const aData = isSynced ? analysisFiltered : _dash.analysisData;
 
-            const ctx = document.getElementById('quality-chart').getContext('2d');
-            if (_dash.qualityChart) _dash.qualityChart.destroy();
-            _dash.qualityChart = new Chart(ctx, {
-                type: 'line',
-                data: { labels, datasets: [
+            // Averages
+            document.getElementById('total-entries').textContent  = mData.length;
+            document.getElementById('avg-quality').textContent    = _calcAverage(mData.map(d => d.quality));
+            document.getElementById('avg-positivity').textContent = _calcAverage(aData.map(d => d.positivity));
+
+            // Top Emotion & Word Cloud
+            const counts = {};
+            mData.forEach(row => { row.emotions.forEach(em => counts[em] = (counts[em] || 0) + 1); });
+            const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
+            
+            document.getElementById('top-emotion').textContent = sorted.length ? `${sorted[0][0]} | ${sorted[0][1]}` : '-';
+            if (sorted.length) drawWordCloud(sorted);
+        }
+
+        // ─── HELPER TO FORMAT DATES ─────────────────────────────────────
+        const _formatYMD = d => {
+            if (!d || !d.dateObj) return null;
+            const date = new Date(d.dateObj);
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        };
+
+        // ─── UPDATED FUNCTION: DRAW LINE CHART ──────────────────────────
+        function _drawLineChart(canvasId, chartKey, dataSplit, dataKey, labelStr, themeColor, yMin, yMax) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            if (_dash.charts[chartKey]) _dash.charts[chartKey].destroy();
+
+            const { primary, secondary } = dataSplit;
+            const subtitle = document.getElementById(`${canvasId}-subtitle`);
+            
+            let datasets = [];
+            let labels = primary.map(d => d.label);
+
+            if (_dash.filters.compareMode && secondary.length) {
+                const maxLen = Math.max(primary.length, secondary.length);
+                labels = Array.from({length: maxLen}, (_,i) => `يوم ${i+1}`);
+                const pad = arr => { const a = [...arr]; while(a.length < maxLen) a.push(null); return a; };
+
+                datasets = [
                     { 
-                        label: label1, 
-                        data: pad(p1v), 
-                        borderColor: rgba(THEME.cool), 
-                        backgroundColor: rgba(THEME.cool, 0.1), 
-                        tension: 0.4, 
-                        fill: false, 
-                        borderWidth: 2,       // Added
-                        pointRadius: 2        // Reduced from 3
+                        label: 'الفترة السابقة', data: pad(secondary.map(d => d[dataKey])),
+                        rawDates: pad(secondary.map(_formatYMD)), // <--- Injected dates
+                        borderColor: rgba(THEME.grey, 0.6), backgroundColor: 'transparent',
+                        tension: 0.4, borderWidth: 2, pointRadius: 1.5, fill: false
                     },
                     { 
-                        label: label2, 
-                        data: pad(p2v), 
-                        borderColor: rgba(THEME.warm), 
-                        backgroundColor: rgba(THEME.warm, 0.1), 
-                        tension: 0.4, 
-                        fill: false, 
-                        borderWidth: 2,       // Added
-                        pointRadius: 2        // Reduced from 3
+                        label: 'الفترة الحالية', data: pad(primary.map(d => d[dataKey])),
+                        rawDates: pad(primary.map(_formatYMD)), // <--- Injected dates
+                        borderColor: rgba(themeColor), backgroundColor: rgba(themeColor, 0.1),
+                        tension: 0.4, borderWidth: 2.5, pointRadius: 2.5, fill: true
                     }
-                ]},
-                options: { ..._qualityOpts(1, 10), plugins: { legend: { display: true, labels: { font: { family: 'IBM Plex Sans Arabic' }, color: '#636e72' } } } }
+                ];
+                
+                if (subtitle) {
+                    subtitle.style.display = '';
+                    const sLab = secondary.map(d => d.label);
+                    const pLab = primary.map(d => d.label);
+                    subtitle.textContent = `مقارنة: (${sLab[0]||''} → ${sLab[sLab.length-1]||''})  مقابل  (${pLab[0]||''} → ${pLab[pLab.length-1]||''})`;
+                }
+            } else {
+                datasets = [{
+                    label: labelStr, data: primary.map(d => d[dataKey]),
+                    rawDates: primary.map(_formatYMD), // <--- Injected dates
+                    borderColor: rgba(themeColor), backgroundColor: rgba(themeColor, 0.15),
+                    tension: 0.4, fill: true, borderWidth: 2, pointRadius: 2.5, pointBorderWidth: 1.5,
+                    pointBackgroundColor: primary.map(d => {
+                        const v = d[dataKey];
+                        return v >= 7 ? rgba(THEME.teal) : v >= 5 ? rgba(THEME.warm) : rgba(THEME.orange);
+                    }),
+                    // Make points look clickable on hover
+                    pointHoverCursor: 'pointer' 
+                }];
+                if (subtitle) subtitle.style.display = 'none';
+            }
+
+            _dash.charts[chartKey] = new Chart(ctx, {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    ..._baseChartOptions(yMin, yMax, _dash.filters.compareMode),
+                    onHover: (event, chartElement) => {
+                        event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
+                    }
+                }
             });
         }
 
-        function _qualityOpts(min, max) {
+        // ─── UPDATED FUNCTION: POSITIVITY CHART ─────────────────────────
+        function _drawPositivityChart(dataSplit) {
+            const ctx = document.getElementById('positivity-chart').getContext('2d');
+            if (_dash.charts.positivity) _dash.charts.positivity.destroy();
+
+            const { primary, secondary } = dataSplit;
+            let datasets = [];
+            let labels = primary.map(d => d.label);
+
+            if (_dash.filters.compareMode && secondary.length) {
+                const maxLen = Math.max(primary.length, secondary.length);
+                labels = Array.from({length: maxLen}, (_,i) => `يوم ${i+1}`);
+                const pad = arr => { const a = [...arr]; while(a.length < maxLen) a.push(null); return a; };
+
+                datasets = [
+                    { type: 'bar', label: 'الفترة السابقة', data: pad(secondary.map(d => d.positivity)), rawDates: pad(secondary.map(_formatYMD)), backgroundColor: rgba(THEME.grey, 0.3), borderColor: rgba(THEME.grey, 0.8), borderWidth: 1, borderRadius: 3 },
+                    { type: 'bar', label: 'الفترة الحالية', data: pad(primary.map(d => d.positivity)), rawDates: pad(primary.map(_formatYMD)), backgroundColor: rgba(THEME.calm, 0.75), borderColor: rgba(THEME.calm), borderWidth: 1, borderRadius: 3 }
+                ];
+            } else {
+                const vals = primary.map(d => d.positivity);
+                const trend = vals.map((_, i) => {
+                    const w = vals.slice(Math.max(0,i-2), i+1).filter(v => v !== null && !isNaN(v));
+                    return w.length ? w.reduce((a,b) => a+b, 0) / w.length : null;
+                });
+
+                datasets = [
+                    {
+                        type: 'bar', label: 'مؤشر الإيجابية', data: vals,
+                        rawDates: primary.map(_formatYMD), // <--- Injected dates
+                        backgroundColor: vals.map(v => v === null ? rgba(THEME.grey,0.2) : v >= 7 ? rgba(THEME.teal,0.85) : v >= 3 ? rgba(THEME.nature,0.75) : v >= 0 ? rgba(THEME.nature,0.4) : v >= -3 ? rgba(THEME.orange,0.5) : v >= -7 ? rgba(THEME.orange,0.8) : rgba(THEME.red,0.85)),
+                        borderColor: vals.map(v => v === null ? rgba(THEME.grey,0.3) : v >= 3 ? rgba(THEME.teal) : v >= 0 ? rgba(THEME.nature) : v >= -3 ? rgba(THEME.orange) : rgba(THEME.red)),
+                        borderWidth: 1.5, borderRadius: 4, order: 2
+                    },
+                    {
+                        type: 'line', label: 'الاتجاه', data: trend,
+                        rawDates: primary.map(_formatYMD), // <--- Injected dates
+                        borderColor: rgba(THEME.calm), backgroundColor: 'transparent',
+                        borderWidth: 1.5, tension: 0.4, pointRadius: 0, borderDash: [4, 3], spanGaps: true, order: 1
+                    }
+                ];
+            }
+
+            _dash.charts.positivity = new Chart(ctx, {
+                data: { labels, datasets },
+                options: {
+                    ..._baseChartOptions(-10, 10, true, true),
+                    onHover: (event, chartElement) => {
+                        event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
+                    }
+                }
+            });
+        }
+
+        // ─── NEW FUNCTION: JUMP TO READ JOURNAL ─────────────────────────
+        function jumpToReadJournal(dateString) {
+            if (!dateString) return;
+
+            // 1. Set the date picker value
+            const dateInput = document.getElementById('read-date-new');
+            if (dateInput) {
+                dateInput.value = dateString;
+            }
+
+            // 2. Fetch the data for that day
+            if (typeof fetchReadEntry === 'function') {
+                fetchReadEntry();
+            }
+
+            // 3. Switch to the read tab (Update this line based on your app's tab logic)
+            // For example, if you have a button that opens the read tab:
+            document.getElementById('read_page').click(); 
+            
+            // Or if you use standard display toggling:
+            // document.getElementById('content-dashboard').classList.remove('active');
+            // document.getElementById('content-read').classList.add('active');
+        }
+
+        // ─── UPDATED FUNCTION: BASE CHART OPTIONS ───────────────────────
+        function _baseChartOptions(min, max, showLegend, isZeroCentered = false) {
             return {
                 responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false }, tooltip: { titleFont: { family: 'IBM Plex Sans Arabic' }, bodyFont: { family: 'IBM Plex Sans Arabic' } } },
+                // This is the magic that links points to your journal view
+                onClick: (event, elements, chart) => {
+                    if (!elements.length) return;
+                    const datasetIndex = elements[0].datasetIndex;
+                    const index = elements[0].index;
+                    // Retrieve the raw YYYY-MM-DD date we will inject into the dataset
+                    const dateString = chart.data.datasets[datasetIndex].rawDates[index];
+                    if (dateString) jumpToReadJournal(dateString);
+                },
+                // Tooltips remain completely unaffected
+                plugins: { 
+                    legend: { display: showLegend, labels: { font: { family: 'IBM Plex Sans Arabic' }, color: '#636e72', boxWidth: 14 } }, 
+                    tooltip: { titleFont: { family: 'IBM Plex Sans Arabic' }, bodyFont: { family: 'IBM Plex Sans Arabic' } } 
+                },
                 scales: {
                     x: { ticks: { maxRotation: 45, minRotation: 0, font: { family: 'IBM Plex Sans Arabic', size: 11 }, color: '#636e72', maxTicksLimit: 12 }, grid: { display: false } },
-                    y: { min, max, ticks: { font: { family: 'IBM Plex Sans Arabic', weight: 'bold', size: 12 },
-                        color: ctx => {
-                            const v = ctx.tick.value;
-                            if (v >= 8) return hex(THEME.teal);
-                            if (v >= 6) return hex(THEME.nature);
-                            if (v >= 4) return hex(THEME.warm);
-                            if (v >= 2) return hex(THEME.orange);
-                            return hex(THEME.red);
-                        }
-                    }, grid: { color: 'rgba(0,0,0,0.04)' } }
+                    y: { 
+                        min, max, 
+                        ticks: { 
+                            stepSize: isZeroCentered ? 2 : undefined,
+                            font: { family: 'IBM Plex Sans Arabic', weight: 'bold', size: 12 },
+                            color: ctx => {
+                                const v = ctx.tick.value;
+                                if (isZeroCentered) {
+                                    return v >= 7 ? hex(THEME.teal) : v >= 3 ? hex(THEME.nature) : v >= 0 ? hex(THEME.grey) : v >= -3 ? hex(THEME.orange) : hex(THEME.red);
+                                } else {
+                                    return v >= 8 ? hex(THEME.teal) : v >= 6 ? hex(THEME.nature) : v >= 4 ? hex(THEME.warm) : v >= 2 ? hex(THEME.orange) : hex(THEME.red);
+                                }
+                            }
+                        }, 
+                        grid: { 
+                            color: ctx => isZeroCentered && ctx.tick.value === 0 ? rgba(THEME.dark, 0.2) : 'rgba(0,0,0,0.04)', 
+                            lineWidth: ctx => isZeroCentered && ctx.tick.value === 0 ? 2 : 1 
+                        } 
+                    }
                 }
             };
         }
 
-        // ─── ENERGY CHART ────────────────────────────────────────────
-        function setEnergyView(view, btn) {
-            _dash.energyView = view;
-            _setActiveBtn(btn.parentElement, btn);
-            _applyEnergyView();
+        // ─── NEW FUNCTION: CLEAR FILTERS ────────────────────────────────
+        function clearGlobalFilters() {
+            // 1. Reset State
+            _dash.filters.view = 'all';
+            _dash.filters.compareMode = false;
+            _dash.filters.customStart = null;
+            _dash.filters.customEnd = null;
+            _dash.filters.compStart = null;
+            _dash.filters.compEnd = null;
+
+            // 2. Reset UI Buttons
+            document.querySelectorAll('#global-filters-btns .cf-btn:not(.compare)').forEach(b => b.classList.remove('active'));
+            const allBtn = Array.from(document.querySelectorAll('#global-filters-btns .cf-btn')).find(b => b.textContent === 'الكل');
+            if (allBtn) allBtn.classList.add('active');
+            
+            // Disable compare button
+            document.getElementById('global-compare-btn').classList.remove('active');
+
+            // 3. Hide custom sections safely
+            document.getElementById('custom-date-section').classList.add('hidden');
+            
+            // FIX: Reset the inline display style
+            document.getElementById('compare-date-section').style.display = 'none';
+
+            // 4. Clear input fields
+            document.getElementById('filter-start').value = '';
+            document.getElementById('filter-end').value = '';
+            document.getElementById('filter-comp-start').value = '';
+            document.getElementById('filter-comp-end').value = '';
+
+            // 5. Update dashboard
+            _updateDashboard();
         }
 
-        function _applyEnergyView() {
-            if (!_dash.analysisDates.length) return;
-            const { dates, vals } = _filterByView(_dash.analysisDates, _dash.energyData, _dash.energyView);
-            const ctx = document.getElementById('energy-chart').getContext('2d');
-            if (_dash.energyChart) _dash.energyChart.destroy();
-            _dash.energyChart = new Chart(ctx, {
-                type: 'line',
-                data: { labels: dates, datasets: [{
-                    label: 'مستوى الطاقة',
-                    data: vals,
-                    borderColor: rgba(THEME.cool),
-                    backgroundColor: rgba(THEME.cool, 0.12),
-                    tension: 0.4, 
-                    fill: true,
-                    pointBackgroundColor: rgba(THEME.cool),
-                    pointBorderColor: 'white',
-                    spanGaps: true,
-                    // --- UPDATED PROPERTIES BELOW ---
-                    borderWidth: 2,           // Added explicit thinner line
-                    pointBorderWidth: 1.5,    // Reduced from 2
-                    pointRadius: 2.5          // Reduced from 4
-                }]},
-                options: _qualityOpts(0, 10)
-            });
-        }
 
-        // ─── POSITIVITY INDEX CHART (Bar + Line) ─────────────────────
-        function setPositivityView(view, btn) {
-            _dash.positivityView = view;
-            _setActiveBtn(btn.parentElement, btn);
-            _applyPositivityView();
-        }
-
-        function _applyPositivityView() {
-            if (!_dash.analysisDates.length) return;
-            const { dates, vals } = _filterByView(_dash.analysisDates, _dash.positivityData, _dash.positivityView);
-
-            // Bar colors: interpolate red → grey → green
-            const barColors = vals.map(v => {
-                if (v === null) return rgba(THEME.grey, 0.2);
-                if (v >= 7)  return rgba(THEME.teal, 0.85);
-                if (v >= 3)  return rgba(THEME.nature, 0.75);
-                if (v >= 0)  return rgba(THEME.nature, 0.4);
-                if (v >= -3) return rgba(THEME.orange, 0.5);
-                if (v >= -7) return rgba(THEME.orange, 0.8);
-                return rgba(THEME.red, 0.85);
-            });
-            const barBorders = vals.map(v => {
-                if (v === null) return rgba(THEME.grey, 0.3);
-                if (v >= 3)  return rgba(THEME.teal);
-                if (v >= 0)  return rgba(THEME.nature);
-                if (v >= -3) return rgba(THEME.orange);
-                return rgba(THEME.red);
-            });
-
-            // Moving average for trend line (window = 3)
-            const trend = vals.map((_, i) => {
-                const w = vals.slice(Math.max(0,i-2), i+1).filter(v => v !== null);
-                return w.length ? w.reduce((a,b) => a+b, 0) / w.length : null;
-            });
-
-            const ctx = document.getElementById('positivity-chart').getContext('2d');
-            if (_dash.positivityChart) _dash.positivityChart.destroy();
-            _dash.positivityChart = new Chart(ctx, {
-                data: {
-                    labels: dates,
-                    datasets: [
-                        {
-                            type: 'bar',
-                            label: 'مؤشر الإيجابية',
-                            data: vals,
-                            backgroundColor: barColors,
-                            borderColor: barBorders,
-                            borderWidth: 1.5,
-                            borderRadius: 4,
-                            order: 2
-                        },
-                        {
-                            type: 'line',
-                            label: 'الاتجاه',
-                            data: trend,
-                            borderColor: rgba(THEME.calm),
-                            backgroundColor: 'transparent',
-                            borderWidth: 1.5,   // Reduced from 2.5 for a subtler trend line                            
-                            tension: 0.4,
-                            pointRadius: 0,
-                            borderDash: [4, 3],
-                            spanGaps: true,
-                            order: 1
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: true, labels: { font: { family: 'IBM Plex Sans Arabic', size: 11 }, color: '#636e72', boxWidth: 14 } },
-                        tooltip: { titleFont: { family: 'IBM Plex Sans Arabic' }, bodyFont: { family: 'IBM Plex Sans Arabic' } }
-                    },
-                    scales: {
-                        x: { ticks: { maxRotation: 45, minRotation: 0, font: { family: 'IBM Plex Sans Arabic', size: 11 }, color: '#636e72', maxTicksLimit: 12 }, grid: { display: false } },
-                        y: { min: -10, max: 10,
-                            ticks: { stepSize: 2, font: { family: 'IBM Plex Sans Arabic', weight: 'bold', size: 12 },
-                                color: ctx => {
-                                    const v = ctx.tick.value;
-                                    if (v >= 7)  return hex(THEME.teal);
-                                    if (v >= 3)  return hex(THEME.nature);
-                                    if (v >= 0)  return hex(THEME.grey);
-                                    if (v >= -3) return hex(THEME.orange);
-                                    return hex(THEME.red);
-                                }
-                            },
-                            grid: { color: ctx => ctx.tick.value === 0 ? rgba(THEME.dark, 0.2) : 'rgba(0,0,0,0.04)', lineWidth: ctx => ctx.tick.value === 0 ? 2 : 1 }
-                        }
-                    }
-                }
-            });
-        }
-
-        // ─── WORD CLOUD (Canvas spiral) ──────────────────────────────
-        // ─── WORD CLOUD (DOM absolute-positioned, crisp, interactive) ──
+        // ─── WORD CLOUD & IFRAME (Unchanged logic, just structured) ─────
         function drawWordCloud(sortedEmotions) {
             const container = document.getElementById('emotion-cloud');
             const tooltip   = document.getElementById('word-cloud-tooltip');
-            if (!container) return;
+            if (!container || !sortedEmotions.length) return;
             container.innerHTML = '';
 
             const maxCount = sortedEmotions[0][1];
             const minCount = sortedEmotions[sortedEmotions.length - 1][1];
 
-            // Step 1: Create all spans and measure them in one DOM pass
-            // We place them off-screen first to get real pixel sizes
             const offscreen = document.createElement('div');
             offscreen.style.cssText = 'position:absolute;visibility:hidden;top:-9999px;left:-9999px;direction:rtl;';
             document.body.appendChild(offscreen);
 
             const items = sortedEmotions.map(([word, count], i) => {
                 const ratio   = maxCount === minCount ? 1 : (count - minCount) / (maxCount - minCount);
-                const size    = Math.round(10 + ratio * 22); // 10–32px
-                const weight  = ratio > 0.55 ? '700' : '500';
+                const size    = Math.round(10 + ratio * 22);
                 const col     = CLOUD_COLORS[i % CLOUD_COLORS.length];
-                const alpha   = 0.55 + ratio * 0.45;
 
                 const span = document.createElement('span');
                 span.textContent = word;
-                span.style.cssText = `
-                    font-family: 'IBM Plex Sans Arabic', sans-serif;
-                    font-size: ${size}px;
-                    font-weight: ${weight};
-                    color: ${rgba(col, alpha)};
-                    white-space: nowrap;
-                    cursor: default;
-                    user-select: none;
-                    transition: transform 0.18s ease, color 0.18s ease;
-                    display: inline-block;
-                `;
+                span.style.cssText = `font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: ${size}px; font-weight: ${ratio > 0.55 ? '700' : '500'}; color: ${rgba(col, 0.55 + ratio * 0.45)}; white-space: nowrap; cursor: default; user-select: none; transition: transform 0.18s ease, color 0.18s ease; display: inline-block;`;
                 offscreen.appendChild(span);
                 return { span, word, count, ratio, col, size };
             });
 
-            // Force layout so we can read real widths/heights
             offscreen.getBoundingClientRect();
-            items.forEach(it => {
-                it.w = it.span.offsetWidth  + 8;
-                it.h = it.span.offsetHeight + 6;
-            });
+            items.forEach(it => { it.w = it.span.offsetWidth + 8; it.h = it.span.offsetHeight + 6; });
             document.body.removeChild(offscreen);
 
-            // Step 2: Spiral placement (center → outward)
             const CW = container.parentElement.clientWidth || 340;
             const cx = CW / 2;
-
-            const placed = []; // {x1,y1,x2,y2}
-            const results = []; // items that got placed with {x,y}
+            const placed = []; 
+            const results = []; 
 
             function collides(x1, y1, x2, y2) {
                 for (const r of placed) {
@@ -6041,78 +6569,37 @@
             let maxY = 0;
             items.forEach((it, wordIdx) => {
                 const { w, h } = it;
-                let placed_ = false;
-                // Start each word at a slightly different initial angle so they don't all go right
-                let angle  = wordIdx * 2.2; // golden-angle-ish spread
-                let radius = 0;
-                const stepA = 0.3;
-                const stepR = 0.9;
+                let placed_ = false, angle = wordIdx * 2.2, radius = 0;
 
                 for (let s = 0; s < 1200 && !placed_; s++) {
                     const px = cx + radius * Math.cos(angle) - w / 2;
-                    const py = 10 + radius * Math.sin(angle) * 0.62; // flatten vertically
-
-                    // Clamp to container width
+                    const py = 10 + radius * Math.sin(angle) * 0.62; 
                     const cx_ = Math.max(4, Math.min(CW - w - 4, px));
-                    const y1  = py;
-                    const y2  = py + h;
 
-                    if (!collides(cx_, y1, cx_ + w, y2)) {
-                        placed.push({ x1: cx_, y1, x2: cx_ + w, y2 });
+                    if (!collides(cx_, py, cx_ + w, py + h)) {
+                        placed.push({ x1: cx_, y1: py, x2: cx_ + w, y2: py + h });
                         results.push({ ...it, x: cx_, y: py });
-                        if (y2 > maxY) maxY = y2;
+                        if (py + h > maxY) maxY = py + h;
                         placed_ = true;
                     }
-                    angle  += stepA;
-                    radius += stepR;
+                    angle += 0.3; radius += 0.9;
                 }
             });
 
-            // Step 3: Set container height and render spans
-            const finalH = Math.max(200, maxY + 20);
-            container.style.minHeight = finalH + 'px';
+            container.style.minHeight = Math.max(200, maxY + 20) + 'px';
 
             results.forEach(({ span, word, count, col, x, y, ratio }) => {
-                span.style.position = 'absolute';
-                span.style.right = 'unset';
-                span.style.left  = x + 'px';
-                span.style.top   = y + 'px';
-
-                // Hover: slightly brighter + scale up
+                span.style.position = 'absolute'; span.style.right = 'unset'; span.style.left = x + 'px'; span.style.top = y + 'px';
+                
                 span.addEventListener('mouseenter', e => {
-                    span.style.transform = 'scale(1.12)';
-                    span.style.color     = rgba(col, 1);
-                    span.style.zIndex    = '10';
-                    // Show tooltip
-                    tooltip.textContent  = `${word} · تكرر ${count} مرة`;
-                    tooltip.style.display = 'block';
-                    tooltip.style.left    = (e.clientX + 10) + 'px';
-                    tooltip.style.top     = (e.clientY - 28) + 'px';
+                    span.style.transform = 'scale(1.12)'; span.style.color = rgba(col, 1); span.style.zIndex = '10';
+                    tooltip.textContent = `${word} · تكرر ${count} مرة`; tooltip.style.display = 'block'; tooltip.style.left = (e.clientX + 10) + 'px'; tooltip.style.top = (e.clientY - 28) + 'px';
                 });
-                span.addEventListener('mousemove', e => {
-                    tooltip.style.left = (e.clientX + 10) + 'px';
-                    tooltip.style.top  = (e.clientY - 28) + 'px';
-                });
-                span.addEventListener('mouseleave', () => {
-                    span.style.transform = 'scale(1)';
-                    span.style.color     = rgba(col, 0.55 + ratio * 0.45);
-                    span.style.zIndex    = '';
-                    tooltip.style.display = 'none';
-                });
-                // Mobile tap
-                span.addEventListener('click', e => {
-                    tooltip.textContent   = `${word} · تكرر ${count} مرة`;
-                    tooltip.style.display = 'block';
-                    tooltip.style.left    = (e.clientX + 10) + 'px';
-                    tooltip.style.top     = (e.clientY - 28) + 'px';
-                    setTimeout(() => { tooltip.style.display = 'none'; }, 2000);
-                    e.stopPropagation();
-                });
-
+                span.addEventListener('mousemove', e => { tooltip.style.left = (e.clientX + 10) + 'px'; tooltip.style.top = (e.clientY - 28) + 'px'; });
+                span.addEventListener('mouseleave', () => { span.style.transform = 'scale(1)'; span.style.color = rgba(col, 0.55 + ratio * 0.45); span.style.zIndex = ''; tooltip.style.display = 'none'; });
+                
                 container.appendChild(span);
             });
-
-            document.addEventListener('click', () => { tooltip.style.display = 'none'; }, { once: false });
         }
 
         function embedLooker() {
@@ -6510,23 +6997,142 @@
             if (label)  { label.textContent = 'ابدأ'; }
         }
 
+        // =============================================
+        // 🔥 تأثير الاحتراق التفاعلي لوضع الإفراغ
+        // =============================================
         function deleteVentText() {
-            const ta = document.getElementById('vent-text');
+            const container = document.querySelector('.vent-area-wrapper');
+            const input = document.getElementById('vent-text');
             
-            // Don't burn if it's already empty
-            if (ta.value.trim() === '') return; 
+            // إذا كان المربع فارغاً أو يحترق بالفعل، أوقفه
+            if (!input.value.trim() || input.classList.contains('input-burning')) {
+                input.value = '';
+                return;
+            }
+            
+            igniteInput(container, input);
+        }
 
-            // 1. Add the burning animation class
-            ta.classList.add('burn-animation');
+        function igniteInput(container, input) {
+            // تعطيل الإدخال أثناء الحرق
+            input.disabled = true;
 
-            // 2. Wait for the animation to finish (1.2 seconds = 1200ms)
+            // إنشاء طبقة النار
+            const fireOverlay = document.createElement('div');
+            fireOverlay.className = 'fire-overlay';
+            container.appendChild(fireOverlay);
+            
+            input.classList.add('input-burning');
+            
+            // توليد النيران والشرر
+            createBurningFire(fireOverlay, input);
+            createEdgeFlames(fireOverlay, input);
+            createFireParticles(container, input);
+            
+            // إضافة طبقة التفحم بعد نصف ثانية
             setTimeout(() => {
-                // Clear the text
-                ta.value = '';
+                const charOverlay = document.createElement('div');
+                charOverlay.className = 'char-overlay';
+                container.appendChild(charOverlay);
+                charOverlay.animate([
+                    { opacity: 0, transform: 'scale(0.9)' },
+                    { opacity: 1, transform: 'scale(1.05)' }
+                ], { duration: 600, easing: 'ease-out', fill: 'forwards' });
+            }, 500);
+            
+            // إعادة التهيئة بعد انتهاء الأنيميشن (2.3 ثانية)
+            setTimeout(() => {
+                // تنظيف التأثيرات وتفريغ النص
+                input.value = '';
+                input.classList.remove('input-burning');
+                input.disabled = false;
                 
-                // Remove the burning class to instantly reset to a "new paper" look
-                ta.classList.remove('burn-animation');
-            }, 1200); 
+                // تنظيف عناصر DOM المؤقتة (النار والشرر)
+                container.querySelectorAll('.fire-overlay, .char-overlay, .fire-particle').forEach(el => el.remove());
+                
+                // تغيير النص الإرشادي (Placeholder) مؤقتاً لرسالة مريحة نفسياً
+                const oldPlaceholder = "اكتب كل ما يجول في ذهنك... لا أحد سيقرأ هذا. أفرغ كل شيء هنا.";
+                input.placeholder = "💨 تحولت كلماتك السلبية إلى رماد وطارت في الهواء...";
+                
+                // إعادة المربع لشكله الطبيعي بعد 3 ثوانٍ
+                setTimeout(() => input.placeholder = oldPlaceholder, 3500);
+            }, 2300);
+        }
+
+        function createBurningFire(overlay, input) {
+            const rect = input.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            
+            for (let i = 0; i < 6; i++) {
+                setTimeout(() => {
+                    const fire = document.createElement('div');
+                    fire.className = 'fire-field';
+                    
+                    const x = (Math.random() - 0.5) * rect.width * 0.7 + rect.width * 0.5;
+                    const y = (Math.random() - 0.5) * rect.height * 0.7 + rect.height * 0.5;
+                    const scale = 0.25 + Math.random() * 0.5;
+                    
+                    fire.style.left = x + 'px';
+                    fire.style.top = y + 'px';
+                    fire.style.width = fire.style.height = size * scale + 'px';
+                    fire.style.animationDelay = (Math.random() * 0.3) + 's';
+                    
+                    overlay.appendChild(fire);
+                    setTimeout(() => fire.remove(), 1900);
+                }, i * 120);
+            }
+        }
+
+        function createEdgeFlames(overlay, input) {
+            const topFlame = document.createElement('div');
+            topFlame.className = 'fire-edge';
+            topFlame.style.top = '2px';
+            topFlame.style.left = '15%';
+            topFlame.style.width = '70%';
+            overlay.appendChild(topFlame);
+            
+            topFlame.animate([
+                { width: '0%', left: '50%', opacity: 0 },
+                { width: '100%', left: '0%', opacity: 1 }
+            ], { duration: 900, easing: 'ease-out' });
+            
+            setTimeout(() => topFlame.remove(), 1400);
+        }
+
+        function createFireParticles(container, input) {
+            const rect = input.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            const particleCount = 25;
+            
+            for (let i = 0; i < particleCount; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'fire-particle';
+                    
+                    const size = 2.5 + Math.random() * 5;
+                    particle.style.width = particle.style.height = size + 'px';
+                    
+                    // حساب الموضع بناءً على الحاوية
+                    particle.style.left = (rect.left - containerRect.left + Math.random() * rect.width) + 'px';
+                    particle.style.top = (rect.top - containerRect.top + Math.random() * rect.height * 0.4) + 'px';
+                    
+                    const dx = (Math.random() - 0.5) * 50;
+                    const dy = -(35 + Math.random() * 60);
+                    
+                    container.appendChild(particle);
+                    
+                    particle.animate([
+                        { transform: 'translate(0, 0) scale(0)', opacity: 0 },
+                        { transform: `translate(${dx}px, ${dy}px) scale(1)`, opacity: 1 },
+                        { transform: `translate(${dx * 1.5}px, ${dy * 1.8 - 25}px) scale(0.3)`, opacity: 0 }
+                    ], {
+                        duration: 700 + Math.random() * 500,
+                        easing: 'ease-out'
+                    });
+                    
+                    setTimeout(() => particle.remove(), 1200);
+                }, i * 50);
+            }
         }
 
         // =============================================
@@ -6534,10 +7140,10 @@
         // =============================================
 
         const HABIT_NAMES = {
-            anger: 'الغضب', anxiety: 'التوتر', stress: 'القلق',
+            anger: 'الغضب', anxiety: 'التوتر', stress: 'القلق', lying: 'الكذب',
             smoking: 'التدخين', procrastination: 'التسويف', scrolling: 'التصفح المفرط'
         };
-        const HABIT_CAT_A = ['anger','anxiety','stress'];
+        const HABIT_CAT_A = ['anger','anxiety','stress',"lying"];
         const HABIT_CAT_B = ['smoking','procrastination','scrolling'];
 
         function handleHabitChange() {
