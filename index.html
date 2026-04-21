@@ -4288,47 +4288,54 @@
         <div id="content-dashboard" class="tab-content">
             <div class="card dash-card-wrap">
 
-                <div class="chart-container global-filters-container" id="global-filters-container">
-                    <div class="chart-header mb-0">
-                        <h3 class="chart-title">🎛️ تصفية البيانات</h3>
-                        <div class="chart-filters" id="global-filters-btns">
-                            <button class="cf-btn active" onclick="setGlobalView('all',this)">الكل</button>
-                            <button class="cf-btn" onclick="setGlobalView('3m',this)">٣ أشهر</button>
-                            <button class="cf-btn" onclick="setGlobalView('month',this)">شهر</button>
-                            <button class="cf-btn" onclick="setGlobalView('week',this)">أسبوع</button>
-                            <button class="cf-btn" onclick="setGlobalView('custom',this)">مخصص</button>
-                            <button class="cf-btn clear-filters-btn" onclick="clearGlobalFilters()">مسح الفلاتر ✖</button>
-                        </div>
-                    </div>
+        <div class="chart-container global-filters-container" id="global-filters-container">
+            
+            <div class="chart-header mb-0">
+                <h3 class="chart-title">🎛️ تصفية البيانات</h3>
+                <button class="cf-btn" id="toggle-filters-btn" onclick="toggleFiltersPanel()" style="margin-right: auto;">إخفاء ⌃</button>
+            </div>
 
-                    <div id="custom-date-section" class="hidden custom-date-wrapper">
-                        <div class="date-row">
-                            <span class="filter-label">الفترة:</span>
-                            <input type="date" id="filter-start" class="read-date-new date-input">
-                            <span class="filter-text-sec">إلى</span>
-                            <input type="date" id="filter-end" class="read-date-new date-input">
-                            
-                            <button class="cf-btn compare" id="global-compare-btn" onclick="toggleGlobalCompare(this)" style="margin-right: auto; padding: 0.4rem 0.8rem; font-size: 0.85rem;">مقارنة ⚖️</button>
-                        </div>
-
-                        <div id="compare-date-section" class="compare-section-box" style="display: none;">
-                            <span class="filter-label-accent">مقابل:</span>
-                            <input type="date" id="filter-comp-start" class="read-date-new date-input">
-                            <span class="filter-text-accent">إلى</span>
-                            <input type="date" id="filter-comp-end" class="read-date-new date-input">
-                        </div>
-                        
-                        <button class="btn btn-primary apply-filter-btn" onclick="applyGlobalFilters()">تطبيق الفلتر المخصص ✓</button>
-                    </div>
-
-                    <div class="sync-toggle-wrapper">
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="sync-all-filters" checked onchange="applyGlobalFilters()">
-                            <span class="toggle-slider"></span>
-                        </label>
-                        <span class="sync-label">تطبيق الفلتر على البطاقات العلوية وسحابة المشاعر</span>
-                    </div>
+            <div id="filters-body" style="margin-top: 1rem;">
+                
+                <div class="chart-filters" id="global-filters-btns" style="margin-bottom: 0.8rem;">
+                    <button class="cf-btn active" onclick="setGlobalView('all',this)">الكل</button>
+                    <button class="cf-btn" onclick="setGlobalView('3m',this)">٣ أشهر</button>
+                    <button class="cf-btn" onclick="setGlobalView('month',this)">شهر</button>
+                    <button class="cf-btn" onclick="setGlobalView('week',this)">أسبوع</button>
+                    <button class="cf-btn" onclick="setGlobalView('custom',this)">مخصص</button>
+                    <button class="cf-btn clear-filters-btn" onclick="clearGlobalFilters()">مسح الفلاتر ✖</button>
                 </div>
+
+                <div id="custom-date-section" class="hidden custom-date-wrapper" style="margin-top: 0.5rem;">
+                    <div class="date-row">
+                        <span class="filter-label">الفترة:</span>
+                        <input type="date" id="filter-start" class="read-date-new date-input">
+                        <span class="filter-text-sec">إلى</span>
+                        <input type="date" id="filter-end" class="read-date-new date-input">
+                        
+                        <button class="cf-btn compare" id="global-compare-btn" onclick="toggleGlobalCompare(this)" style="margin-right: auto; padding: 0.4rem 0.8rem; font-size: 0.85rem;">مقارنة ⚖️</button>
+                    </div>
+
+                    <div id="compare-date-section" class="compare-section-box" style="display: none;">
+                        <span class="filter-label-accent">مقابل:</span>
+                        <input type="date" id="filter-comp-start" class="read-date-new date-input">
+                        <span class="filter-text-accent">إلى</span>
+                        <input type="date" id="filter-comp-end" class="read-date-new date-input">
+                    </div>
+                    
+                    <button class="btn btn-primary apply-filter-btn" onclick="applyGlobalFilters()">تطبيق الفلتر المخصص ✓</button>
+                </div>
+
+                <div class="sync-toggle-wrapper">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="sync-all-filters" checked onchange="applyGlobalFilters()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="sync-label">تطبيق الفلتر على البطاقات العلوية وسحابة المشاعر</span>
+                </div>
+                
+            </div>
+        </div>
 
                 <div class="dashboard-grid">
                     <div class="stat-card">
@@ -6220,6 +6227,19 @@
                 }
             }
             _updateDashboard();
+        }
+        // ─── NEW FUNCTION: TOGGLE FILTERS PANEL ─────────────────────────
+        function toggleFiltersPanel() {
+            const body = document.getElementById('filters-body');
+            const btn = document.getElementById('toggle-filters-btn');
+            
+            if (body.style.display === 'none') {
+                body.style.display = 'block';
+                btn.innerHTML = 'إخفاء ⌃';
+            } else {
+                body.style.display = 'none';
+                btn.innerHTML = 'إظهار ⌄';
+            }
         }
 
         // ─── CORE DASHBOARD PIPELINE ────────────────────────────────────
