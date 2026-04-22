@@ -2626,6 +2626,74 @@
         @keyframes fadeOutToast {
             to { transform: translateY(20px); opacity: 0; }
         }
+        /* ===================================================
+           AUDIO LIBRARY (المكتبة الصوتية)
+           =================================================== */
+        .audio-lib-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin-top: 1rem;
+        }
+        .audio-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.2rem;
+            box-shadow: var(--shadow-sm);
+            border-right: 4px solid var(--accent-calm);
+            transition: all 0.2s;
+        }
+        .audio-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--accent-cool);
+        }
+        .audio-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .audio-card-title {
+            font-family: 'Amiri', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .audio-card-date {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            background: var(--bg-primary);
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
+        }
+        .audio-card-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid var(--border-soft);
+        }
+        .audio-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 10px;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            transition: all 0.2s;
+        }
+        .audio-btn.play { background: rgba(162,155,254,0.15); color: var(--accent-calm); }
+        .audio-btn.play:hover { background: var(--accent-calm); color: white; }
+        .audio-btn.download { background: rgba(85,239,196,0.15); color: #00b894; }
+        .audio-btn.download:hover { background: #00b894; color: white; }
+        .audio-btn.delete { background: rgba(214,48,49,0.1); color: #d63031; flex: 0.4; }
+        .audio-btn.delete:hover { background: #d63031; color: white; }
     </style>
 </head>
 <body>
@@ -2695,6 +2763,10 @@
             <div class="menu-item" onclick="navigateTo('setup'); toggleMenu();">
                 <span class="menu-item-icon">⚙️</span>
                 <span class="menu-item-text">الإعدادات</span>
+            </div>
+            <div class="menu-item" onclick="navigateTo('audio-library'); toggleMenu();">
+                <span class="menu-item-icon">🎧</span>
+                <span class="menu-item-text">المكتبة الصوتية</span>
             </div>
         </div>
     </div>
@@ -4453,7 +4525,14 @@
                     <label class="form-label">رابط Google Apps Script</label>
                     <input type="text" id="script-url" placeholder="https://script.google.com/macros/s/...../exec">
                 </div>
-                
+                <div class="form-group mt-2">
+                    <label class="form-label">مفتاح الصوت Google Cloud TTS (اختياري لصوت طبيعي)</label>
+                    <input type="text" id="tts-api-key" placeholder="AIzaSy...">
+                    <small style="color: var(--text-secondary); display: block; margin-top: 0.3rem;">
+                        استخدم صوت <b>WaveNet</b> البشري. مجاني حتى مليون حرف شهرياً. 
+                        (إذا تركته فارغاً سيعمل الصوت الافتراضي للمتصفح).
+                    </small>
+                </div>
                 <button onclick="saveConfig()" class="btn btn-primary btn-full">💾 حفظ الإعدادات</button>
                 
                 <div id="setup-message" style="margin-top: 1rem;"></div>
@@ -4492,6 +4571,21 @@
             <div class="nav-item-label">القراءة</div>
         </button>
     </div>
+    <div id="content-audio-library" class="tab-content">
+            <div class="card">
+                <div style="display:flex;align-items:center;gap:0.7rem;margin-bottom:1.2rem;">
+                    <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#a29bfe,#6c5ce7);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">🎧</div>
+                    <div>
+                        <h2 style="font-family:'Amiri',serif;font-size:1.35rem;font-weight:700;margin:0;">المكتبة الصوتية</h2>
+                        <p style="font-size:0.78rem;color:var(--text-secondary);margin:0;">تحليلاتك المحفوظة للاستماع والتحميل</p>
+                    </div>
+                </div>
+                
+                <div id="audio-library-message"></div>
+                <div id="audio-library-list" class="audio-lib-grid">
+                    </div>
+            </div>
+        </div>
     <div class="add-menu-overlay" id="add-menu-overlay" onclick="toggleAddMenu()"></div>
     <div class="add-menu-sheet" id="add-menu-sheet">
         <div class="add-menu-header">
@@ -5119,12 +5213,18 @@
         
         // ============= NAVIGATION =============
         function navigateTo(section) {
+            // إيقاف أي قراءة صوتية شغالة عند الانتقال لصفحة أخرى
+            if (typeof stopSpeech === "function") stopSpeech();
             // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             
             // Show selected tab
             document.getElementById('content-' + section).classList.add('active');
-            
+
+            // تحميل المكتبة الصوتية إذا تم فتحها
+            if (section === 'audio-library') {
+                loadAudioLibrary();
+            }
             // Show/hide back button
             if (section === 'landing') {
                 document.getElementById('back-btn').classList.add('hidden');
@@ -5208,6 +5308,8 @@
         // ============= CONFIG =============
         function saveConfig() {
             const url = document.getElementById('script-url').value.trim();
+            const ttsKey = document.getElementById('tts-api-key').value.trim();
+            
             if (!url) {
                 showMessage('setup-message', 'الرجاء إدخال رابط Google Apps Script', 'error');
                 return;
@@ -5215,6 +5317,7 @@
             
             CONFIG.scriptUrl = url;
             localStorage.setItem('scriptUrl', url);
+            localStorage.setItem('ttsApiKey', ttsKey);
             showMessage('setup-message', '✅ تم حفظ الإعدادات بنجاح!', 'success');
         }
                 // ── YES/NO TOGGLE QUESTIONS ──
@@ -7793,15 +7896,27 @@
         function _analysisCard(key, val, extraClass) {
             if (!val || !String(val).trim()) return '';
             let v = ''; try { v = marked.parse(String(val)); } catch(e) { v = String(val); }
+            
             return `<div class="read-field-card analysis ${extraClass || ''}">
-                <button class="read-field-toggle" onclick="toggleReadField(this)">
-                    <span class="read-field-key">${key}</span>
-                    <span class="read-field-chevron">▼</span>
-                </button>
-                <div class="read-field-body open">
+                <div class="read-field-toggle" onclick="toggleReadField(this)" style="display:flex; align-items:center; width:100%;">
+                    <span class="read-field-key" style="flex:1; text-align:right;">${key}</span>
+                    
+                    <button class="tts-save-btn" onclick="event.stopPropagation(); saveAnalysisToLibrary(this)" title="حفظ في المكتبة" 
+                            style="background:none; border:none; font-size:1.1rem; cursor:pointer; padding:0 8px; opacity:0.7; transition:all 0.2s;">
+                        💾
+                    </button>
+                    <button class="tts-btn" onclick="event.stopPropagation(); playAnalysisSpeech(this)" title="استماع للتحليل" 
+                            style="background:none; border:none; font-size:1.3rem; cursor:pointer; padding:0 8px; opacity:0.7; transition:all 0.2s;">
+                        🔊
+                    </button>
+                    
+                    <span class="read-field-chevron" style="margin-right:8px;">▼</span>
+                </div>
+                <div class="read-field-body"> <!-- Removed "open" class here -->
                     <div class="read-field-value markdown-content">${v}</div>
                 </div></div>`;
         }
+
 
         // ── Main journal ─────────────────────────────────────────
         function _renderMain(data, container) {
@@ -8207,6 +8322,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadCustomHabitsToSelect();
             loadAffirmationsList();
+            if (localStorage.getItem('ttsApiKey')) document.getElementById('tts-api-key').value = localStorage.getItem('ttsApiKey'); 
             // Register custom habits in HABIT_NAMES
             const customs = JSON.parse(localStorage.getItem('_customHabits') || '[]');
             customs.forEach(h => { HABIT_NAMES[h.key] = h.name; });
@@ -8218,6 +8334,404 @@
                 .then(reg => console.log('Service Worker Registered!', reg))
                 .catch(err => console.log('Service Worker Failed!', err));
             });
+        }
+// ===================================================
+        // قاعدة البيانات المحلية للمقاطع الصوتية (IndexedDB)
+        // ===================================================
+        const AudioDB = {
+            db: null,
+            init() {
+                return new Promise((resolve, reject) => {
+                    const req = indexedDB.open('DiaryAudioDB', 1);
+                    req.onupgradeneeded = e => {
+                        if (!e.target.result.objectStoreNames.contains('audios')) {
+                            e.target.result.createObjectStore('audios', { keyPath: 'id' });
+                        }
+                    };
+                    req.onsuccess = e => { this.db = e.target.result; resolve(); };
+                    req.onerror = e => reject(e);
+                });
+            },
+            async save(id, title, text, chunksBase64) {
+                if (!this.db) await this.init();
+                return new Promise((resolve, reject) => {
+                    const tx = this.db.transaction('audios', 'readwrite');
+                    const store = tx.objectStore('audios');
+                    store.put({ id, title, text, chunks: chunksBase64, timestamp: Date.now() });
+                    tx.oncomplete = resolve;
+                    tx.onerror = reject;
+                });
+            },
+            async getAll() {
+                if (!this.db) await this.init();
+                return new Promise((resolve, reject) => {
+                    const tx = this.db.transaction('audios', 'readonly');
+                    const req = tx.objectStore('audios').getAll();
+                    req.onsuccess = () => resolve(req.result.sort((a,b) => b.timestamp - a.timestamp));
+                    req.onerror = reject;
+                });
+            },
+            async get(id) {
+                if (!this.db) await this.init();
+                return new Promise((resolve, reject) => {
+                    const tx = this.db.transaction('audios', 'readonly');
+                    const req = tx.objectStore('audios').get(id);
+                    req.onsuccess = () => resolve(req.result);
+                    req.onerror = reject;
+                });
+            },
+            async delete(id) {
+                if (!this.db) await this.init();
+                return new Promise((resolve, reject) => {
+                    const tx = this.db.transaction('audios', 'readwrite');
+                    tx.objectStore('audios').delete(id);
+                    tx.oncomplete = resolve;
+                    tx.onerror = reject;
+                });
+            }
+        };
+
+        // ===================================================
+        // النظام الصوتي السحابي (مع ميزة الإيقاف/الاستئناف)
+        // ===================================================
+        let currentAudioInstance = null;
+        let activeSpeechBtn = null;
+        let currentPlaylist = [];
+        let currentChunkIndex = 0;
+        let isTTSStopped = false;
+        let isTTSPaused = false;
+
+        async function playAnalysisSpeech(btn, libraryAudioId = null) {
+            // 1. إدارة حالة الإيقاف والاستئناف
+            if (activeSpeechBtn === btn) {
+                if (isTTSPaused) resumeSpeech(btn);
+                else pauseSpeech(btn);
+                return;
+            }
+
+            // 2. إيقاف أي صوت آخر يعمل
+            stopSpeech();
+            activeSpeechBtn = btn;
+            isTTSStopped = false;
+            isTTSPaused = false;
+            
+            btn.textContent = '⏳';
+            btn.style.opacity = '1';
+            btn.style.transform = 'scale(1.15)';
+
+            let textToRead = "";
+            let ttsApiKey = localStorage.getItem('ttsApiKey') || '';
+
+            try {
+                // إذا كان التشغيل من المكتبة الصوتية (تم تحميله مسبقاً)
+                if (libraryAudioId) {
+                    const record = await AudioDB.get(libraryAudioId);
+                    if (!record) throw new Error("Audio not found");
+                    currentPlaylist = record.chunks;
+                    currentChunkIndex = 0;
+                    playAudioQueue([], '', btn, true); // True تعني أنه محفوظ مسبقاً
+                    return;
+                }
+
+                // التشغيل العادي (الاستماع الحي)
+                const card = btn.closest('.read-field-card');
+                textToRead = card.querySelector('.read-field-value').innerText;
+                if (!textToRead) { resetSpeechBtn(); return; }
+
+                if (ttsApiKey) {
+                    const chunks = chunkTextForTTS(textToRead, 1500);
+                    currentPlaylist = [];
+                    currentChunkIndex = 0;
+                    
+                    const firstAudioBase64 = await fetchGoogleCloudTTS(chunks[0], ttsApiKey);
+                    currentPlaylist.push(firstAudioBase64);
+                    playAudioQueue(chunks, ttsApiKey, btn, false);
+                } else {
+                    fallbackBrowserTTS(textToRead, btn);
+                }
+            } catch(e) {
+                console.warn("TTS Error:", e);
+                if(textToRead) fallbackBrowserTTS(textToRead, btn);
+                else resetSpeechBtn();
+            }
+        }
+
+        function pauseSpeech(btn) {
+            isTTSPaused = true;
+            btn.textContent = '▶️'; // أيقونة الاستئناف
+            if (currentAudioInstance instanceof Audio) {
+                currentAudioInstance.pause();
+            } else if (window.speechSynthesis && window.speechSynthesis.speaking) {
+                window.speechSynthesis.pause();
+            }
+        }
+
+        function resumeSpeech(btn) {
+            isTTSPaused = false;
+            btn.textContent = '⏸️'; // أيقونة الإيقاف المؤقت
+            if (currentAudioInstance instanceof Audio) {
+                currentAudioInstance.play();
+            } else if (window.speechSynthesis && window.speechSynthesis.paused) {
+                window.speechSynthesis.resume();
+            }
+        }
+
+        async function playAudioQueue(chunks, ttsApiKey, btn, isSavedAudio = false) {
+            if (isTTSStopped || activeSpeechBtn !== btn) return;
+
+            if (currentChunkIndex >= (isSavedAudio ? currentPlaylist.length : chunks.length)) {
+                resetSpeechBtn();
+                return;
+            }
+
+            // تحميل المقطع إذا لم يكن محفوظاً
+            if (!isSavedAudio && currentPlaylist.length <= currentChunkIndex) {
+                btn.textContent = '⏳';
+                try {
+                    const audioBase64 = await fetchGoogleCloudTTS(chunks[currentChunkIndex], ttsApiKey);
+                    currentPlaylist.push(audioBase64);
+                } catch (e) {
+                    console.error("Fetch chunk failed:", e);
+                    stopSpeech();
+                    return;
+                }
+            }
+
+            if (activeSpeechBtn === btn && !isTTSPaused) btn.textContent = '⏸️';
+            
+            currentAudioInstance = new Audio('data:audio/mp3;base64,' + currentPlaylist[currentChunkIndex]);
+            
+            // طلب المقطع التالي في الخلفية (فقط إذا لم يكن محفوظاً)
+            if (!isSavedAudio && currentChunkIndex + 1 < chunks.length && currentPlaylist.length <= currentChunkIndex + 1) {
+                fetchGoogleCloudTTS(chunks[currentChunkIndex + 1], ttsApiKey).then(res => {
+                    currentPlaylist.push(res);
+                }).catch(e => console.error("Prefetch error", e));
+            }
+
+            currentAudioInstance.onended = () => {
+                currentChunkIndex++;
+                if (!isTTSPaused) {
+                    playAudioQueue(chunks, ttsApiKey, btn, isSavedAudio); 
+                }
+            };
+            
+            currentAudioInstance.onerror = () => stopSpeech();
+
+            if (!isTTSPaused) {
+                await currentAudioInstance.play();
+            }
+        }
+
+        // ===================================================
+        // دوال الحفظ والتحميل (المكتبة)
+        // ===================================================
+        async function saveAnalysisToLibrary(btn) {
+            const ttsApiKey = localStorage.getItem('ttsApiKey');
+            if (!ttsApiKey) {
+                showToast('⚠️ يتطلب تفعيل Google Cloud', 'يرجى إضافة مفتاح الصوت من الإعدادات أولاً.', '❌', '#e17055');
+                return;
+            }
+
+            const card = btn.closest('.read-field-card');
+            const text = card.querySelector('.read-field-value').innerText;
+            const title = card.querySelector('.read-field-key').innerText;
+            
+            if (!text) return;
+
+            btn.textContent = '⏳';
+            try {
+                const chunks = chunkTextForTTS(text, 1500);
+                const base64Chunks = [];
+                for (let c of chunks) {
+                    base64Chunks.push(await fetchGoogleCloudTTS(c, ttsApiKey));
+                }
+                
+                const id = 'audio_' + Date.now();
+                await AudioDB.save(id, title, text, base64Chunks);
+                
+                btn.textContent = '✅';
+                showToast('✨ تم الحفظ', 'تم حفظ المقطع في المكتبة الصوتية بنجاح.', '🎧', '#00b894');
+                setTimeout(() => btn.textContent = '💾', 2000);
+                
+                // تحديث المكتبة إذا كانت مفتوحة
+                loadAudioLibrary();
+            } catch(e) {
+                btn.textContent = '💾';
+                showToast('❌ خطأ في الحفظ', e.message, '⚠️', '#d63031');
+            }
+        }
+
+        async function loadAudioLibrary() {
+            const container = document.getElementById('audio-library-list');
+            if (!container) return;
+
+            try {
+                const audios = await AudioDB.getAll();
+                if (audios.length === 0) {
+                    container.innerHTML = `
+                        <div class="read-empty" style="padding:2rem 0;">
+                            <div class="read-empty-icon">📭</div>
+                            <div class="read-empty-title">المكتبة الصوتية فارغة</div>
+                            <div class="read-empty-sub">اضغط على زر (💾) بجانب أي تحليل لحفظه هنا.</div>
+                        </div>`;
+                    return;
+                }
+
+                container.innerHTML = audios.map(audio => {
+                    const dateObj = new Date(audio.timestamp);
+                    const dateStr = `${dateObj.getDate()}/${dateObj.getMonth()+1}/${dateObj.getFullYear()}`;
+                    return `
+                        <div class="audio-card" id="${audio.id}">
+                            <div class="audio-card-header">
+                                <div class="audio-card-title">${audio.title}</div>
+                                <div class="audio-card-date">${dateStr}</div>
+                            </div>
+                            <div style="font-size:0.85rem; color:var(--text-secondary); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
+                                ${audio.text}
+                            </div>
+                            <div class="audio-card-actions">
+                                <button class="audio-btn play" onclick="playAnalysisSpeech(this, '${audio.id}')">
+                                    <span style="font-size:1.2rem;">▶️</span> تشغيل
+                                </button>
+                                <button class="audio-btn download" onclick="downloadAudioAsMP3('${audio.id}', '${audio.title}')">
+                                    <span style="font-size:1.1rem;">📥</span> تحميل
+                                </button>
+                                <button class="audio-btn delete" onclick="deleteSavedAudio('${audio.id}')">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch(e) {
+                console.error("Failed to load library", e);
+            }
+        }
+
+        async function downloadAudioAsMP3(id, title) {
+            try {
+                showToast('⏳ جاري المعالجة...', 'يتم دمج المقاطع لتحميلها كملف واحد...', '⚙️', '#74b9ff');
+                const record = await AudioDB.get(id);
+                if (!record) return;
+
+                // تحويل الـ Base64 إلى مصفوفات ثنائية (Uint8Array)
+                const buffers = record.chunks.map(b64 => {
+                    const binary = atob(b64);
+                    const bytes = new Uint8Array(binary.length);
+                    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+                    return bytes;
+                });
+
+                // دمج المصفوفات الثنائية (MP3 frames يمكن دمجها مباشرة)
+                const totalLen = buffers.reduce((acc, b) => acc + b.length, 0);
+                const finalBuffer = new Uint8Array(totalLen);
+                let offset = 0;
+                for (let b of buffers) {
+                    finalBuffer.set(b, offset);
+                    offset += b.length;
+                }
+
+                // إنشاء الملف وتحميله
+                const blob = new Blob([finalBuffer], { type: 'audio/mp3' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `تحليل_${title}_${Date.now()}.mp3`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showToast('✅ تم التحميل', 'تم حفظ الملف في جهازك.', '📥', '#00b894');
+            } catch(e) {
+                console.error(e);
+                showToast('❌ فشل التحميل', 'حدث خطأ أثناء معالجة الملف.', '⚠️', '#d63031');
+            }
+        }
+
+        async function deleteSavedAudio(id) {
+            if(!confirm("هل أنت متأكد من حذف هذا المقطع؟")) return;
+            await AudioDB.delete(id);
+            loadAudioLibrary();
+        }
+
+        // إبقاء دوال تقسيم النص وجلب الصوت السابقة كما هي
+        function chunkTextForTTS(text, maxLength) {
+            const sentences = text.match(/[^.!?،\n]+[.!?،\n]+/g) || [text];
+            const chunks = [];
+            let currentChunk = "";
+            for (let sentence of sentences) {
+                if (sentence.length > maxLength) {
+                    if (currentChunk.trim()) chunks.push(currentChunk.trim());
+                    currentChunk = "";
+                    let start = 0;
+                    while (start < sentence.length) {
+                        chunks.push(sentence.substring(start, start + maxLength));
+                        start += maxLength;
+                    }
+                } else if (currentChunk.length + sentence.length > maxLength) {
+                    if (currentChunk.trim()) chunks.push(currentChunk.trim());
+                    currentChunk = sentence;
+                } else { currentChunk += sentence; }
+            }
+            if (currentChunk.trim()) chunks.push(currentChunk.trim());
+            return chunks;
+        }
+
+        async function fetchGoogleCloudTTS(text, apiKey) {
+            const url = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`;
+            const payload = {
+                input: { text: text },
+                voice: { languageCode: 'ar-XA', name: 'ar-XA-Chirp3-HD-Achernar' },
+                audioConfig: { audioEncoding: 'MP3', speakingRate: 0.90 }
+            };
+            const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            const data = await response.json();
+            if (data.error) throw new Error(data.error.message);
+            return data.audioContent;
+        }
+
+        function fallbackBrowserTTS(text, btn) {
+            if (!window.speechSynthesis) { resetSpeechBtn(); return; }
+            
+            btn.textContent = '⏸️';
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ar-SA';
+            utterance.rate = 0.9;
+            
+            utterance.onend = () => resetSpeechBtn();
+            utterance.onerror = () => resetSpeechBtn();
+            
+            currentAudioInstance = utterance;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function stopSpeech() {
+            isTTSStopped = true;
+            isTTSPaused = false;
+            if (currentAudioInstance instanceof Audio) {
+                currentAudioInstance.pause();
+                currentAudioInstance.currentTime = 0;
+            } else if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+            resetSpeechBtn();
+        }
+
+        function resetSpeechBtn() {
+            if (activeSpeechBtn) {
+                // العودة للأيقونة الأصلية بناءً على مكان الزر
+                const isLibraryBtn = activeSpeechBtn.classList.contains('play');
+                if (isLibraryBtn) {
+                    activeSpeechBtn.innerHTML = '<span style="font-size:1.2rem;">▶️</span> تشغيل';
+                } else {
+                    activeSpeechBtn.textContent = '🔊';
+                }
+                activeSpeechBtn.style.opacity = '0.7';
+                activeSpeechBtn.style.transform = 'scale(1)';
+                activeSpeechBtn = null;
+            }
+            currentAudioInstance = null;
         }
     </script>
 </body>
