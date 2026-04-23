@@ -2760,13 +2760,13 @@
                 <span class="menu-item-icon">📊</span>
                 <span class="menu-item-text">لوحة التحكم</span>
             </div>
-            <div class="menu-item" onclick="navigateTo('setup'); toggleMenu();">
-                <span class="menu-item-icon">⚙️</span>
-                <span class="menu-item-text">الإعدادات</span>
-            </div>
             <div class="menu-item" onclick="navigateTo('audio-library'); toggleMenu();">
                 <span class="menu-item-icon">🎧</span>
                 <span class="menu-item-text">المكتبة الصوتية</span>
+            </div>
+            <div class="menu-item" onclick="navigateTo('setup'); toggleMenu();">
+                <span class="menu-item-icon">⚙️</span>
+                <span class="menu-item-text">الإعدادات</span>
             </div>
         </div>
     </div>
@@ -4474,6 +4474,20 @@
                 <button onclick="loadDashboard()" class="btn btn-primary btn-full mt-md">🔄 تحديث البيانات</button>
             </div>
         </div>
+        <div id="content-audio-library" class="tab-content">
+            <div class="card">
+                <div style="display:flex;align-items:center;gap:0.7rem;margin-bottom:1.2rem;">
+                    <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#a29bfe,#6c5ce7);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">🎧</div>
+                    <div>
+                        <h2 style="font-family:'Amiri',serif;font-size:1.35rem;font-weight:700;margin:0;">المكتبة الصوتية</h2>
+                        <p style="font-size:0.78rem;color:var(--text-secondary);margin:0;">تحليلاتك المحفوظة للاستماع والتحميل</p>
+                    </div>
+                </div>
+                <div id="audio-library-message"></div>
+                <div id="audio-library-list" class="audio-lib-grid">
+                    </div>
+            </div>
+        </div>
         <!-- Setup Page -->
         <div id="content-setup" class="tab-content">
             <div class="card">
@@ -4571,21 +4585,6 @@
             <div class="nav-item-label">القراءة</div>
         </button>
     </div>
-    <div id="content-audio-library" class="tab-content">
-            <div class="card">
-                <div style="display:flex;align-items:center;gap:0.7rem;margin-bottom:1.2rem;">
-                    <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#a29bfe,#6c5ce7);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">🎧</div>
-                    <div>
-                        <h2 style="font-family:'Amiri',serif;font-size:1.35rem;font-weight:700;margin:0;">المكتبة الصوتية</h2>
-                        <p style="font-size:0.78rem;color:var(--text-secondary);margin:0;">تحليلاتك المحفوظة للاستماع والتحميل</p>
-                    </div>
-                </div>
-                
-                <div id="audio-library-message"></div>
-                <div id="audio-library-list" class="audio-lib-grid">
-                    </div>
-            </div>
-        </div>
     <div class="add-menu-overlay" id="add-menu-overlay" onclick="toggleAddMenu()"></div>
     <div class="add-menu-sheet" id="add-menu-sheet">
         <div class="add-menu-header">
@@ -4620,6 +4619,7 @@
             </div>
         </div>
     </div>
+    
     <!-- Thinking Trap Info Modal -->
     <div id="trap-modal-overlay" class="trap-modal-overlay hidden" onclick="closeTrapModal()">
         <div class="trap-modal" onclick="event.stopPropagation()">
@@ -8335,7 +8335,7 @@
                 .catch(err => console.log('Service Worker Failed!', err));
             });
         }
-// ===================================================
+        // ===================================================
         // قاعدة البيانات المحلية للمقاطع الصوتية (IndexedDB)
         // ===================================================
         const AudioDB = {
