@@ -2534,6 +2534,138 @@
             font-size: 0.85rem;
         }
 
+        /* ── Inventory Journal (جرد الخسائر والمكاسب) ── */
+        .inventory-section {
+            border-radius: 16px; padding: 1.1rem 1.1rem 0.9rem; margin-bottom: 1rem;
+        }
+        .losses-section { background:rgba(225,112,85,0.06); border:1.5px solid rgba(225,112,85,0.2); }
+        .gains-section  { background:rgba(0,184,148,0.06);  border:1.5px solid rgba(0,184,148,0.2); }
+        .inventory-section-header { display:flex; align-items:flex-start; gap:0.75rem; margin-bottom:0.75rem; }
+        .inventory-section-icon { font-size:1.5rem; flex-shrink:0; }
+        .inventory-section-title {
+            font-family:'Amiri',serif; font-size:1.05rem; font-weight:700;
+            color:var(--text-primary); margin-bottom:0.15rem;
+        }
+        .inventory-section-sub { font-size:0.78rem; color:var(--text-secondary); }
+        .inventory-hints-toggle {
+            background:none; border:1px solid var(--border-soft); border-radius:8px;
+            padding:0.3rem 0.75rem; font-family:inherit; font-size:0.78rem;
+            color:var(--text-secondary); cursor:pointer; margin-bottom:0.5rem;
+        }
+        .inventory-hints { display:none; flex-wrap:wrap; gap:0.4rem; margin-bottom:0.75rem; }
+        .inventory-hints.open { display:flex; }
+        .inventory-hint-chip {
+            background:white; border:1px solid var(--border-soft); border-radius:20px;
+            padding:0.28rem 0.75rem; font-size:0.76rem; color:var(--text-secondary);
+        }
+        .inventory-add-row { display:flex; gap:0.5rem; align-items:flex-start; margin-bottom:0.85rem; }
+        .inventory-add-row textarea {
+            flex:1; min-height:68px; padding:0.6rem 0.8rem;
+            border-radius:10px; font-size:0.88rem; resize:vertical;
+        }
+        .inventory-add-btn {
+            border:none; border-radius:10px; padding:0.6rem 1rem;
+            font-family:inherit; font-size:0.85rem; font-weight:700;
+            cursor:pointer; align-self:flex-end; white-space:nowrap;
+        }
+        .losses-add-btn { background:#e17055; color:white; }
+        .gains-add-btn  { background:#00b894; color:white; }
+        .inventory-add-btn:hover { opacity:0.88; }
+        .inventory-list { display:flex; flex-direction:column; gap:0.45rem; }
+        .inventory-item {
+            display:flex; align-items:flex-start; gap:0.6rem;
+            background:white; border-radius:10px; padding:0.65rem 0.9rem;
+            border:1px solid var(--border-soft); font-size:0.88rem;
+            line-height:1.6; color:var(--text-primary);
+        }
+        .inventory-item-text { flex:1; }
+        .inventory-del {
+            background:none; border:none; color:#d63031; cursor:pointer;
+            font-size:0.9rem; padding:0; flex-shrink:0; opacity:0.55; transition:opacity 0.2s;
+        }
+        .inventory-del:hover { opacity:1; }
+        .inventory-empty { text-align:center; padding:0.8rem; color:var(--text-secondary); font-size:0.83rem; }
+        /* Home daily reminder */
+        .inventory-reminder-card {
+            background:linear-gradient(135deg,#2d3436,#34495e);
+            border-radius:16px; padding:1rem 1.15rem;
+            display:flex; flex-direction:column; gap:0.65rem;
+        }
+        .inventory-reminder-label { font-size:0.7rem; color:rgba(255,255,255,0.45); letter-spacing:0.02em; }
+        .inventory-reminder-loss { font-size:0.86rem; color:#ff9f9f; line-height:1.6; font-style:italic; }
+        .inventory-reminder-divider { height:1px; background:rgba(255,255,255,0.1); }
+        .inventory-reminder-gain { font-size:0.86rem; color:#81ecec; line-height:1.6; font-style:italic; }
+
+        /* ── Gratitude Journal (يوميات الامتنان) ── */
+        .gratitude-scene-wrap {
+            display:flex; flex-direction:column; align-items:center;
+            padding:0.5rem 0 0.5rem;
+        }
+        .gratitude-header-title {
+            font-family:'Amiri',serif; font-size:1.5rem; font-weight:700;
+            color:var(--text-primary); text-align:center; margin-bottom:0.1rem;
+        }
+        .gratitude-header-sub {
+            font-size:0.82rem; color:var(--text-secondary); text-align:center; margin-bottom:0.5rem;
+        }
+        .gratitude-count-badge {
+            display:inline-flex; align-items:center; gap:0.35rem;
+            background:rgba(162,155,254,0.1); border:1px solid rgba(162,155,254,0.25);
+            border-radius:20px; padding:0.28rem 0.85rem;
+            font-size:0.8rem; color:var(--accent-calm); font-weight:600; margin-bottom:0.75rem;
+        }
+        .jar-scene {
+            position:relative; width:210px; margin:0 auto;
+        }
+        .jar-svg { width:100%; display:block; }
+        .jar-stars-overlay {
+            position:absolute; bottom:26px; left:50%; transform:translateX(-50%);
+            width:108px; height:130px; display:flex; flex-wrap:wrap;
+            align-content:flex-end; align-items:center;
+            justify-content:center; gap:3px 2px;
+            overflow:hidden; pointer-events:none;
+        }
+        .jar-star-item {
+            font-size:1.35rem; display:inline-block; line-height:1;
+            animation:starBob var(--dur,3s) ease-in-out infinite;
+            animation-delay:var(--delay,0s);
+        }
+        @keyframes starBob {
+            0%,100% { transform:translateY(0) rotate(-6deg); }
+            50%      { transform:translateY(-4px) rotate(6deg); }
+        }
+        .star-drop-anim {
+            position:fixed; pointer-events:none; z-index:9999;
+            font-size:2.2rem; line-height:1;
+            animation:dropIntoJar 1.05s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
+        }
+        @keyframes dropIntoJar {
+            0%  { transform:translateY(0) scale(0) rotate(0deg);     opacity:0; }
+            22% { transform:translateY(6px) scale(1.5) rotate(40deg); opacity:1; }
+            72% { transform:translateY(145px) scale(1.1) rotate(255deg); opacity:0.9; }
+            100%{ transform:translateY(192px) scale(0.1) rotate(380deg); opacity:0; }
+        }
+        .gratitude-prompt-card {
+            background:linear-gradient(135deg,rgba(162,155,254,0.06),rgba(116,185,255,0.05));
+            border:1.5px solid rgba(162,155,254,0.2);
+            border-radius:18px; padding:1.1rem 1.2rem; margin-bottom:1rem; position:relative;
+        }
+        .gratitude-prompt-eyebrow {
+            font-size:0.68rem; font-weight:700; letter-spacing:0.06em;
+            color:var(--accent-calm); margin-bottom:0.5rem; text-transform:uppercase;
+        }
+        .gratitude-prompt-text {
+            font-family:'Amiri',serif; font-size:1.06rem; color:var(--text-primary);
+            line-height:1.8; transition:opacity 0.2s ease, transform 0.2s ease;
+        }
+        .gratitude-shuffle-btn {
+            position:absolute; top:0.75rem; left:0.75rem;
+            background:rgba(162,155,254,0.12); border:none; border-radius:8px;
+            width:30px; height:30px; font-size:0.82rem; cursor:pointer;
+            display:flex; align-items:center; justify-content:center; transition:background 0.2s;
+        }
+        .gratitude-shuffle-btn:hover { background:rgba(162,155,254,0.25); }
+
         /* ── Read page date browser (for CBT / Scenarios / Exposure) ── */
         .date-browser {
             margin-bottom: 1rem;
@@ -2784,6 +2916,16 @@
                 <div class="home-date-row">
                     <span class="home-date-badge" id="home-date-display">...</span>
                     <span class="home-day-text" id="home-day-display"></span>
+                </div>
+            </div>
+
+            <!-- Daily Inventory Reminder -->
+            <div id="inventory-reminder" style="display:none; margin-bottom:0.75rem;">
+                <div class="inventory-reminder-card">
+                    <div class="inventory-reminder-label">تذكير اليوم 🌅</div>
+                    <div class="inventory-reminder-loss" id="reminder-loss-text"></div>
+                    <div class="inventory-reminder-divider"></div>
+                    <div class="inventory-reminder-gain" id="reminder-gain-text"></div>
                 </div>
             </div>
 
@@ -3143,6 +3285,7 @@
                         <div class="analysis-mode-hint">⚙️ هذا الاختيار لا يُحفظ — يحدد فقط نوع التحليل الذي سيجريه الذكاء الاصطناعي بعد الحفظ</div>
                     </div>
 
+                    <button type="button" class="btn btn-secondary btn-full" onclick="event.stopPropagation(); clearDailyDraft()" style="margin-bottom:0.5rem;">🗑️ مسح المسودة</button>
                     <button type="submit" class="btn btn-primary btn-full">💾 حفظ المدخل</button>
                 </form>
             </div>
@@ -3911,6 +4054,32 @@
                         </div>
                     </div>
 
+                    <!-- 7. جرد الخسائر والمكاسب -->
+                    <div class="journal-hub-card" style="border-color:rgba(253,121,168,0.3);">
+                        <div class="jhc-icon-wrap" style="background:linear-gradient(135deg,#fd79a8,#e84393);">📋</div>
+                        <div class="jhc-body">
+                            <div class="jhc-title">جرد الخسائر والمكاسب</div>
+                            <div class="jhc-desc">دوّن دوافعك للتعافي — ما خسرته وما تأمل أن تكونه</div>
+                        </div>
+                        <div class="jhc-actions">
+                            <button class="jhc-btn jhc-btn-write" onclick="navigateTo('write-inventory')">✏️ كتابة</button>
+                            <button class="jhc-btn jhc-btn-read" onclick="openReadForType('Inventory')">📖</button>
+                        </div>
+                    </div>
+
+                    <!-- 8. يوميات الامتنان -->
+                    <div class="journal-hub-card" style="border-color:rgba(162,155,254,0.3);">
+                        <div class="jhc-icon-wrap" style="background:linear-gradient(135deg,#a29bfe,#6c5ce7);">✨</div>
+                        <div class="jhc-body">
+                            <div class="jhc-title">يوميات الامتنان</div>
+                            <div class="jhc-desc">جمّع لحظات السعادة في جرة النجوم</div>
+                        </div>
+                        <div class="jhc-actions">
+                            <button class="jhc-btn jhc-btn-write" onclick="navigateTo('write-gratitude')">✏️ كتابة</button>
+                            <button class="jhc-btn jhc-btn-read" onclick="openReadForType('Gratitude')">📖</button>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- ── Affirmations Management Card ── -->
@@ -3933,6 +4102,165 @@
                     </div>
                     <div id="aff-message" style="margin-top:0.5rem;"></div>
                 </div>
+            </div>
+        </div>
+
+        <!-- INVENTORY JOURNAL — جرد الخسائر والمكاسب
+             ============================================ -->
+        <div id="content-write-inventory" class="tab-content">
+            <div class="card">
+                <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1.5rem;">
+                    <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#fd79a8,#e84393);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;">📋</div>
+                    <div>
+                        <h2 style="font-family:'Amiri',serif;font-size:1.4rem;font-weight:700;color:var(--text-primary);margin:0;">جرد الخسائر والمكاسب</h2>
+                        <p style="font-size:0.82rem;color:var(--text-secondary);margin:0;">دوافعك نحو التعافي</p>
+                    </div>
+                </div>
+
+                <!-- LOSSES SECTION -->
+                <div class="inventory-section losses-section">
+                    <div class="inventory-section-header">
+                        <span class="inventory-section-icon">💔</span>
+                        <div>
+                            <div class="inventory-section-title">أجرد كل ما خسرته بسبب مشكلتك</div>
+                            <div class="inventory-section-sub">ابدأ كل جملة بـ "أنا خسرت ..."</div>
+                        </div>
+                    </div>
+                    <button class="inventory-hints-toggle" onclick="toggleInventoryHints('losses')">💡 أفكار مساعدة</button>
+                    <div class="inventory-hints" id="inventory-hints-losses">
+                        <span class="inventory-hint-chip">ماذا خسرت على الجانب الروحي؟</span>
+                        <span class="inventory-hint-chip">ما الفرص التي ضاعت عليّ؟</span>
+                        <span class="inventory-hint-chip">ماذا خسرت اجتماعياً؟</span>
+                        <span class="inventory-hint-chip">ماذا خسرت نفسياً؟</span>
+                        <span class="inventory-hint-chip">ماذا خسرت مادياً؟</span>
+                        <span class="inventory-hint-chip">ماذا خسرت في علاقاتي؟</span>
+                    </div>
+                    <div class="inventory-add-row">
+                        <textarea id="inv-loss-input" placeholder="أنا خسرت ..."></textarea>
+                        <button class="inventory-add-btn losses-add-btn" onclick="addInventoryItem('loss')">➕ أضف</button>
+                    </div>
+                    <div id="inventory-losses-list" class="inventory-list">
+                        <div class="inventory-empty" id="inv-losses-empty">لم تضف أي خسائر بعد.</div>
+                    </div>
+                </div>
+
+                <!-- GAINS SECTION -->
+                <div class="inventory-section gains-section" style="margin-bottom:0;">
+                    <div class="inventory-section-header">
+                        <span class="inventory-section-icon">🌟</span>
+                        <div>
+                            <div class="inventory-section-title">أجرد كل ما تتمنى أن تكون عليه بعد التعافي</div>
+                            <div class="inventory-section-sub">ابدأ كل جملة بـ "أنا بعد التعافي ..."</div>
+                        </div>
+                    </div>
+                    <button class="inventory-hints-toggle" onclick="toggleInventoryHints('gains')">💡 أفكار مساعدة</button>
+                    <div class="inventory-hints" id="inventory-hints-gains">
+                        <span class="inventory-hint-chip">ماذا سيكون شكلي بعد التعافي؟</span>
+                        <span class="inventory-hint-chip">كيف ستكون نظرتي لنفسي؟</span>
+                        <span class="inventory-hint-chip">كيف ستكون نظرتي للمجتمع؟</span>
+                        <span class="inventory-hint-chip">كيف ستكون علاقتي بالله؟</span>
+                        <span class="inventory-hint-chip">كيف سيكون شكل علاقاتي؟</span>
+                    </div>
+                    <div class="inventory-add-row">
+                        <textarea id="inv-gain-input" placeholder="أنا بعد التعافي ..."></textarea>
+                        <button class="inventory-add-btn gains-add-btn" onclick="addInventoryItem('gain')">➕ أضف</button>
+                    </div>
+                    <div id="inventory-gains-list" class="inventory-list">
+                        <div class="inventory-empty" id="inv-gains-empty">لم تضف أي أمنيات بعد.</div>
+                    </div>
+                </div>
+
+                <div id="inventory-message" style="margin-top:0.75rem;"></div>
+            </div>
+        </div>
+
+        <!-- GRATITUDE JOURNAL — يوميات الامتنان
+             ============================================ -->
+        <div id="content-write-gratitude" class="tab-content">
+            <div class="card">
+
+                <!-- Header + Jar -->
+                <div class="gratitude-scene-wrap">
+                    <div class="gratitude-header-title">يوميات الامتنان ✨</div>
+                    <div class="gratitude-header-sub">كل نجمة تحكي لحظة جميلة</div>
+                    <div class="gratitude-count-badge">
+                        <span id="gratitude-count-num">0</span> نجمة في الجرة
+                    </div>
+
+                    <!-- Glass Jar -->
+                    <div class="jar-scene" id="jar-scene">
+                        <svg class="jar-svg" viewBox="0 0 240 300" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <filter id="grat-shadow">
+                                    <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="rgba(0,0,0,0.1)"/>
+                                </filter>
+                                <linearGradient id="grat-glass" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%"   stop-color="#b0d4e8" stop-opacity="0.88"/>
+                                    <stop offset="45%"  stop-color="#daeef8" stop-opacity="0.58"/>
+                                    <stop offset="100%" stop-color="#b0d4e8" stop-opacity="0.78"/>
+                                </linearGradient>
+                                <linearGradient id="grat-cork" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%"   stop-color="#e0ae50"/>
+                                    <stop offset="100%" stop-color="#b07828"/>
+                                </linearGradient>
+                            </defs>
+
+                            <!-- Cork shadow -->
+                            <ellipse cx="120" cy="55" rx="55" ry="5" fill="rgba(0,0,0,0.07)"/>
+                            <!-- Cork body -->
+                            <rect x="67" y="8" width="106" height="47" rx="13" fill="url(#grat-cork)" filter="url(#grat-shadow)"/>
+                            <!-- Cork top sheen -->
+                            <rect x="73" y="13" width="94" height="11" rx="5" fill="#eab858" opacity="0.55"/>
+                            <!-- Cork grain lines -->
+                            <line x1="90"  y1="11" x2="90"  y2="53" stroke="#8c6020" stroke-width="1.3" opacity="0.38"/>
+                            <line x1="107" y1="11" x2="107" y2="53" stroke="#8c6020" stroke-width="1.3" opacity="0.38"/>
+                            <line x1="124" y1="11" x2="124" y2="53" stroke="#8c6020" stroke-width="1.3" opacity="0.38"/>
+                            <line x1="141" y1="11" x2="141" y2="53" stroke="#8c6020" stroke-width="1.3" opacity="0.38"/>
+                            <line x1="158" y1="11" x2="158" y2="53" stroke="#8c6020" stroke-width="1.3" opacity="0.38"/>
+
+                            <!-- Neck trapezoid -->
+                            <path d="M83 55 L70 89 L170 89 L157 55 Z"
+                                  fill="url(#grat-glass)" stroke="#88bcd0" stroke-width="1.5"/>
+
+                            <!-- Jar body -->
+                            <path d="M70 89 C48 115 42 172 46 226 C50 278 86 295 120 295 C154 295 190 278 194 226 C198 172 192 115 170 89 Z"
+                                  fill="url(#grat-glass)" stroke="#88bcd0" stroke-width="2" filter="url(#grat-shadow)"/>
+
+                            <!-- Bottom glass tint -->
+                            <ellipse cx="120" cy="291" rx="36" ry="7" fill="#88bcd0" opacity="0.2"/>
+
+                            <!-- Left highlight (thick) -->
+                            <path d="M57 108 C51 145 48 190 50 234 C52 264 60 284 71 294"
+                                  stroke="rgba(255,255,255,0.72)" stroke-width="10" fill="none" stroke-linecap="round"/>
+                            <!-- Left highlight (thin) -->
+                            <path d="M75 98 C71 125 70 160 72 194"
+                                  stroke="rgba(255,255,255,0.42)" stroke-width="4" fill="none" stroke-linecap="round"/>
+                            <!-- Right highlight -->
+                            <path d="M191 118 C194 152 194 194 192 226"
+                                  stroke="rgba(255,255,255,0.26)" stroke-width="5" fill="none" stroke-linecap="round"/>
+                        </svg>
+
+                        <!-- Stars rendered inside jar -->
+                        <div class="jar-stars-overlay" id="jar-stars"></div>
+                    </div>
+                </div>
+
+                <div id="gratitude-message"></div>
+
+                <!-- Rotating prompt card -->
+                <div class="gratitude-prompt-card">
+                    <button class="gratitude-shuffle-btn" onclick="shuffleGratitudePrompt()" title="سؤال مختلف">🔀</button>
+                    <div class="gratitude-prompt-eyebrow">✦ سؤال اليوم</div>
+                    <div class="gratitude-prompt-text" id="gratitude-prompt-text">جارٍ التحضير...</div>
+                </div>
+
+                <!-- Answer textarea -->
+                <div class="form-group">
+                    <label class="form-label">إجابتك</label>
+                    <textarea id="gratitude-answer" rows="4" placeholder="اكتب إجابتك هنا..."></textarea>
+                </div>
+
+                <button class="btn btn-primary btn-full" onclick="submitGratitudeEntry()">إضافة نجمة 🌟</button>
             </div>
         </div>
 
@@ -4316,6 +4644,12 @@
                         <button class="read-tab" data-type="Quick Logs" onclick="switchReadTab(this)">
                             <span class="read-tab-emoji">⚡</span> تسجيل سريع
                         </button>
+                        <button class="read-tab" data-type="Inventory" onclick="switchReadTab(this)">
+                            <span class="read-tab-emoji">📊</span> الجرد
+                        </button>
+                        <button class="read-tab" data-type="Gratitude" onclick="switchReadTab(this)">
+                            <span class="read-tab-emoji">🌟</span> الامتنان
+                        </button>
                     </div>
                 </div>
 
@@ -4616,6 +4950,11 @@
             <div class="add-menu-item" onclick="selectJournalType('habit-lab')">
                 <div class="add-icon" style="background: linear-gradient(135deg,#a29bfe22,#74b9ff22);">🔬</div>
                 <span>مختبر العادات</span>
+            </div>
+
+            <div class="add-menu-item" onclick="selectJournalType('write-gratitude')">
+                <div class="add-icon" style="background: linear-gradient(135deg,#a29bfe33,#fd79a833);">✨</div>
+                <span>يوميات الامتنان</span>
             </div>
         </div>
     </div>
@@ -5225,6 +5564,12 @@
             if (section === 'audio-library') {
                 loadAudioLibrary();
             }
+            if (section === 'write-inventory') {
+                loadInventoryPage();
+            }
+            if (section === 'write-gratitude') {
+                loadGratitudePage();
+            }
             // Show/hide back button
             if (section === 'landing') {
                 document.getElementById('back-btn').classList.add('hidden');
@@ -5395,119 +5740,147 @@
             document.getElementById('apill-deep').classList.add('selected');
             document.querySelector('.analysis-mode-card').style.borderColor = 'rgba(108,92,231,0.2)';
         }
-        // ============= DRAFT SYSTEM =============
+        // ============= DRAFT SYSTEM (max 4 days) =============
+        const DRAFT_STORAGE_KEY = 'journal_daily_drafts';
+        const MAX_DRAFTS = 4;
+        let _currentDraftDate = '';
 
-        // 1. Save current form state to local storage
+        function _getAllDrafts() {
+            try { return JSON.parse(localStorage.getItem(DRAFT_STORAGE_KEY) || '{}'); } catch(e) { return {}; }
+        }
+
         function saveDailyDraft() {
+            const date = _currentDraftDate;
+            if (!date) return;
             const draft = {
-                date: document.getElementById('date-daily')?.value || '',
                 quality: document.getElementById('quality-daily')?.value || '5',
                 negative: document.getElementById('negative-daily')?.value || '',
                 positive: document.getElementById('positive-daily')?.value || '',
                 freeform: document.getElementById('freeform-daily')?.value || '',
-                
-                // Toggles
                 attractionToggle: document.getElementById('tq-attraction')?.classList.contains('active') || false,
                 attractionText: document.getElementById('attraction-daily')?.value || '',
                 relapseToggle: document.getElementById('tq-relapse')?.classList.contains('active') || false,
                 relapseText: document.getElementById('relapse-daily')?.value || '',
-                
-                // Analysis Mode Pills
                 analysisGeneral: document.getElementById('apill-general')?.classList.contains('selected') || false,
                 analysisDeep: document.getElementById('apill-deep')?.classList.contains('selected') || false,
-                
-                // Arrays for Chips (assuming these global variables exist in your code)
-                halt: typeof selectedHalt !== 'undefined' ? selectedHalt : [],
-                emotions: typeof selectedEmotions !== 'undefined' && selectedEmotions.daily ? selectedEmotions.daily : {}
+                halt: typeof selectedHalt !== 'undefined' ? [...selectedHalt] : [],
+                emotions: typeof selectedEmotions !== 'undefined' && selectedEmotions.daily
+                    ? JSON.parse(JSON.stringify(selectedEmotions.daily)) : {},
+                savedAt: Date.now()
             };
-            
-            localStorage.setItem('journal_daily_draft', JSON.stringify(draft));
+            const drafts = _getAllDrafts();
+            if (!drafts[date] && Object.keys(drafts).length >= MAX_DRAFTS) {
+                const oldest = Object.entries(drafts).sort((a, b) => (a[1].savedAt||0) - (b[1].savedAt||0))[0][0];
+                delete drafts[oldest];
+            }
+            drafts[date] = draft;
+            localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(drafts));
         }
 
-        // 2. Load draft from local storage when the page opens
-        function loadDailyDraft() {
-            const draftJson = localStorage.getItem('journal_daily_draft');
-            if (!draftJson) return; // Exit if no draft exists
-            
+        function loadDailyDraft(date) {
+            const drafts = _getAllDrafts();
+            const draft = drafts[date];
+            if (!draft) { _resetDailyFormFields(); return; }
             try {
-                const draft = JSON.parse(draftJson);
-                
-                // Restore standard text/date/range inputs
-                if (draft.date) document.getElementById('date-daily').value = draft.date;
-                if (draft.quality) {
-                    document.getElementById('quality-daily').value = draft.quality;
-                    if (typeof updateDayQuality === 'function') updateDayQuality();
+                document.getElementById('quality-daily').value = draft.quality || '5';
+                if (typeof updateDayQuality === 'function') updateDayQuality();
+                document.getElementById('negative-daily').value = draft.negative || '';
+                document.getElementById('positive-daily').value = draft.positive || '';
+                document.getElementById('freeform-daily').value = draft.freeform || '';
+                if (typeof setToggleQuestion === 'function') {
+                    setToggleQuestion('attraction', !!draft.attractionToggle);
+                    setToggleQuestion('relapse', !!draft.relapseToggle);
                 }
-                if (draft.negative) document.getElementById('negative-daily').value = draft.negative;
-                if (draft.positive) document.getElementById('positive-daily').value = draft.positive;
-                if (draft.freeform) document.getElementById('freeform-daily').value = draft.freeform;
-                
-                // Restore Yes/No Toggles
-                if (draft.attractionToggle && typeof setToggleQuestion === 'function') {
-                    setToggleQuestion('attraction', true);
-                }
-                if (draft.attractionText) document.getElementById('attraction-daily').value = draft.attractionText;
-                
-                if (draft.relapseToggle && typeof setToggleQuestion === 'function') {
-                    setToggleQuestion('relapse', true);
-                }
-                if (draft.relapseText) document.getElementById('relapse-daily').value = draft.relapseText;
-
-                // Restore Analysis Pills
-                if (!draft.analysisGeneral) toggleAnalysisPill('general'); // unselect if saved as false
-                if (!draft.analysisDeep) toggleAnalysisPill('deep');       // unselect if saved as false
-                
-                // Restore HALT Chips (Visuals & Data array)
-                if (draft.halt && draft.halt.length > 0) {
-                    selectedHalt = draft.halt;
-                    const haltChips = document.querySelectorAll('.halt-chip');
-                    haltChips.forEach(chip => {
-                        if (draft.halt.includes(chip.getAttribute('data-value'))) {
-                            chip.classList.add('selected');
-                        }
-                    });
-                }
-                
-                // Restore Emotion Chips (Visuals & Data object)
+                document.getElementById('attraction-daily').value = draft.attractionText || '';
+                document.getElementById('relapse-daily').value = draft.relapseText || '';
+                const generalPill = document.getElementById('apill-general');
+                const deepPill = document.getElementById('apill-deep');
+                if (generalPill) generalPill.classList.toggle('selected', !!draft.analysisGeneral);
+                if (deepPill) deepPill.classList.toggle('selected', !!draft.analysisDeep);
+                const card = document.querySelector('.analysis-mode-card');
+                if (card) card.style.borderColor = getAnalysisMode() === 'none' ? '#e17055' : 'rgba(108,92,231,0.2)';
+                selectedHalt = draft.halt || [];
+                document.querySelectorAll('.halt-chip').forEach(chip => {
+                    chip.classList.toggle('selected', selectedHalt.includes(chip.getAttribute('data-value')));
+                });
                 if (draft.emotions && Object.keys(draft.emotions).length > 0) {
                     selectedEmotions.daily = draft.emotions;
-                    
                     Object.keys(draft.emotions).forEach(category => {
-                        const selectedVals = draft.emotions[category];
-                        if (selectedVals && selectedVals.length > 0) {
-                            const container = document.getElementById(`emotion-${category}-daily`);
-                            if (container) {
-                                const chips = container.querySelectorAll('.emotion-chip');
-                                chips.forEach(chip => {
-                                    // Assuming emotion chips use text content or a data-value attribute
-                                    const val = chip.getAttribute('data-value') || chip.innerText.trim();
-                                    if (selectedVals.includes(val)) {
-                                        chip.classList.add('selected');
-                                    }
-                                });
-                            }
-                        }
+                        const vals = draft.emotions[category];
+                        if (!vals || !vals.length) return;
+                        const container = document.getElementById(`emotion-${category}-daily`);
+                        if (container) container.querySelectorAll('.emotion-chip').forEach(chip => {
+                            const val = chip.getAttribute('data-value') || chip.innerText.trim();
+                            chip.classList.toggle('selected', vals.includes(val));
+                        });
                     });
+                } else {
+                    Object.keys(selectedEmotions.daily).forEach(k => { selectedEmotions.daily[k] = []; });
+                    document.querySelectorAll('#journal-form-daily .emotion-chip.selected').forEach(c => c.classList.remove('selected'));
                 }
-            } catch (e) {
-                console.error("Error loading journal draft:", e);
-            }
+            } catch (e) { console.error('Error loading journal draft:', e); }
         }
 
-        // 3. Initialize auto-save triggers on page load
+        function _resetDailyFormFields() {
+            document.getElementById('negative-daily').value = '';
+            document.getElementById('positive-daily').value = '';
+            document.getElementById('freeform-daily').value = '';
+            document.getElementById('attraction-daily').value = '';
+            document.getElementById('relapse-daily').value = '';
+            document.getElementById('quality-daily').value = '5';
+            if (typeof updateDayQuality === 'function') updateDayQuality();
+            if (typeof resetDailyToggles === 'function') resetDailyToggles();
+            document.getElementById('apill-general')?.classList.add('selected');
+            document.getElementById('apill-deep')?.classList.add('selected');
+            const card = document.querySelector('.analysis-mode-card');
+            if (card) card.style.borderColor = 'rgba(108,92,231,0.2)';
+            selectedHalt = [];
+            document.querySelectorAll('.halt-chip').forEach(c => c.classList.remove('selected'));
+            Object.keys(selectedEmotions.daily).forEach(k => { selectedEmotions.daily[k] = []; });
+            document.querySelectorAll('#journal-form-daily .emotion-chip.selected').forEach(c => c.classList.remove('selected'));
+        }
+
+        function clearDailyDraft() {
+            const date = _currentDraftDate;
+            if (!date) return;
+            const drafts = _getAllDrafts();
+            delete drafts[date];
+            localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(drafts));
+            _resetDailyFormFields();
+        }
+
+        function _onDailyDateChange() {
+            const newDate = document.getElementById('date-daily')?.value || '';
+            if (newDate === _currentDraftDate) return;
+            _currentDraftDate = newDate;
+            loadDailyDraft(newDate);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            // Migrate old single-draft format if present
+            const oldDraft = localStorage.getItem('journal_daily_draft');
+            if (oldDraft) {
+                try {
+                    const old = JSON.parse(oldDraft);
+                    if (old && old.date) {
+                        const drafts = _getAllDrafts();
+                        if (!drafts[old.date]) { old.savedAt = old.savedAt || Date.now(); drafts[old.date] = old; }
+                        localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(drafts));
+                    }
+                } catch(e) {}
+                localStorage.removeItem('journal_daily_draft');
+            }
+            const dateInput = document.getElementById('date-daily');
+            if (dateInput) {
+                _currentDraftDate = dateInput.value || '';
+                dateInput.addEventListener('change', _onDailyDateChange);
+            }
             const dailyForm = document.getElementById('journal-form-daily');
             if (dailyForm) {
-                // Save automatically when typing or changing sliders/dates
-                dailyForm.addEventListener('input', saveDailyDraft);
-                
-                // Save automatically on clicks (captures chip selections and yes/no toggles)
-                // A slight timeout ensures the UI classes update before saving the draft
+                dailyForm.addEventListener('input', e => { if (e.target !== dateInput) saveDailyDraft(); });
                 dailyForm.addEventListener('click', () => setTimeout(saveDailyDraft, 50));
             }
-            
-            // Attempt to load any existing draft
-            loadDailyDraft();
+            loadDailyDraft(_currentDraftDate);
         });
         // ============= DAILY JOURNAL SUBMISSION =============
         async function submitEntry(event, journalType) {
@@ -5582,7 +5955,9 @@
                 
                 if (result.success) {
                     if (journalType === 'daily') {
-                        localStorage.removeItem('journal_daily_draft');
+                        const _submittedDrafts = _getAllDrafts();
+                        delete _submittedDrafts[_currentDraftDate];
+                        localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(_submittedDrafts));
                         const mode = getAnalysisMode();
                         
                         // تعديل الرسالة لتبدو منطقية إذا كان التحليل معطلاً
@@ -5629,6 +6004,7 @@
 
 
                         document.getElementById('date-daily').valueAsDate = new Date();
+                        _currentDraftDate = document.getElementById('date-daily').value;
                     } else if (journalType === 'exposure') {
                         document.getElementById('date-exposure').valueAsDate = new Date();
                     }
@@ -6796,6 +7172,7 @@
             // Load timeline + sync affirmations in background
             loadTodayTimeline();
             syncAffirmationsFromGAS();
+            updateInventoryReminder();
         }
 
 
@@ -7524,10 +7901,10 @@
         // =============================================
         function openReadForType(type) {
             navigateTo('read');
-            // Select the correct tab
             setTimeout(() => {
                 const tab = document.querySelector(`.read-tab[data-type="${type}"]`);
                 if (tab) switchReadTab(tab);
+                if (READ_LIST_TYPES.has(type)) setTimeout(fetchAvailableDates, 250);
             }, 120);
         }
 
@@ -7539,6 +7916,7 @@
         const _readCache = {}; // session cache: type::date → data
 
         const READ_DATE_PICKER_TYPES = new Set(['Form responses 1', 'Habit Lab', 'Quick Logs']);
+        const READ_LIST_TYPES        = new Set(['Inventory', 'Gratitude']);
 
         // ── CSS for group cards (injected once) ──────────────────
         (function injectRJStyles() {
@@ -7579,7 +7957,9 @@
             if (!usePicker) {
                 document.getElementById('read-date-list').innerHTML = '';
                 const btn2 = document.getElementById('read-load-dates-btn');
-                btn2.textContent = '📋 تحميل السجلات المتاحة';
+                btn2.textContent = READ_LIST_TYPES.has(_readCurrentType)
+                    ? '📋 تحميل جميع المدخلات'
+                    : '📋 تحميل السجلات المتاحة';
                 btn2.disabled = false;
             }
             document.getElementById('read-entry-area').innerHTML = `
@@ -8231,6 +8611,243 @@
             }
         }
 
+        // ============= INVENTORY JOURNAL (جرد الخسائر والمكاسب) =============
+        function toggleInventoryHints(type) {
+            document.getElementById(`inventory-hints-${type}`)?.classList.toggle('open');
+        }
+
+        function renderInventoryList(type) {
+            const key      = type === 'loss' ? 'losses' : 'gains';
+            const storeKey = type === 'loss' ? '_inventoryLosses' : '_inventoryGains';
+            const items    = JSON.parse(localStorage.getItem(storeKey) || '[]');
+            const list     = document.getElementById(`inventory-${key}-list`);
+            const empty    = document.getElementById(`inv-${key}-empty`);
+            if (!list) return;
+            list.querySelectorAll('.inventory-item').forEach(el => el.remove());
+            if (empty) empty.style.display = items.length ? 'none' : '';
+            items.forEach((text, idx) => {
+                const item = document.createElement('div');
+                item.className = 'inventory-item';
+                item.innerHTML = `<span class="inventory-item-text">${text}</span><button class="inventory-del" onclick="deleteInventoryItem('${type}',${idx})" title="حذف">🗑</button>`;
+                list.appendChild(item);
+            });
+        }
+
+        async function addInventoryItem(type) {
+            const inputId  = type === 'loss' ? 'inv-loss-input' : 'inv-gain-input';
+            const storeKey = type === 'loss' ? '_inventoryLosses' : '_inventoryGains';
+            const ta   = document.getElementById(inputId);
+            const text = ta.value.trim();
+            if (!text) { ta.focus(); return; }
+            const items = JSON.parse(localStorage.getItem(storeKey) || '[]');
+            items.push(text);
+            localStorage.setItem(storeKey, JSON.stringify(items));
+            ta.value = '';
+            renderInventoryList(type);
+            showMessage('inventory-message', '✅ تمت الإضافة!', 'success');
+            refreshInventoryReminder();
+            if (CONFIG.scriptUrl) {
+                try {
+                    await fetch(CONFIG.scriptUrl, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            sheetName: 'Inventory',
+                            'النوع': type === 'loss' ? 'خسارة' : 'مكسب',
+                            'النص': text
+                        })
+                    });
+                } catch(e) { /* silent — saved locally */ }
+            }
+        }
+
+        function deleteInventoryItem(type, idx) {
+            const storeKey = type === 'loss' ? '_inventoryLosses' : '_inventoryGains';
+            const items = JSON.parse(localStorage.getItem(storeKey) || '[]');
+            items.splice(idx, 1);
+            localStorage.setItem(storeKey, JSON.stringify(items));
+            renderInventoryList(type);
+            refreshInventoryReminder();
+        }
+
+        function loadInventoryPage() {
+            renderInventoryList('loss');
+            renderInventoryList('gain');
+        }
+
+        function updateInventoryReminder() {
+            const losses = JSON.parse(localStorage.getItem('_inventoryLosses') || '[]');
+            const gains  = JSON.parse(localStorage.getItem('_inventoryGains')  || '[]');
+            const el = document.getElementById('inventory-reminder');
+            if (!el || !losses.length || !gains.length) { if (el) el.style.display = 'none'; return; }
+            const now = new Date();
+            const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+            let reminder = null;
+            try { reminder = JSON.parse(localStorage.getItem('_inventoryReminder') || 'null'); } catch(e) {}
+            if (!reminder || reminder.date !== todayStr) {
+                reminder = {
+                    date: todayStr,
+                    loss: losses[Math.floor(Math.random() * losses.length)],
+                    gain: gains[Math.floor(Math.random() * gains.length)]
+                };
+                localStorage.setItem('_inventoryReminder', JSON.stringify(reminder));
+            }
+            document.getElementById('reminder-loss-text').textContent = reminder.loss;
+            document.getElementById('reminder-gain-text').textContent = reminder.gain;
+            el.style.display = '';
+        }
+
+        function refreshInventoryReminder() {
+            localStorage.removeItem('_inventoryReminder');
+            updateInventoryReminder();
+        }
+
+        // ============= GRATITUDE JOURNAL (يوميات الامتنان) =============
+        const GRATITUDE_PROMPTS = [
+            "ما هو الشيء البسيط الذي جلب لك السعادة اليوم؟ (كوب قهوة، طقس جميل، رسالة...)",
+            "ما هو ألطف شيء رأيته، سمعته، أو تذوقته اليوم؟",
+            "اكتب عن لحظة هدوء أو راحة شعرت بها اليوم.",
+            "من هو الشخص الذي رسم ابتسامة على وجهك اليوم، ولماذا؟",
+            "موقف لطيف حدث بينك وبين شخص آخر اليوم؟",
+            "شخص في حياتك تشعر بالامتنان العميق لوجوده، وما هو السبب؟",
+            "ما هو الشيء الذي أنجزته اليوم وتفخر به، حتى لو كان صغيراً جداً؟",
+            "كيف أظهرت اللطف تجاه نفسك أو تجاه الآخرين اليوم؟",
+            "صفة إيجابية في شخصيتك ساعدتك على تجاوز يومك؟",
+            "تحدٍ واجهته اليوم، وما هو الدرس الإيجابي الذي تعلمته منه؟",
+            "شيء لم تكن تتوقع أن يسير بشكل جيد، ولكنه فاجأك بنتيجة إيجابية؟",
+            "اختر صورة مفضلة في هاتفك تحمل ذكرى دافئة. ماذا كان شعورك في تلك اللحظة؟",
+            "ما هي أفضل نصيحة تلقيتها في حياتك، ومن الشخص الذي قدمها لك؟",
+            "فكر في محادثة عميقة أو ممتعة أجريتها مؤخراً. ماذا أضافت ليومك؟",
+            "ما هو النشاط البدني أو العادة الصحية التي تشعر بالامتنان لقدرة جسدك على القيام بها؟",
+            "مهارة جديدة أو شيء بسيط تعلمته مؤخراً وتفخر به؟",
+            "وجبة أعددتها أو تذوقتها مؤخراً، واستمتعت بكل تفاصيلها ونكهاتها؟",
+            "خطأ ارتكبته مؤخراً، ولكنك ممتن للدرس الذي تعلمته منه؟"
+        ];
+
+        // Star color per month (Jan=0 … Dec=11)
+        const STAR_MONTH_COLORS = [
+            '#aed6f1','#f4b8c1','#a9dfbf','#fef9c3','#d5f5e3','#fde8d8',
+            '#ffd700','#f0b429','#d7bde2','#f5cba7','#d1f2eb','#dbeafe'
+        ];
+
+        let _gratitudePromptIdx = -1;
+
+        function _gratitudeStarColor() {
+            return STAR_MONTH_COLORS[new Date().getMonth()];
+        }
+
+        function _gratitudeCount() {
+            return parseInt(localStorage.getItem('_gratitudeCount') || '0', 10);
+        }
+
+        function renderJarStars() {
+            const container = document.getElementById('jar-stars');
+            const badge     = document.getElementById('gratitude-count-num');
+            const count     = _gratitudeCount();
+            if (badge) badge.textContent = count;
+            if (!container) return;
+            container.innerHTML = '';
+            const visible = Math.min(count, 22);
+            const color   = _gratitudeStarColor();
+            for (let i = 0; i < visible; i++) {
+                const s = document.createElement('span');
+                s.className = 'jar-star-item';
+                s.textContent = '★';
+                s.style.color      = color;
+                s.style.textShadow = `0 0 6px ${color}88`;
+                s.style.setProperty('--delay', `${((i * 0.37) % 2.4).toFixed(2)}s`);
+                s.style.setProperty('--dur',   `${(2.4 + (i % 4) * 0.55).toFixed(2)}s`);
+                container.appendChild(s);
+            }
+        }
+
+        function shuffleGratitudePrompt() {
+            const prev  = _gratitudePromptIdx;
+            const pool  = GRATITUDE_PROMPTS.map((_, i) => i).filter(i => i !== prev);
+            const newIdx = pool[Math.floor(Math.random() * pool.length)];
+            _gratitudePromptIdx = newIdx;
+            const el = document.getElementById('gratitude-prompt-text');
+            if (!el) return;
+            el.style.opacity   = '0';
+            el.style.transform = 'translateY(6px)';
+            setTimeout(() => {
+                el.textContent     = GRATITUDE_PROMPTS[newIdx];
+                el.style.opacity   = '1';
+                el.style.transform = 'translateY(0)';
+            }, 200);
+        }
+
+        function loadGratitudePage() {
+            shuffleGratitudePrompt();
+            renderJarStars();
+            _syncGratitudeCount();
+        }
+
+        async function _syncGratitudeCount() {
+            if (!CONFIG.scriptUrl) return;
+            try {
+                const res  = await fetch(`${CONFIG.scriptUrl}?action=getAll&sheet=Gratitude`);
+                const data = await res.json();
+                if (data.success && Array.isArray(data.data) && data.data.length > 1) {
+                    const serverCount = data.data.length - 1;
+                    if (serverCount > _gratitudeCount()) {
+                        localStorage.setItem('_gratitudeCount', String(serverCount));
+                        renderJarStars();
+                    }
+                }
+            } catch(e) { /* silent */ }
+        }
+
+        function _animateStarDrop() {
+            const jarScene = document.getElementById('jar-scene');
+            if (!jarScene) return;
+            const rect  = jarScene.getBoundingClientRect();
+            const star  = document.createElement('div');
+            star.className   = 'star-drop-anim';
+            star.textContent = '★';
+            star.style.color = _gratitudeStarColor();
+            star.style.left  = `${rect.left + rect.width / 2 - 18}px`;
+            star.style.top   = `${rect.top  + 28}px`;
+            document.body.appendChild(star);
+            setTimeout(() => star.remove(), 1150);
+        }
+
+        async function submitGratitudeEntry() {
+            const ta     = document.getElementById('gratitude-answer');
+            const answer = ta?.value.trim();
+            if (!answer) { ta?.focus(); return; }
+
+            const prompt = GRATITUDE_PROMPTS[_gratitudePromptIdx] || '';
+            const now    = new Date();
+            const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+
+            // Animate & update count immediately
+            _animateStarDrop();
+            const newCount = _gratitudeCount() + 1;
+            localStorage.setItem('_gratitudeCount', String(newCount));
+
+            setTimeout(() => {
+                renderJarStars();
+                if (ta) ta.value = '';
+                shuffleGratitudePrompt();
+                showMessage('gratitude-message', '✨ نجمة جديدة أضفتها إلى جرتك!', 'success');
+            }, 950);
+
+            // Sync to GAS in background
+            if (CONFIG.scriptUrl) {
+                try {
+                    await fetch(CONFIG.scriptUrl, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            sheetName: 'Gratitude',
+                            'التاريخ': dateStr,
+                            'السؤال المحفز': prompt,
+                            'الإجابة': answer
+                        })
+                    });
+                } catch(e) { /* silent — saved locally */ }
+            }
+        }
+
         function renderSOSAffirmations() {
             const container = document.getElementById('sos-positive-cards');
             if (!container) return;
@@ -8253,6 +8870,8 @@
         // =============================================
 
         async function fetchAvailableDates() {
+            if (READ_LIST_TYPES.has(_readCurrentType)) return _fetchAllListEntries();
+
             const btn     = document.getElementById('read-load-dates-btn');
             const listDiv = document.getElementById('read-date-list');
             const msgBox  = document.getElementById('read-message-new');
@@ -8314,6 +8933,108 @@
                     <div class="read-empty-sub">${err.message}</div>
                 </div>`;
             }
+        }
+
+        // ── List-type journals (Inventory & Gratitude) ───────────
+        async function _fetchAllListEntries() {
+            const btn    = document.getElementById('read-load-dates-btn');
+            const area   = document.getElementById('read-entry-area');
+            const msgBox = document.getElementById('read-message-new');
+
+            if (!CONFIG.scriptUrl) {
+                msgBox.innerHTML = '<div class="message message-error">⚠️ الرجاء إعداد رابط Google Apps Script في الإعدادات أولاً</div>';
+                return;
+            }
+
+            btn.textContent = '⏳ جارٍ التحميل...';
+            btn.disabled    = true;
+            _skeleton(area);
+
+            try {
+                const res  = await fetch(`${CONFIG.scriptUrl}?action=getAll&sheet=${encodeURIComponent(_readCurrentType)}`);
+                const data = await res.json();
+
+                btn.textContent = '🔄 تحديث';
+                btn.disabled    = false;
+
+                if (!data.success || !Array.isArray(data.data) || data.data.length <= 1) {
+                    area.innerHTML = `<div class="read-empty">
+                        <div class="read-empty-icon">📭</div>
+                        <div class="read-empty-title">لا يوجد مدخلات بعد</div>
+                        <div class="read-empty-sub">ابدأ بإضافة مدخلات جديدة</div></div>`;
+                    return;
+                }
+
+                if (_readCurrentType === 'Inventory')  _renderInventoryList(data.data, area);
+                else if (_readCurrentType === 'Gratitude') _renderGratitudeList(data.data, area);
+            } catch(err) {
+                btn.textContent = '📋 تحميل جميع المدخلات';
+                btn.disabled    = false;
+                area.innerHTML  = `<div class="read-empty">
+                    <div class="read-empty-icon">⚠️</div>
+                    <div class="read-empty-title">خطأ في الاتصال</div>
+                    <div class="read-empty-sub">${err.message}</div></div>`;
+            }
+        }
+
+        function _renderInventoryList(rows, container) {
+            const dataRows = rows.slice(1).reverse();
+            const losses   = dataRows.filter(r => r[1] === 'loss');
+            const gains    = dataRows.filter(r => r[1] === 'gain');
+
+            const itemCard = (r, color, bg) => {
+                const ts = r[0] ? new Date(r[0]).toLocaleDateString('ar-SA') : '';
+                return `<div style="background:${bg};border:1px solid ${color}33;border-radius:10px;
+                    padding:0.65rem 0.9rem;margin-bottom:0.5rem;font-size:0.9rem;">
+                    <div>${r[2] || ''}</div>
+                    ${ts ? `<div style="font-size:0.72rem;color:#888;margin-top:0.3rem;">${ts}</div>` : ''}
+                </div>`;
+            };
+
+            let html = '<div class="read-entry-container">';
+            if (losses.length) {
+                html += `<div style="margin-bottom:1.2rem;">
+                    <div style="font-weight:700;color:#e17055;margin-bottom:0.6rem;font-size:0.95rem;">❌ الخسائر (${losses.length})</div>
+                    ${losses.map(r => itemCard(r, '#e17055', 'rgba(225,112,85,0.06)')).join('')}
+                </div>`;
+            }
+            if (gains.length) {
+                html += `<div>
+                    <div style="font-weight:700;color:#00b894;margin-bottom:0.6rem;font-size:0.95rem;">✅ المكاسب (${gains.length})</div>
+                    ${gains.map(r => itemCard(r, '#00b894', 'rgba(0,184,148,0.06)')).join('')}
+                </div>`;
+            }
+            if (!losses.length && !gains.length) {
+                html += `<div class="read-empty"><div class="read-empty-icon">📭</div>
+                    <div class="read-empty-title">لا يوجد مدخلات</div></div>`;
+            }
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function _renderGratitudeList(rows, container) {
+            const dataRows  = rows.slice(1).reverse();
+            const starColor = _gratitudeStarColor();
+
+            let html = `<div class="read-entry-container">
+                <div style="text-align:center;margin-bottom:1rem;font-size:0.9rem;color:var(--text-secondary);">
+                    <span style="color:${starColor};">★</span> ${dataRows.length} لحظة امتنان سجّلتها
+                </div>`;
+
+            dataRows.forEach(r => {
+                const date   = r[1] || (r[0] ? String(r[0]).substring(0, 10) : '');
+                const prompt = r[2] || '';
+                const answer = r[3] || '';
+                html += `<div style="background:white;border:1px solid var(--border-soft);
+                    border-radius:12px;padding:0.9rem;margin-bottom:0.65rem;">
+                    <div style="font-size:0.75rem;color:${starColor};font-weight:600;margin-bottom:0.3rem;">★ ${date}</div>
+                    ${prompt ? `<div style="font-size:0.78rem;color:var(--text-secondary);font-style:italic;margin-bottom:0.4rem;">${prompt}</div>` : ''}
+                    <div style="font-size:0.9rem;line-height:1.55;">${answer}</div>
+                </div>`;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
         }
 
         // =============================================
