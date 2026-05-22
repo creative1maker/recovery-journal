@@ -2587,68 +2587,88 @@
         .inventory-empty { text-align:center; padding:0.8rem; color:var(--text-secondary); font-size:0.83rem; }
         /* Home daily reminder */
         .inventory-reminder-card {
-            background:linear-gradient(135deg,#2d3436,#34495e);
+            background:linear-gradient(135deg, rgba(255,255,255,0.10) 0%, rgba(200,220,255,0.07) 100%);
+            border:1px solid rgba(255,255,255,0.11);
             border-radius:16px; padding:1rem 1.15rem;
-            display:flex; flex-direction:column; gap:0.65rem;
+            display:flex; flex-direction:column; gap:0.7rem;
         }
-        .inventory-reminder-label { font-size:0.7rem; color:rgba(255,255,255,0.45); letter-spacing:0.02em; }
-        .inventory-reminder-loss { font-size:0.86rem; color:#ff9f9f; line-height:1.6; font-style:italic; }
-        .inventory-reminder-divider { height:1px; background:rgba(255,255,255,0.1); }
-        .inventory-reminder-gain { font-size:0.86rem; color:#81ecec; line-height:1.6; font-style:italic; }
+        .inventory-reminder-label { font-size:0.7rem; color:rgba(255,255,255,0.5); letter-spacing:0.02em; }
+        .inventory-reminder-loss {
+            font-size:0.86rem; color:#ff9f9f; line-height:1.7;
+            border-right:2px solid rgba(255,159,159,0.45); padding-right:0.65rem;
+        }
+        .inventory-reminder-divider { height:0; border-top:1px dashed rgba(255,255,255,0.18); margin:0; }
+        .inventory-reminder-gain {
+            font-size:0.86rem; color:#81ecec; line-height:1.7;
+            border-right:2px solid rgba(129,236,236,0.45); padding-right:0.65rem;
+        }
 
         /* ── Gratitude Journal (يوميات الامتنان) ── */
-        .gratitude-scene-wrap {
+        .grat-page {
             display:flex; flex-direction:column; align-items:center;
-            padding:0.5rem 0 0.5rem;
+            padding:0.25rem 0 1rem; min-height:60vh;
         }
-        .gratitude-header-title {
+        .grat-header {
+            text-align:center; margin-bottom:0.9rem; width:100%;
+        }
+        .grat-title {
             font-family:'Amiri',serif; font-size:1.5rem; font-weight:700;
-            color:var(--text-primary); text-align:center; margin-bottom:0.1rem;
+            color:var(--text-primary); margin-bottom:0.15rem;
         }
-        .gratitude-header-sub {
-            font-size:0.82rem; color:var(--text-secondary); text-align:center; margin-bottom:0.5rem;
-        }
-        .gratitude-count-badge {
-            display:inline-flex; align-items:center; gap:0.35rem;
+        .grat-subtitle {
+            display:inline-flex; align-items:center; gap:0.3rem;
             background:rgba(162,155,254,0.1); border:1px solid rgba(162,155,254,0.25);
-            border-radius:20px; padding:0.28rem 0.85rem;
-            font-size:0.8rem; color:var(--accent-calm); font-weight:600; margin-bottom:0.75rem;
+            border-radius:20px; padding:0.22rem 0.8rem;
+            font-size:0.8rem; color:var(--accent-calm); font-weight:600;
         }
+        .grat-add-btn {
+            display:inline-flex; align-items:center; gap:0.5rem;
+            background:linear-gradient(135deg,#a29bfe,#74b9ff);
+            color:white; border:none; border-radius:14px;
+            padding:0.7rem 1.4rem; font-family:'IBM Plex Sans Arabic',sans-serif;
+            font-size:0.95rem; font-weight:600; cursor:pointer;
+            box-shadow:0 4px 14px rgba(162,155,254,0.35);
+            transition:transform 0.15s, box-shadow 0.15s;
+            margin-bottom:1.1rem;
+        }
+        .grat-add-btn:active { transform:scale(0.96); box-shadow:0 2px 8px rgba(162,155,254,0.25); }
         .jar-scene {
-            position:relative; width:210px; margin:0 auto;
+            position:relative; width:min(88vw, 380px); margin:0 auto;
         }
         .jar-svg { width:100%; display:block; }
         .jar-stars-overlay {
-            position:absolute; bottom:26px; left:50%; transform:translateX(-50%);
-            width:108px; height:130px; display:flex; flex-wrap:wrap;
+            position:absolute; bottom:4.9%; left:50%; transform:translateX(-50%);
+            width:62%; height:70%; display:flex; flex-wrap:wrap;
             align-content:flex-end; align-items:center;
-            justify-content:center; gap:3px 2px;
+            justify-content:center; gap:4px 3px;
             overflow:hidden; pointer-events:none;
         }
         .jar-star-item {
-            font-size:1.35rem; display:inline-block; line-height:1;
+            display:inline-block; line-height:1; pointer-events:auto;
             animation:starBob var(--dur,3s) ease-in-out infinite;
             animation-delay:var(--delay,0s);
+            cursor:pointer; transition:transform 0.15s;
+            background:none; border:none; padding:1px;
         }
+        .jar-star-item:hover { transform:scale(1.35) !important; }
         @keyframes starBob {
-            0%,100% { transform:translateY(0) rotate(-6deg); }
-            50%      { transform:translateY(-4px) rotate(6deg); }
+            0%,100% { transform:translateY(0) rotate(-5deg) scale(1); }
+            50%      { transform:translateY(-3px) rotate(5deg) scale(1.04); }
         }
         .star-drop-anim {
-            position:fixed; pointer-events:none; z-index:9999;
-            font-size:2.2rem; line-height:1;
+            position:fixed; pointer-events:none; z-index:9999; width:38px; height:38px;
             animation:dropIntoJar 1.05s cubic-bezier(0.25,0.46,0.45,0.94) forwards;
         }
         @keyframes dropIntoJar {
-            0%  { transform:translateY(0) scale(0) rotate(0deg);     opacity:0; }
-            22% { transform:translateY(6px) scale(1.5) rotate(40deg); opacity:1; }
-            72% { transform:translateY(145px) scale(1.1) rotate(255deg); opacity:0.9; }
-            100%{ transform:translateY(192px) scale(0.1) rotate(380deg); opacity:0; }
+            0%  { transform:translateY(0) scale(0) rotate(0deg);      opacity:0; }
+            22% { transform:translateY(8px) scale(1.6) rotate(40deg);  opacity:1; }
+            72% { transform:translateY(155px) scale(1.1) rotate(255deg); opacity:0.9; }
+            100%{ transform:translateY(195px) scale(0.1) rotate(380deg); opacity:0; }
         }
         .gratitude-prompt-card {
             background:linear-gradient(135deg,rgba(162,155,254,0.06),rgba(116,185,255,0.05));
             border:1.5px solid rgba(162,155,254,0.2);
-            border-radius:18px; padding:1.1rem 1.2rem; margin-bottom:1rem; position:relative;
+            border-radius:18px; padding:1.1rem 1.2rem; margin-bottom:0.9rem; position:relative;
         }
         .gratitude-prompt-eyebrow {
             font-size:0.68rem; font-weight:700; letter-spacing:0.06em;
@@ -2665,6 +2685,135 @@
             display:flex; align-items:center; justify-content:center; transition:background 0.2s;
         }
         .gratitude-shuffle-btn:hover { background:rgba(162,155,254,0.25); }
+        .grat-mode-tabs {
+            display:flex; gap:0.5rem; margin-bottom:0.9rem;
+        }
+        .grat-mode-tab {
+            flex:1; padding:0.5rem 0.75rem; border-radius:10px; border:1.5px solid var(--border-soft);
+            background:white; font-family:'IBM Plex Sans Arabic',sans-serif;
+            font-size:0.82rem; font-weight:600; cursor:pointer; color:var(--text-secondary);
+            transition:all 0.2s;
+        }
+        .grat-mode-tab.active {
+            background:rgba(162,155,254,0.12); border-color:rgba(162,155,254,0.4);
+            color:var(--accent-calm);
+        }
+        .grat-view-star { text-align:center; margin-bottom:0.75rem; }
+        .grat-view-date { font-size:0.8rem; color:var(--text-secondary); text-align:center; margin-bottom:0.9rem; }
+        .grat-view-prompt {
+            font-family:'Amiri',serif; font-size:1rem; color:var(--accent-calm);
+            font-style:italic; background:rgba(162,155,254,0.07); border-radius:10px;
+            padding:0.6rem 0.9rem; margin-bottom:0.75rem; line-height:1.7;
+        }
+        .grat-view-answer {
+            font-size:0.95rem; line-height:1.7; color:var(--text-primary);
+        }
+
+        /* ── PDF Reports Page ────────────────────────────── */
+        .pdf-back-btn {
+            display:inline-flex; align-items:center; gap:0.4rem;
+            padding:0.4rem 0.85rem; border-radius:20px; font-size:0.82rem;
+            border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.04);
+            color:var(--text-secondary); cursor:pointer; margin-bottom:1rem;
+            transition:background 0.15s;
+        }
+        .pdf-back-btn:hover { background:rgba(255,255,255,0.08); }
+        .pdf-section-tabs { display:flex; gap:0.6rem; margin-bottom:1.2rem; }
+        .pdf-section-tab {
+            flex:1; padding:0.9rem 0.5rem; border-radius:14px;
+            border:2px solid transparent; background:rgba(255,255,255,0.04);
+            color:var(--text-secondary); font-family:'Amiri',serif;
+            font-size:0.92rem; cursor:pointer; transition:all 0.2s;
+            display:flex; flex-direction:column; align-items:center; gap:0.3rem;
+        }
+        .pdf-section-tab .pdf-tab-emoji { font-size:1.4rem; }
+        .pdf-section-tab.active {
+            border-color:var(--accent-calm); background:rgba(162,155,254,0.1);
+            color:var(--text-primary);
+        }
+        .pdf-panel { display:none; }
+        .pdf-panel.active { display:block; }
+        .pdf-hint {
+            font-size:0.82rem; color:var(--text-secondary); line-height:1.65;
+            margin-bottom:0.9rem; background:rgba(255,255,255,0.04);
+            border-radius:10px; padding:0.7rem 0.9rem;
+        }
+        .pdf-load-btn {
+            display:flex; align-items:center; justify-content:center; gap:0.5rem;
+            width:100%; padding:0.7rem; border-radius:12px; margin-bottom:0.8rem;
+            font-family:'Amiri',serif; font-size:0.92rem; cursor:pointer;
+            border:1px solid rgba(255,255,255,0.12); color:var(--text-primary);
+            background:rgba(255,255,255,0.05); transition:background 0.2s;
+        }
+        .pdf-load-btn:hover { background:rgba(255,255,255,0.09); }
+        .pdf-date-list { display:flex; flex-direction:column; gap:0.4rem; }
+        .pdf-date-item {
+            display:flex; align-items:center; gap:0.7rem; padding:0.65rem 0.9rem;
+            border-radius:10px; background:rgba(255,255,255,0.04);
+            border:1px solid rgba(255,255,255,0.07); cursor:pointer;
+            transition:background 0.15s; font-size:0.88rem;
+        }
+        .pdf-date-item:hover { background:rgba(255,255,255,0.08); }
+        .pdf-date-item.selected { background:rgba(162,155,254,0.12); border-color:rgba(162,155,254,0.3); }
+        .pdf-date-item input[type=checkbox] { accent-color:var(--accent-calm); width:16px; height:16px; flex-shrink:0; cursor:pointer; }
+        .pdf-range-tabs { display:flex; gap:0.5rem; margin-bottom:0.9rem; }
+        .pdf-range-tab {
+            padding:0.4rem 0.9rem; border-radius:20px; font-size:0.82rem;
+            border:1px solid rgba(255,255,255,0.12); background:none;
+            color:var(--text-secondary); cursor:pointer; transition:all 0.15s;
+        }
+        .pdf-range-tab.active {
+            background:rgba(116,185,255,0.12); border-color:rgba(116,185,255,0.35); color:#74b9ff;
+        }
+        .pdf-range-row { display:flex; gap:0.5rem; align-items:center; margin-bottom:0.8rem; }
+        .pdf-range-row input {
+            flex:1; padding:0.55rem 0.75rem; border-radius:10px;
+            border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.05);
+            color:var(--text-primary); font-size:0.88rem;
+        }
+        .pdf-range-row button {
+            padding:0.55rem 1rem; border-radius:10px;
+            border:1px solid rgba(116,185,255,0.3); background:rgba(116,185,255,0.1);
+            color:#74b9ff; cursor:pointer; font-size:0.88rem; white-space:nowrap;
+        }
+        .pdf-distortions-preview { margin-top:0.8rem; }
+        .pdf-distortion-day { margin-bottom:1rem; }
+        .pdf-distortion-day-header {
+            font-size:0.8rem; color:var(--accent-calm); font-weight:600;
+            margin-bottom:0.5rem; padding-bottom:0.35rem;
+            border-bottom:1px dashed rgba(162,155,254,0.3);
+        }
+        .pdf-date-select {
+            width:100%; padding:0.65rem 0.9rem; border-radius:10px; margin-bottom:0.8rem;
+            border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.06);
+            color:var(--text-primary); font-family:'Amiri',serif; font-size:0.92rem;
+            cursor:pointer; appearance:auto;
+        }
+        .pdf-distortion-item {
+            font-size:0.84rem; line-height:1.75; padding:0.35rem 0.5rem 0.35rem 0;
+            border-bottom:1px dashed rgba(255,255,255,0.07); color:var(--text-primary);
+        }
+        .pdf-distortion-item:last-child { border-bottom:none; }
+        .pdf-distortion-item p { margin:.3em 0; line-height:1.75; }
+        .pdf-distortion-item ul,.pdf-distortion-item ol { padding-right:1.3rem; margin:.3em 0; }
+        .pdf-distortion-item li { margin-bottom:.3em; line-height:1.7; }
+        .pdf-distortion-item strong { color:var(--accent-calm); }
+        .pdf-col-badge {
+            display:inline-block; font-size:0.78rem; padding:0.25rem 0.65rem;
+            border-radius:20px; margin:0.2rem 0.2rem 0 0;
+            background:rgba(162,155,254,0.12); color:var(--accent-calm);
+            border:1px solid rgba(162,155,254,0.2);
+        }
+        .pdf-export-btn {
+            display:flex; align-items:center; justify-content:center; gap:0.5rem;
+            width:100%; padding:0.85rem; border-radius:14px; margin-top:1rem;
+            font-family:'Amiri',serif; font-size:1rem; cursor:pointer; border:none;
+            color:white; background:linear-gradient(135deg,#6c5ce7,#a29bfe);
+            transition:opacity 0.2s; box-shadow:0 4px 15px rgba(108,92,231,0.3);
+        }
+        .pdf-export-btn.green { background:linear-gradient(135deg,#00b894,#55efc4); box-shadow:0 4px 15px rgba(0,184,148,0.3); }
+        .pdf-export-btn:disabled { opacity:0.5; cursor:not-allowed; }
+        .pdf-status { font-size:0.82rem; color:var(--text-secondary); text-align:center; padding:0.5rem 0; }
 
         /* ── Read page date browser (for CBT / Scenarios / Exposure) ── */
         .date-browser {
@@ -2880,6 +3029,14 @@
                 <span class="menu-item-icon">🔬</span>
                 <span class="menu-item-text">مختبر العادات</span>
             </div>
+            <div class="menu-item" onclick="navigateTo('write-inventory'); toggleMenu();">
+                <span class="menu-item-icon">📊</span>
+                <span class="menu-item-text">جرد الخسائر والمكاسب</span>
+            </div>
+            <div class="menu-item" onclick="navigateTo('write-gratitude'); toggleMenu();">
+                <span class="menu-item-icon">🌟</span>
+                <span class="menu-item-text">يوميات الامتنان</span>
+            </div>
             <div class="menu-item" onclick="navigateTo('breathing'); toggleMenu();">
                 <span class="menu-item-icon">🧘</span>
                 <span class="menu-item-text">تمارين التنفس</span>
@@ -2887,6 +3044,10 @@
             <div class="menu-item" onclick="navigateTo('read'); toggleMenu();">
                 <span class="menu-item-icon">📖</span>
                 <span class="menu-item-text">قراءة اليوميات</span>
+            </div>
+            <div class="menu-item" onclick="navigateTo('pdf-reports'); toggleMenu();">
+                <span class="menu-item-icon">📄</span>
+                <span class="menu-item-text">تصدير التقارير</span>
             </div>
             <div class="menu-item" onclick="navigateTo('dashboard'); toggleMenu();">
                 <span class="menu-item-icon">📊</span>
@@ -3990,71 +4151,7 @@
                         </div>
                     </div>
 
-                    <!-- 2. يوميات CBT -->
-                    <div class="journal-hub-card" style="border-color:rgba(250,177,160,0.3);">
-                        <div class="jhc-icon-wrap" style="background:linear-gradient(135deg,#fab1a0,#e17055);">🧠</div>
-                        <div class="jhc-body">
-                            <div class="jhc-title">يوميات CBT</div>
-                            <div class="jhc-desc">التقاط الأفكار والمشاعر وإعادة هيكلتها</div>
-                        </div>
-                        <div class="jhc-actions">
-                            <button class="jhc-btn jhc-btn-write" onclick="navigateTo('cbt')">✏️ كتابة</button>
-                            <button class="jhc-btn jhc-btn-read" onclick="openReadForType('CBT')">📖</button>
-                        </div>
-                    </div>
-
-                    <!-- 3. السيناريوهات -->
-                    <div class="journal-hub-card" style="border-color:rgba(116,185,255,0.3);">
-                        <div class="jhc-icon-wrap" style="background:linear-gradient(135deg,#74b9ff,#0984e3);">🎯</div>
-                        <div class="jhc-body">
-                            <div class="jhc-title">السيناريوهات التفاعلية</div>
-                            <div class="jhc-desc">واجه مواقف افتراضية واحصل على تقييم AI</div>
-                        </div>
-                        <div class="jhc-actions">
-                            <button class="jhc-btn jhc-btn-write" onclick="navigateTo('write-scenarios')">✏️ كتابة</button>
-                            <button class="jhc-btn jhc-btn-read" onclick="openReadForType('Scenarios')">📖</button>
-                        </div>
-                    </div>
-
-                    <!-- 4. المواجهة -->
-                    <div class="journal-hub-card" style="border-color:rgba(85,239,196,0.3);">
-                        <div class="jhc-icon-wrap" style="background:linear-gradient(135deg,#55efc4,#00b894);">💪</div>
-                        <div class="jhc-body">
-                            <div class="jhc-title">يوميات المواجهة</div>
-                            <div class="jhc-desc">تحدّى مخاوفك وتتبع تقدمك خطوة بخطوة</div>
-                        </div>
-                        <div class="jhc-actions">
-                            <button class="jhc-btn jhc-btn-write" onclick="navigateTo('write-exposure')">✏️ كتابة</button>
-                            <button class="jhc-btn jhc-btn-read" onclick="openReadForType('Exposure')">📖</button>
-                        </div>
-                    </div>
-
-                    <!-- 5. مختبر العادات -->
-                    <div class="journal-hub-card" style="border-color:rgba(162,155,254,0.3);">
-                        <div class="jhc-icon-wrap" style="background:linear-gradient(135deg,#a29bfe,#6c5ce7);">🔬</div>
-                        <div class="jhc-body">
-                            <div class="jhc-title">مختبر العادات</div>
-                            <div class="jhc-desc">تحليل الأنماط السلوكية والانفعالية بعمق</div>
-                        </div>
-                        <div class="jhc-actions">
-                            <button class="jhc-btn jhc-btn-write" onclick="navigateTo('habit-lab')">✏️ كتابة</button>
-                            <button class="jhc-btn jhc-btn-read" onclick="openReadForType('Habit Lab')">📖</button>
-                        </div>
-                    </div>
-
-                    <!-- 6. التسجيل السريع (read only) -->
-                    <div class="journal-hub-card" style="border-color:rgba(253,203,110,0.2);background:var(--bg-primary);">
-                        <div class="jhc-icon-wrap" style="background:rgba(253,203,110,0.2);">⚡</div>
-                        <div class="jhc-body">
-                            <div class="jhc-title" style="font-size:0.95rem;">سجلات التسجيل السريع</div>
-                            <div class="jhc-desc">الومضات اليومية السريعة التي دوّنتها</div>
-                        </div>
-                        <div class="jhc-actions">
-                            <button class="jhc-btn jhc-btn-read" onclick="openReadForType('Quick Logs')">📖 عرض</button>
-                        </div>
-                    </div>
-
-                    <!-- 7. جرد الخسائر والمكاسب -->
+                    <!-- 2. جرد الخسائر والمكاسب -->
                     <div class="journal-hub-card" style="border-color:rgba(253,121,168,0.3);">
                         <div class="jhc-icon-wrap" style="background:linear-gradient(135deg,#fd79a8,#e84393);">📋</div>
                         <div class="jhc-body">
@@ -4067,7 +4164,59 @@
                         </div>
                     </div>
 
-                    <!-- 8. يوميات الامتنان -->
+                    <!-- 3. يوميات CBT -->
+                    <div class="journal-hub-card" style="border-color:rgba(250,177,160,0.3);">
+                        <div class="jhc-icon-wrap" style="background:linear-gradient(135deg,#fab1a0,#e17055);">🧠</div>
+                        <div class="jhc-body">
+                            <div class="jhc-title">يوميات CBT</div>
+                            <div class="jhc-desc">التقاط الأفكار والمشاعر وإعادة هيكلتها</div>
+                        </div>
+                        <div class="jhc-actions">
+                            <button class="jhc-btn jhc-btn-write" onclick="navigateTo('cbt')">✏️ كتابة</button>
+                            <button class="jhc-btn jhc-btn-read" onclick="openReadForType('CBT')">📖</button>
+                        </div>
+                    </div>
+
+                    <!-- 4. السيناريوهات -->
+                    <div class="journal-hub-card" style="border-color:rgba(116,185,255,0.3);">
+                        <div class="jhc-icon-wrap" style="background:linear-gradient(135deg,#74b9ff,#0984e3);">🎯</div>
+                        <div class="jhc-body">
+                            <div class="jhc-title">السيناريوهات التفاعلية</div>
+                            <div class="jhc-desc">واجه مواقف افتراضية واحصل على تقييم AI</div>
+                        </div>
+                        <div class="jhc-actions">
+                            <button class="jhc-btn jhc-btn-write" onclick="navigateTo('write-scenarios')">✏️ كتابة</button>
+                            <button class="jhc-btn jhc-btn-read" onclick="openReadForType('Scenarios')">📖</button>
+                        </div>
+                    </div>
+
+                    <!-- 5. المواجهة -->
+                    <div class="journal-hub-card" style="border-color:rgba(85,239,196,0.3);">
+                        <div class="jhc-icon-wrap" style="background:linear-gradient(135deg,#55efc4,#00b894);">💪</div>
+                        <div class="jhc-body">
+                            <div class="jhc-title">يوميات المواجهة</div>
+                            <div class="jhc-desc">تحدّى مخاوفك وتتبع تقدمك خطوة بخطوة</div>
+                        </div>
+                        <div class="jhc-actions">
+                            <button class="jhc-btn jhc-btn-write" onclick="navigateTo('write-exposure')">✏️ كتابة</button>
+                            <button class="jhc-btn jhc-btn-read" onclick="openReadForType('Exposure')">📖</button>
+                        </div>
+                    </div>
+
+                    <!-- 6. مختبر العادات -->
+                    <div class="journal-hub-card" style="border-color:rgba(162,155,254,0.3);">
+                        <div class="jhc-icon-wrap" style="background:linear-gradient(135deg,#a29bfe,#6c5ce7);">🔬</div>
+                        <div class="jhc-body">
+                            <div class="jhc-title">مختبر العادات</div>
+                            <div class="jhc-desc">تحليل الأنماط السلوكية والانفعالية بعمق</div>
+                        </div>
+                        <div class="jhc-actions">
+                            <button class="jhc-btn jhc-btn-write" onclick="navigateTo('habit-lab')">✏️ كتابة</button>
+                            <button class="jhc-btn jhc-btn-read" onclick="openReadForType('Habit Lab')">📖</button>
+                        </div>
+                    </div>
+
+                    <!-- 7. يوميات الامتنان -->
                     <div class="journal-hub-card" style="border-color:rgba(162,155,254,0.3);">
                         <div class="jhc-icon-wrap" style="background:linear-gradient(135deg,#a29bfe,#6c5ce7);">✨</div>
                         <div class="jhc-body">
@@ -4077,6 +4226,18 @@
                         <div class="jhc-actions">
                             <button class="jhc-btn jhc-btn-write" onclick="navigateTo('write-gratitude')">✏️ كتابة</button>
                             <button class="jhc-btn jhc-btn-read" onclick="openReadForType('Gratitude')">📖</button>
+                        </div>
+                    </div>
+
+                    <!-- 8. التسجيل السريع (read only) -->
+                    <div class="journal-hub-card" style="border-color:rgba(253,203,110,0.2);background:var(--bg-primary);">
+                        <div class="jhc-icon-wrap" style="background:rgba(253,203,110,0.2);">⚡</div>
+                        <div class="jhc-body">
+                            <div class="jhc-title" style="font-size:0.95rem;">سجلات التسجيل السريع</div>
+                            <div class="jhc-desc">الومضات اليومية السريعة التي دوّنتها</div>
+                        </div>
+                        <div class="jhc-actions">
+                            <button class="jhc-btn jhc-btn-read" onclick="openReadForType('Quick Logs')">📖 عرض</button>
                         </div>
                     </div>
 
@@ -4178,89 +4339,69 @@
              ============================================ -->
         <div id="content-write-gratitude" class="tab-content">
             <div class="card">
+                <div class="grat-page">
 
-                <!-- Header + Jar -->
-                <div class="gratitude-scene-wrap">
-                    <div class="gratitude-header-title">يوميات الامتنان ✨</div>
-                    <div class="gratitude-header-sub">كل نجمة تحكي لحظة جميلة</div>
-                    <div class="gratitude-count-badge">
-                        <span id="gratitude-count-num">0</span> نجمة في الجرة
+                    <!-- Header -->
+                    <div class="grat-header">
+                        <div class="grat-title">يوميات الامتنان ✨</div>
+                        <div style="margin-top:0.35rem;">
+                            <span class="grat-subtitle" id="gratitude-count-num">0 نجمة</span>
+                        </div>
                     </div>
 
-                    <!-- Glass Jar -->
+                    <!-- Add entry button -->
+                    <button class="grat-add-btn" onclick="openGratitudeAddModal()">
+                        ✏️ أضف امتنان اليوم
+                    </button>
+
+                    <!-- Jar with stars -->
                     <div class="jar-scene" id="jar-scene">
-                        <svg class="jar-svg" viewBox="0 0 240 300" xmlns="http://www.w3.org/2000/svg">
-                            <defs>
-                                <filter id="grat-shadow">
-                                    <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="rgba(0,0,0,0.1)"/>
-                                </filter>
-                                <linearGradient id="grat-glass" x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%"   stop-color="#b0d4e8" stop-opacity="0.88"/>
-                                    <stop offset="45%"  stop-color="#daeef8" stop-opacity="0.58"/>
-                                    <stop offset="100%" stop-color="#b0d4e8" stop-opacity="0.78"/>
-                                </linearGradient>
-                                <linearGradient id="grat-cork" x1="0%" y1="0%" x2="0%" y2="100%">
-                                    <stop offset="0%"   stop-color="#e0ae50"/>
-                                    <stop offset="100%" stop-color="#b07828"/>
-                                </linearGradient>
-                            </defs>
-
-                            <!-- Cork shadow -->
-                            <ellipse cx="120" cy="55" rx="55" ry="5" fill="rgba(0,0,0,0.07)"/>
-                            <!-- Cork body -->
-                            <rect x="67" y="8" width="106" height="47" rx="13" fill="url(#grat-cork)" filter="url(#grat-shadow)"/>
-                            <!-- Cork top sheen -->
-                            <rect x="73" y="13" width="94" height="11" rx="5" fill="#eab858" opacity="0.55"/>
-                            <!-- Cork grain lines -->
-                            <line x1="90"  y1="11" x2="90"  y2="53" stroke="#8c6020" stroke-width="1.3" opacity="0.38"/>
-                            <line x1="107" y1="11" x2="107" y2="53" stroke="#8c6020" stroke-width="1.3" opacity="0.38"/>
-                            <line x1="124" y1="11" x2="124" y2="53" stroke="#8c6020" stroke-width="1.3" opacity="0.38"/>
-                            <line x1="141" y1="11" x2="141" y2="53" stroke="#8c6020" stroke-width="1.3" opacity="0.38"/>
-                            <line x1="158" y1="11" x2="158" y2="53" stroke="#8c6020" stroke-width="1.3" opacity="0.38"/>
-
-                            <!-- Neck trapezoid -->
-                            <path d="M83 55 L70 89 L170 89 L157 55 Z"
-                                  fill="url(#grat-glass)" stroke="#88bcd0" stroke-width="1.5"/>
-
-                            <!-- Jar body -->
-                            <path d="M70 89 C48 115 42 172 46 226 C50 278 86 295 120 295 C154 295 190 278 194 226 C198 172 192 115 170 89 Z"
-                                  fill="url(#grat-glass)" stroke="#88bcd0" stroke-width="2" filter="url(#grat-shadow)"/>
-
-                            <!-- Bottom glass tint -->
-                            <ellipse cx="120" cy="291" rx="36" ry="7" fill="#88bcd0" opacity="0.2"/>
-
-                            <!-- Left highlight (thick) -->
-                            <path d="M57 108 C51 145 48 190 50 234 C52 264 60 284 71 294"
-                                  stroke="rgba(255,255,255,0.72)" stroke-width="10" fill="none" stroke-linecap="round"/>
-                            <!-- Left highlight (thin) -->
-                            <path d="M75 98 C71 125 70 160 72 194"
-                                  stroke="rgba(255,255,255,0.42)" stroke-width="4" fill="none" stroke-linecap="round"/>
-                            <!-- Right highlight -->
-                            <path d="M191 118 C194 152 194 194 192 226"
-                                  stroke="rgba(255,255,255,0.26)" stroke-width="5" fill="none" stroke-linecap="round"/>
-                        </svg>
-
-                        <!-- Stars rendered inside jar -->
+                        <img src="jar.svg" class="jar-svg" alt="">
                         <div class="jar-stars-overlay" id="jar-stars"></div>
                     </div>
+
+                    <div id="gratitude-message" style="margin-top:0.5rem; width:100%; text-align:center;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRATITUDE ADD MODAL -->
+        <div class="modal-overlay" id="grat-add-modal" onclick="closeGratModal('grat-add-modal',event)">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
+                <div class="modal-handle"></div>
+                <div class="modal-title">✨ إضافة نجمة جديدة</div>
+
+                <!-- Template / Free toggle -->
+                <div class="grat-mode-tabs">
+                    <button class="grat-mode-tab active" id="grat-tab-template" onclick="setGratMode('template',this)">📝 استخدم القالب</button>
+                    <button class="grat-mode-tab" id="grat-tab-free" onclick="setGratMode('free',this)">✏️ كتابة حرة</button>
                 </div>
 
-                <div id="gratitude-message"></div>
-
-                <!-- Rotating prompt card -->
-                <div class="gratitude-prompt-card">
-                    <button class="gratitude-shuffle-btn" onclick="shuffleGratitudePrompt()" title="سؤال مختلف">🔀</button>
-                    <div class="gratitude-prompt-eyebrow">✦ سؤال اليوم</div>
-                    <div class="gratitude-prompt-text" id="gratitude-prompt-text">جارٍ التحضير...</div>
+                <!-- Template: rotating prompt -->
+                <div id="grat-template-section">
+                    <div class="gratitude-prompt-card">
+                        <button class="gratitude-shuffle-btn" onclick="shuffleGratitudePrompt()" title="سؤال مختلف">🔀</button>
+                        <div class="gratitude-prompt-eyebrow">✦ سؤال اليوم</div>
+                        <div class="gratitude-prompt-text" id="gratitude-prompt-text">جارٍ التحضير...</div>
+                    </div>
                 </div>
 
-                <!-- Answer textarea -->
-                <div class="form-group">
-                    <label class="form-label">إجابتك</label>
-                    <textarea id="gratitude-answer" rows="4" placeholder="اكتب إجابتك هنا..."></textarea>
+                <!-- Answer -->
+                <div class="form-group" style="margin-top:0.5rem;">
+                    <textarea id="gratitude-answer" rows="4" placeholder="اكتب هنا..."></textarea>
                 </div>
 
                 <button class="btn btn-primary btn-full" onclick="submitGratitudeEntry()">إضافة نجمة 🌟</button>
+            </div>
+        </div>
+
+        <!-- GRATITUDE VIEW MODAL -->
+        <div class="modal-overlay" id="grat-view-modal" onclick="closeGratModal('grat-view-modal',event)">
+            <div class="modal-sheet" onclick="event.stopPropagation()">
+                <div class="modal-handle"></div>
+                <div id="grat-view-content"></div>
+                <button class="btn btn-secondary btn-full" style="margin-top:1rem;"
+                    onclick="closeGratModal('grat-view-modal',null)">إغلاق</button>
             </div>
         </div>
 
@@ -4617,10 +4758,11 @@
                 <!-- Page title -->
                 <div style="display:flex;align-items:center;gap:0.7rem;margin-bottom:1.2rem;">
                     <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#2d3436,#636e72);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">📖</div>
-                    <div>
+                    <div style="flex:1;">
                         <h2 style="font-family:'Amiri',serif;font-size:1.35rem;font-weight:700;margin:0;">قراءة المذكرات</h2>
                         <p style="font-size:0.78rem;color:var(--text-secondary);margin:0;">اختر النوع ثم التاريخ</p>
                     </div>
+                    <button id="read-pdf-export-btn" onclick="navigateTo('pdf-reports')" style="display:inline-flex;align-items:center;gap:0.3rem;padding:0.4rem 0.8rem;border-radius:20px;font-size:0.78rem;border:1px solid rgba(162,155,254,0.3);background:rgba(162,155,254,0.08);color:var(--accent-calm);cursor:pointer;white-space:nowrap;">📄 تصدير</button>
                 </div>
 
                 <!-- Journal type tabs -->
@@ -4690,7 +4832,81 @@
 
             </div>
         </div>
-        
+
+        <!-- ═══════════════════════════════════════════════
+             PDF REPORTS PAGE — تصدير التقارير
+             ═══════════════════════════════════════════════ -->
+        <div id="content-pdf-reports" class="tab-content">
+            <div class="card">
+
+                <button class="pdf-back-btn" onclick="navigateTo('read')">← العودة للقراءة</button>
+
+                <div style="display:flex;align-items:center;gap:0.7rem;margin-bottom:1.2rem;">
+                    <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#6c5ce7,#a29bfe);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">📄</div>
+                    <div>
+                        <h2 style="font-family:'Amiri',serif;font-size:1.35rem;font-weight:700;margin:0;">تصدير التقارير</h2>
+                        <p style="font-size:0.78rem;color:var(--text-secondary);margin:0;">يوميات التعافي بصيغة PDF</p>
+                    </div>
+                </div>
+
+                <!-- Section tabs -->
+                <div class="pdf-section-tabs">
+                    <button class="pdf-section-tab active" id="pdf-tab-reports" onclick="switchPdfTab('reports',this)">
+                        <span class="pdf-tab-emoji">📋</span>
+                        تقارير التحليل
+                    </button>
+                    <button class="pdf-section-tab" id="pdf-tab-distortions" onclick="switchPdfTab('distortions',this)">
+                        <span class="pdf-tab-emoji">🧠</span>
+                        التشوهات المعرفية
+                    </button>
+                </div>
+
+                <!-- ── Panel 1: Analysis Reports ── -->
+                <div class="pdf-panel active" id="pdf-panel-reports">
+                    <div class="pdf-hint">اختر تاريخاً لتصدير تحليلاته — يشمل التصدير: تحليل AI يومي، تحليل داخلي، والتقارير الأسبوعية والشهرية المتوفرة.</div>
+                    <button class="pdf-load-btn" onclick="fetchPdfReportDates()">📅 تحميل التواريخ المتاحة</button>
+                    <div class="pdf-status" id="pdf-date-status"></div>
+                    <select id="pdf-reports-date-select" class="pdf-date-select" style="display:none;"
+                        onchange="if(this.value) selectPdfReportDate(this.value)">
+                        <option value="">— اختر تاريخاً —</option>
+                    </select>
+                    <div id="pdf-reports-preview"></div>
+                </div>
+
+                <!-- ── Panel 2: Thought Distortions ── -->
+                <div class="pdf-panel" id="pdf-panel-distortions">
+                    <div class="pdf-hint">استخرج التشوهات المعرفية من تحليل AI يومي وصدّرها في تقرير موحّد — ليوم واحد، أسبوع، أو شهر كامل.</div>
+
+                    <div class="pdf-range-tabs">
+                        <button class="pdf-range-tab active" onclick="setPdfRange('day',this)">يوم واحد</button>
+                        <button class="pdf-range-tab" onclick="setPdfRange('week',this)">أسبوع</button>
+                        <button class="pdf-range-tab" onclick="setPdfRange('month',this)">شهر</button>
+                    </div>
+
+                    <div class="pdf-range-row" id="pdf-range-day">
+                        <input type="date" id="pdf-dist-day-input">
+                        <button onclick="loadDistortionDay()">🔍 تحليل</button>
+                    </div>
+                    <div class="pdf-range-row" id="pdf-range-week" style="display:none;">
+                        <input type="week" id="pdf-dist-week-input">
+                        <button onclick="loadDistortionWeek()">🔍 تحليل</button>
+                    </div>
+                    <div class="pdf-range-row" id="pdf-range-month" style="display:none;">
+                        <input type="month" id="pdf-dist-month-input">
+                        <button onclick="loadDistortionMonth()">🔍 تحليل</button>
+                    </div>
+
+                    <div class="pdf-status" id="pdf-dist-status"></div>
+                    <div class="pdf-date-list" id="pdf-dist-date-list"></div>
+                    <div class="pdf-distortions-preview" id="pdf-distortions-preview"></div>
+                    <button id="pdf-export-dist-btn" class="pdf-export-btn" style="display:none;" onclick="exportDistortionsPdf()">
+                        🧠 تصدير التشوهات PDF
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
         <div id="content-dashboard" class="tab-content">
             <div class="card dash-card-wrap">
 
@@ -4977,6 +5193,8 @@
     
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         // ============= CONFIGURATION =============
         const EMOTION_CONFIG = {
@@ -5569,6 +5787,9 @@
             }
             if (section === 'write-gratitude') {
                 loadGratitudePage();
+            }
+            if (section === 'pdf-reports') {
+                loadPdfReportsPage();
             }
             // Show/hide back button
             if (section === 'landing') {
@@ -7967,6 +8188,8 @@
                 <div class="read-empty-title">اختر تاريخاً لعرض مدخلاته</div>
                 <div class="read-empty-sub">اضغط "عرض" بعد اختيار التاريخ</div></div>`;
             document.getElementById('read-message-new').innerHTML = '';
+            const pdfBtn = document.getElementById('read-pdf-export-btn');
+            if (pdfBtn) pdfBtn.style.display = _readCurrentType === 'Form responses 1' ? 'inline-flex' : 'none';
         }
 
         function onReadDateChange() {
@@ -8663,10 +8886,16 @@
         function deleteInventoryItem(type, idx) {
             const storeKey = type === 'loss' ? '_inventoryLosses' : '_inventoryGains';
             const items = JSON.parse(localStorage.getItem(storeKey) || '[]');
+            const text = items[idx];
             items.splice(idx, 1);
             localStorage.setItem(storeKey, JSON.stringify(items));
             renderInventoryList(type);
             refreshInventoryReminder();
+            if (CONFIG.scriptUrl && text) {
+                const gasType = type === 'loss' ? 'خسارة' : 'مكسب';
+                fetch(`${CONFIG.scriptUrl}?action=deleteInventoryItem&type=${encodeURIComponent(gasType)}&text=${encodeURIComponent(text)}`)
+                    .catch(() => {});
+            }
         }
 
         function loadInventoryPage() {
@@ -8724,45 +8953,140 @@
         ];
 
         // Star color per month (Jan=0 … Dec=11)
+        // ── Star month colours (Jan=0 … Dec=11) ──────────────────────
         const STAR_MONTH_COLORS = [
             '#aed6f1','#f4b8c1','#a9dfbf','#fef9c3','#d5f5e3','#fde8d8',
             '#ffd700','#f0b429','#d7bde2','#f5cba7','#d1f2eb','#dbeafe'
         ];
 
+        // ── Star SVG path data (6 designs, black fill → coloured at render) ──
+        // Each entry: { vb: viewBox string, paths: [{d, detail}] }
+        // detail=true → overlay path gets darker shade of the main colour
+        const _OUTER = 'M168.33,63.7c-2.73-16.04-22.3-12.1-34.24-15.21-4.92-1.28-18.6-.55-20.84-6.62,0,0-16.4-33.27-16.4-33.27-23.03-29.57-32.99,25.73-44.6,36.43-3.54,2.17-13.64,2.69-17.83,3.46-11.8,3.12-30.98-.87-34.14,14.71-2.92,11.42,17.99,24.2,24.67,32.49,8.09,7.43,9.82,8.66,7.19,19.92-.65,3.69-3.6,21.22-4.26,24.91-3.64,11.01,2.86,23.18,15.47,21.09,6.72-1.66,33.33-18.14,39.81-19.54,10.62.24,35.6,21.4,46.62,19.64,9.9-1.24,13.64-12.43,10.67-21.03-.97-5.46-3.07-18.36-4.05-23.76-1.62-9.17-3.31-12.4,4.69-18.98,7.01-8.8,29.91-22.76,27.26-34.23Z';
+        const STAR_SHAPES = [
+          null, // 1-indexed
+          // Star 1 — rounded star with face details as compound subpaths
+          { vb:'0 0 168.44 161.24', paths:[
+            { d:'M129.7,161.04c-2.15.27-5.55.13-7.22-.74l-32.24-16.81c-1.8-.94-3.26-1.73-5.34-1.9-.46-.04-1.4-.29-1.82-.19l-1.82.44c-1.6.38-2.93,1.33-4.42,2.11l-31.15,16.35-2.42.64c-1.69.44-3.73.36-5.44-.03-3.27-.74-6.14-2.49-8.09-5.11-2.32-3.13-3.44-6.93-2.83-10.72l.4-2.44.49-2.8.46-2.61,3.35-19.68.45-2.62.48-2.78.4-2.23c.7-3.88.3-6.83-2.65-9.68l-5.41-5.23-6.18-5.99-8.01-7.83-7.88-7.73c-2.17-3.29-3.32-7.07-2.6-10.93,1.11-6,5.37-10.44,11.44-11.39l2.26-.36,1.99-.3,2.68-.39,3.22-.47,3.04-.44,3.04-.44,3.04-.44,3.43-.49,12.16-1.75c2.03-.29,4.04-.49,5.67-1.71,1.5-1.12,2.59-2.32,3.44-4.03L72.14,6.94c1.83-3.71,5.43-5.72,9.29-6.81,1.85-.17,3.7-.18,5.49.02,4.46,1.05,7.87,3.73,9.87,7.79l16.4,33.27c1.09,2.2,3.6,4.13,6.05,4.49l14.79,2.14,3.44.5,3.04.44,3.04.44,3.05.44,3.04.44,2.85.41,1.99.29,2.26.37c6.26,1.01,10.61,5.74,11.54,11.89.2,1.29.28,2.75,0,4.03l-.39,1.75c-.56,2.52-2.09,4.52-3.91,6.27l-5.31,5.12-5.51,5.34-4.23,4.04-7.93,7.67-3.96,3.89c-1.74,1.72-2.45,5.02-2.03,7.48l.41,2.4.44,2.6.45,2.61.45,2.6.45,2.62,2.69,15.76.47,2.78.44,2.57.51,3.01c.18,1.07.24,2.48,0,3.58l-.47,2.1c-1.74,5.08-5.89,9.1-11.14,9.77ZM106.79,80.92c.49.19,1.6.18,1.99,0,.56-.27,1.1-1.43.96-2.03-.91-3.9-5.31-7.45-9.35-7.51l-1.6-.02c-3.34.31-7.06,1.98-5.74,4.28.47.81,1.5,1.49,2.53.97l1.82-.93c1.2-.06,2.61-.23,3.7.07,1.66.46,3.26,1.36,4.1,2.78.49.82.72,2.07,1.58,2.4ZM71.86,76.28c.95.88,2.11.97,3.08.06.72-.67.89-2.02-.04-2.91-2.93-2.79-8.47-2.47-12.16-.09s-5.42,6.97-2.83,7.65c1.52.4,2.4-.33,2.87-1.56,1.61-4.12,7.39-4.72,9.08-3.16ZM82.48,115.59c3.64.38,8.12-.32,10.82-2.32,4.35-3.22,5.38-7.95,6.29-12.91l.53-2.89c.18-1,.4-1.39-.44-2.14-.61-.54-1.19-1.02-2.13-.85l-13.03,2.33-6.85,1.21-2.55.46-2.59.46c-.76.14-1.46.34-1.98.86-.38.38-.49,1.32-.32,1.97,1.55,6.11,5.79,12.08,12.25,13.82Z',
+              detail:false }
+          ]},
+          // Star 2 — winking face
+          { vb:'0 0 168.54 161.84', paths:[
+            { d:_OUTER+'M87.53,69.51c.27-1.62.82-3.1,1.66-4.5,1.47-2.44,4-4.2,6.85-4.53,2.91-.33,5.5.48,7.84,2.22,1.51,1.12,2.69,2.44,3.66,4.06,1.96,3.28,3.04,7.31,2.49,11.12-.44,3.04-1.66,5.82-3.99,7.83-2.38,2.04-5.85,2.69-8.85,1.75-1.89-.59-3.99-2.04-5.33-3.5-2.46-2.68-4.13-6-4.53-9.66-.18-1.63-.08-3.2.19-4.79ZM57.23,76.76c2.09-1.76,4.45-3.06,7.07-3.88,3.24-1.01,6.65-1.28,9.92-.35,1.6.45,3.01,1.21,4.29,2.22.37.29.65.74.78,1.19.14.49-.14,1.12-.61,1.31-.28.11-.73.07-1.06-.01-5.17-4.99-13.33-3-18.52,1.06-.31.24-.56.58-.89.72-.68.29-1.3-.06-1.56-.65-.28-.66.06-1.15.58-1.59ZM57.88,91.65c-.52.39-.75.98-.72,1.67.03.63-.47,1.19-1.05,1.23-.65.04-1.25-.38-1.31-1.07-.17-1.98,1-3.77,2.92-4.42,1.49-.5,4.3.26,4.3,1.75,0,.41-.17.77-.44.98-.28.22-.76.38-1.08.18l-.81-.5c-.61-.38-1.32-.19-1.81.18ZM94.42,119.45c-2.3.61-4.56,1.09-6.95,1.27-4.52.36-9.02-.04-13.3-1.43-.65-.21-.78-1.17-.52-1.61.39-.66.99-.71,1.65-.49,1.72.57,3.48.8,5.26,1.08l1.96.18h3.97c2.54-.16,4.96-.61,7.44-1.3.73-.2,1.38.28,1.5.92.13.7-.32,1.2-1.03,1.39ZM110.18,95.5c-.24,3.56-1.23,6.99-3.17,10-2.7,4.2-6.71,7.16-11.37,8.91l-3.2,1.01c-2.06.51-4.08.85-6.2.96h-3.44c-7-.4-13.92-2.89-18.73-8.12-.99-1.08-1.75-2.18-2.5-3.44-1.68-2.82-2.5-6.01-2.75-9.33-.06-.79.24-1.43.98-1.52.7-.09,1.34.4,1.38,1.18.23,4.41,1.87,8.69,4.99,11.85l.56.57c1.23,1.24,2.62,2.24,4.17,3.1,3.5,1.95,7.33,2.99,11.32,3.3,4.25.33,8.87-.27,12.83-1.87,2.62-1.06,5.02-2.46,7.08-4.39,3.16-2.96,5.12-6.93,5.59-11.23l.11-1.19c.04-.48.14-.9.54-1.16.38-.25.89-.28,1.33,0,.41.27.62.85.49,1.36ZM112.58,93.72c-.61.02-1.23-.5-1.21-1.22.02-.82-.32-1.59-1.06-1.9-.66-.27-1.4-.09-1.94.33-.44.35-1.09.32-1.5-.02-.41-.34-.53-1.04-.22-1.52.71-1.11,2.94-1.58,4.22-1.13,1.1.39,2,1.2,2.5,2.28.27.59.37,1.28.39,1.93.01.71-.51,1.24-1.17,1.26Z',
+              detail:false },
+            { d:'M93.22,82.01l1.25,1.25c1.38,1.16,3.43,2.2,5.18,2.19h.68c2.3-.02,4.48-1.42,5.77-3.29,1.01-1.46,1.48-3.15,1.67-4.92v-2.34c-.26-2.91-1.24-5.68-3.02-8-1.54-2.01-3.77-3.62-6.27-4.08l-.51-.04h-1.29c-1.68.11-3.18.85-4.31,2.06-.41.44-.8.85-1.12,1.37-.85,1.39-1.3,2.9-1.56,4.52v3.18c.18,1.09.35,2.11.73,3.14.67,1.81,1.56,3.51,2.81,4.97ZM95.85,70.3c2.15,0,3.9,1.75,3.9,3.9s-1.75,3.9-3.9,3.9-3.9-1.75-3.9-3.9,1.75-3.9,3.9-3.9Z',
+              detail:true }
+          ]},
+          // Star 3 — smiling face
+          { vb:'0 0 168.54 161.84', paths:[
+            { d:'M106.2,89.55c3.83-6.89-.2-18.61-8.06-20.72-2.44-.65-5.1-.22-7.06,1.4-6.25,5.16-4.69,17.65,3.32,22.45,4.47,2.68,9.39,1.21,11.8-3.13ZM90.15,81.39c0-2.3,1.87-4.17,4.17-4.17s4.17,1.87,4.17,4.17-1.87,4.17-4.17,4.17-4.17-1.87-4.17-4.17Z',
+              detail:true },
+            { d:_OUTER+'M74.05,84.29c-5.73-5.2-15.21-2.82-20.8,1.99-.55.48-1.24.56-1.74.03-.53-.56-.37-1.28.21-1.8,4.74-4.26,12.23-6.48,18.47-4.94,2.41.59,7.4,3.2,5.46,4.88-.51.44-1.1.29-1.6-.16ZM87.86,118.6c-.84,3.28-3.83,5.25-7.2,4.71-3.02-.49-5.21-3.05-5.34-6.12-.03-.69.35-1.27.99-1.33.66-.06,1.32.36,1.33,1.12.02,1.2.44,2.39,1.44,3.17,1.43,1.12,3.18,1.25,4.68.34,1.36-.83,2.2-2.46,1.87-4.19-.29-1.52-1.58-2.9-3.26-3.19-.58-.1-.94-.5-1.02-1.01-.09-.55.21-1.18.83-1.27,1.58-.24,2.89-1.29,3.35-2.66.53-1.58.13-3.35-1.12-4.36-1.69-1.37-4.12-1.25-5.64.22-.81.78-1.13,1.79-1.13,2.85,0,.62-.46,1.09-.98,1.15-.54.07-1.27-.27-1.31-.9-.13-1.91.65-3.68,2.02-4.95,2.6-2.41,6.5-2.25,8.92.32,2.6,2.78,2.23,7.1-.87,9.46,2.21,1.49,3.09,4.12,2.44,6.66ZM84.96,80.8c-.28-2.51.1-4.87.95-7.2.64-1.76,1.55-3.24,2.91-4.5,3.88-3.6,9.58-3.8,13.81-.67,1.7,1.26,3.15,2.61,4.29,4.45,1.87,3,2.87,6.35,3,9.91.2,5.27-1.9,10.62-7.02,12.77-3.32,1.39-7.1.89-10.08-1.06-4.55-2.98-7.26-8.3-7.86-13.7ZM112.81,117.84c-2.1,2.35-4.84,3.96-7.93,4.63-1.75-.14-3.19-.7-4.76-1.44-3.25-1.96-5.91-4.84-7.57-8.29-1.57-3.26-1.21-6.73,1.42-9.2,2.46-2.31,6.11-3.09,8.8-1.01l1.7,1.65c1.11-1.58,2.69-2.68,4.58-2.89,3.73-.41,7.56,2.59,8.19,6.24.67,3.82-1.95,7.53-4.43,10.32Z',
+              detail:false }
+          ]},
+          // Star 4 — surprised face
+          { vb:'0 0 168.54 161.84', paths:[
+            { d:_OUTER+'M51.97,73.37c-.67-1.55-.94-3.19-.59-4.87.64-3.11,2.84-5.75,5.88-6.73,2.35-.76,4.75-.07,6.76,1.48,1.49-4.04,4.55-5.91,8.8-5.11,2.76.6,5.15,2.29,6.29,4.88,1.77,4-.08,9.23-2.1,13.04-1.59,2.99-4,5.33-6.98,6.92-2.62.32-5.16.01-7.64-.96-4.08-1.6-8.67-4.56-10.42-8.64ZM104.21,102.22c-.99,5.29-3.68,9.83-7.99,13.06-4.22,3.16-9.79,4.61-15.07,3.75l-6.23-1.01c-3.12-.51-6-1.76-8.52-3.57-6.3-4.54-9.37-12.09-8.22-19.77.29-1.97,1.75-3.82,4-3.46l39.24,6.43c2.23.37,3.17,2.58,2.8,4.57ZM110.37,88.11c-4.06,1.11-9.17,1.32-12.96-.6-2.14-2.2-3.59-4.81-4.28-7.82-.97-4.25-1.11-10.31,1.67-13.71,1.82-2.22,4.61-3.3,7.45-3.01,4.17.41,7.25,3.44,7.01,7.76,3.18-1.31,6.68-.31,8.69,2.46.79,1.1,1.24,2.46,1.54,3.81,1.3,5.89-3.83,9.64-9.13,11.1Z',
+              detail:false },
+            { d:'M79.85,110.89c-.47.22-.96.13-1.36-.21-3.54-3.71-9.61-3.86-14.15-1.44,2.55,3.11,5.89,5.3,9.77,6.18l7.18,1.25c4.29.61,8.61-.18,12.4-2.58-3.58-3.87-9.14-5.47-13.84-3.19Z',
+              detail:true }
+          ]},
+          // Star 5 — star sparkle face
+          { vb:'0 0 168.54 161.84', paths:[
+            { d:'M89,112.42c-1.58.26-2.98.8-4.26,1.68-.66.58-1.29.4-1.93-.06-4.11-2.94-10.23-2.07-14.15,1.06,3.13,2.8,6.94,4.45,11.09,4.63,2.94.13,5.81.17,8.76,0,3.9-.23,7.49-1.92,10.48-4.48-2.95-2.33-6.49-3.19-9.99-2.83Z',
+              detail:true },
+            { d:_OUTER+'M57.66,89.33l.73-7.31-7.23-3.15c-.99-.43-1.48-1.45-1.4-2.45.07-.91.74-1.87,1.77-2.09l7.84-1.71.75-7.62c.11-1.07.66-1.94,1.63-2.26.92-.3,2.17-.14,2.73.8l4.17,7.06,7.84-1.72c1.1-.24,2.13.51,2.53,1.33.52,1.05.2,2.07-.56,2.92l-5.03,5.65,4.04,6.93c.53.91.2,2.08-.44,2.78-.7.76-1.81.92-2.8.49l-7.1-3.11-5.11,5.73c-.82.92-1.96,1.22-3.02.7-1.17-.57-1.44-1.72-1.31-2.96ZM87.86,122.22h-7.22c-11.28.02-20.4-9.36-20.49-20.6-.36-2.26,1.24-4.29,3.57-4.34l6.99.04,28.11.09,4.62.03c.75,0,1.61.08,2.27.45,1.63.9,1.96,2.48,1.92,4.1-.27,10.87-8.83,19.8-19.76,20.23ZM117.26,79.16l-7.14,3.09.69,7.57c.11,1.21-.35,2.25-1.42,2.7-1.05.44-2.13.14-2.93-.77l-5.06-5.78-7.32,3.16c-.96.41-2.15.02-2.73-.7-.72-.89-.73-1.97-.15-2.94l3.95-6.64-5.29-6.04c-.69-.79-.66-2.02-.13-2.81.6-.91,1.6-1.27,2.69-1.02l7.58,1.69,4.03-6.76c.59-.99,1.76-1.33,2.75-1.05,1.14.33,1.69,1.28,1.8,2.47l.67,7.47,7.47,1.66c1.14.25,1.94,1,2.07,2.16.11,1.03-.46,2.08-1.51,2.54Z',
+              detail:false }
+          ]},
+          // Star 6 — cool shades face
+          { vb:'0 0 168.54 161.84', paths:[
+            { d:_OUTER+'M54.11,91.5c-4.21-5.34-4.05-13.03.53-18.19,2.29-2.58,5.41-4.18,8.85-4.65,4.65-.63,9.77,1.33,12.67,4.93,2.41,3,3.65,6.67,3.27,10.47l-.3,1.71c-.39,2.18-1.38,4.1-2.76,5.8-.73.91-2.01,1.18-3.08.52-2.5-1.55-5.12-2.26-8.01-2.26-2.84,0-5.48.68-7.89,2.18-1.13.7-2.43.56-3.28-.52ZM102.65,113.3c-3.4,3.63-8.87,6.38-13.75,6.91l-2.32.25h-4.94s-1.75-.19-1.75-.19c-6.05-.61-12.41-4.12-15.95-9.24-.43-.63-.96-1.38-1.02-2.16-.11-1.32,1.19-2.5,2.4-2.46,1.14.04,1.8.77,2.28,1.64l1.43,1.9,1.09,1.06c4.75,4.62,13.4,5.75,19.83,4.21,4.69-1.13,8.59-3.45,11.17-7.59.42-.67,1.15-1.18,2-1.21,1.34-.05,2.4,1.12,2.49,2.52-.66,1.79-1.75,3.07-2.97,4.37ZM117.29,84.25c-.34,2.77-1.35,5.45-3.21,7.49-.77.85-2.01.91-2.91.35-4.79-2.98-11.09-3.02-15.87-.06-1.1.68-2.36.55-3.2-.45-1.36-1.61-2.23-3.49-2.72-5.56l-.34-1.92c-.17-.98-.16-2.06.02-3.04l.26-1.47c.73-2.99,2.31-5.7,4.62-7.63,5.6-4.69,13.66-4.5,19,.44,3.12,2.89,4.89,7.57,4.37,11.86Z',
+              detail:false },
+            { d:'M67.52,82.17l.06,2.84.61.35c1.96.23,3.69.76,5.55,1.59.52-.98.79-2,.99-3.07.19-1,.05-2-.16-3.03-.49-2.43-1.91-4.6-3.93-5.94-3.44-2.28-7.53-2.21-10.91.17-2.4,1.7-3.92,4.59-3.85,7.57.03,1.57.17,2.8,1,4.29,1.96-.92,3.84-1.37,6-1.7l.08-2.69c.04-1.2,1.12-2.04,2.15-2.11,1.01-.06,2.4.48,2.43,1.71ZM108.76,75.09c-3.32-2.37-7.39-2.45-10.82-.23-2.07,1.34-3.55,3.53-4.02,5.99-.21,1.12-.35,2.16-.12,3.25.21.98.47,1.95.94,2.85,1.5-.65,2.87-1.05,4.4-1.41l1.74-.4c.11-1.1-.15-2.16.13-3.16.34-1.23,1.56-1.66,2.64-1.49.93.14,1.88,1.06,1.91,2.17l.07,2.59c2.14.32,4.04.78,5.99,1.7,1.01-1.75,1.18-4.11.86-5.99-.42-2.42-1.8-4.5-3.72-5.87Z',
+              detail:true }
+          ]}
+        ];
+
         let _gratitudePromptIdx = -1;
+        let _gratMode = 'template';
 
         function _gratitudeStarColor() {
             return STAR_MONTH_COLORS[new Date().getMonth()];
         }
 
-        function _gratitudeCount() {
-            return parseInt(localStorage.getItem('_gratitudeCount') || '0', 10);
+        function _darkenHex(hex, factor) {
+            hex = hex.replace('#','');
+            if (hex.length === 3) hex = hex.split('').map(c=>c+c).join('');
+            const r = Math.round(parseInt(hex.slice(0,2),16) * factor);
+            const g = Math.round(parseInt(hex.slice(2,4),16) * factor);
+            const b = Math.round(parseInt(hex.slice(4,6),16) * factor);
+            return `rgb(${r},${g},${b})`;
         }
 
+        function _starSvg(shape, color, size) {
+            const s = STAR_SHAPES[shape] || STAR_SHAPES[2];
+            const det = _darkenHex(color, 0.52);
+            const paths = s.paths.map(p =>
+                `<path fill-rule="evenodd" fill="${p.detail ? det : color}" d="${p.d}"/>`
+            ).join('');
+            return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${s.vb}" width="${size}" height="${size}" style="display:block;overflow:visible;">${paths}</svg>`;
+        }
+
+        // ── Entry storage ──────────────────────────────────────────────────
+        function _getGratitudeEntries() {
+            try { return JSON.parse(localStorage.getItem('_gratitudeEntries') || '[]'); } catch(e) { return []; }
+        }
+        function _saveGratitudeEntries(arr) {
+            localStorage.setItem('_gratitudeEntries', JSON.stringify(arr));
+            localStorage.setItem('_gratitudeCount', String(arr.length));
+        }
+        function _migrateGratitudeData() {
+            if (localStorage.getItem('_gratitudeEntries') !== null) return;
+            const n = parseInt(localStorage.getItem('_gratitudeCount') || '0', 10);
+            if (n <= 0) return;
+            const color = _gratitudeStarColor();
+            const entries = Array.from({length: n}, (_, i) => ({
+                id: Date.now() - (n - i) * 86400000,
+                date: '',
+                prompt: '',
+                answer: '(مدخل قديم)',
+                shape: (i % 6) + 1,
+                color
+            }));
+            _saveGratitudeEntries(entries);
+        }
+
+        // ── Jar rendering ──────────────────────────────────────────────────
         function renderJarStars() {
             const container = document.getElementById('jar-stars');
             const badge     = document.getElementById('gratitude-count-num');
-            const count     = _gratitudeCount();
-            if (badge) badge.textContent = count;
+            const entries   = _getGratitudeEntries();
+            const count     = entries.length;
+            if (badge) badge.textContent = `${count} نجمة`;
             if (!container) return;
             container.innerHTML = '';
-            const visible = Math.min(count, 22);
-            const color   = _gratitudeStarColor();
-            for (let i = 0; i < visible; i++) {
-                const s = document.createElement('span');
-                s.className = 'jar-star-item';
-                s.textContent = '★';
-                s.style.color      = color;
-                s.style.textShadow = `0 0 6px ${color}88`;
-                s.style.setProperty('--delay', `${((i * 0.37) % 2.4).toFixed(2)}s`);
-                s.style.setProperty('--dur',   `${(2.4 + (i % 4) * 0.55).toFixed(2)}s`);
-                container.appendChild(s);
-            }
+            const visible = Math.min(count, 30);
+            const toShow  = entries.slice(-visible);
+            toShow.forEach((entry, i) => {
+                const color = entry.color || _gratitudeStarColor();
+                const shape = entry.shape || ((i % 6) + 1);
+                const btn = document.createElement('button');
+                btn.className = 'jar-star-item';
+                btn.title = entry.date || '';
+                btn.setAttribute('aria-label', entry.date || 'نجمة');
+                btn.style.setProperty('--delay', `${((i * 0.37) % 2.4).toFixed(2)}s`);
+                btn.style.setProperty('--dur',   `${(2.4 + (i % 4) * 0.55).toFixed(2)}s`);
+                const realIdx = entries.length - visible + i;
+                btn.onclick = (e) => { e.stopPropagation(); openGratitudeViewModal(realIdx); };
+                btn.innerHTML = _starSvg(shape, color, 28);
+                container.appendChild(btn);
+            });
         }
 
+        // ── Prompt shuffle ─────────────────────────────────────────────────
         function shuffleGratitudePrompt() {
-            const prev  = _gratitudePromptIdx;
-            const pool  = GRATITUDE_PROMPTS.map((_, i) => i).filter(i => i !== prev);
+            const prev   = _gratitudePromptIdx;
+            const pool   = GRATITUDE_PROMPTS.map((_,i) => i).filter(i => i !== prev);
             const newIdx = pool[Math.floor(Math.random() * pool.length)];
             _gratitudePromptIdx = newIdx;
             const el = document.getElementById('gratitude-prompt-text');
@@ -8776,8 +9100,9 @@
             }, 200);
         }
 
+        // ── Page load ──────────────────────────────────────────────────────
         function loadGratitudePage() {
-            shuffleGratitudePrompt();
+            _migrateGratitudeData();
             renderJarStars();
             _syncGratitudeCount();
         }
@@ -8789,62 +9114,105 @@
                 const data = await res.json();
                 if (data.success && Array.isArray(data.data) && data.data.length > 1) {
                     const serverCount = data.data.length - 1;
-                    if (serverCount > _gratitudeCount()) {
+                    if (serverCount > _getGratitudeEntries().length) {
+                        // Server has more — update count badge only; full sync would need GAS schema change
                         localStorage.setItem('_gratitudeCount', String(serverCount));
-                        renderJarStars();
+                        document.getElementById('gratitude-count-num').textContent = `${serverCount} نجمة`;
                     }
                 }
             } catch(e) { /* silent */ }
         }
 
-        function _animateStarDrop() {
+        // ── Animated star drop ────────────────────────────────────────────
+        function _animateStarDrop(color, shape) {
             const jarScene = document.getElementById('jar-scene');
             if (!jarScene) return;
-            const rect  = jarScene.getBoundingClientRect();
-            const star  = document.createElement('div');
-            star.className   = 'star-drop-anim';
-            star.textContent = '★';
-            star.style.color = _gratitudeStarColor();
-            star.style.left  = `${rect.left + rect.width / 2 - 18}px`;
-            star.style.top   = `${rect.top  + 28}px`;
-            document.body.appendChild(star);
-            setTimeout(() => star.remove(), 1150);
+            const rect = jarScene.getBoundingClientRect();
+            const el   = document.createElement('div');
+            el.className = 'star-drop-anim';
+            el.innerHTML = _starSvg(shape || 1, color, 36);
+            el.style.left = `${rect.left + rect.width / 2 - 19}px`;
+            el.style.top  = `${rect.top + 18}px`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1150);
         }
 
+        // ── Modals ─────────────────────────────────────────────────────────
+        function openGratitudeAddModal() {
+            // reset form
+            const ta = document.getElementById('gratitude-answer');
+            if (ta) ta.value = '';
+            // ensure template is the active mode
+            setGratMode('template', document.getElementById('grat-tab-template'));
+            shuffleGratitudePrompt();
+            document.getElementById('grat-add-modal').classList.add('active');
+        }
+
+        function openGratitudeViewModal(idx) {
+            const entries = _getGratitudeEntries();
+            const e = entries[idx];
+            if (!e) return;
+            const color = e.color || _gratitudeStarColor();
+            const shape = e.shape || 1;
+            document.getElementById('grat-view-content').innerHTML = `
+                <div class="grat-view-star">${_starSvg(shape, color, 68)}</div>
+                <div class="grat-view-date">${e.date || ''}</div>
+                ${e.prompt ? `<div class="grat-view-prompt">"${e.prompt}"</div>` : ''}
+                <div class="grat-view-answer">${(e.answer || '').replace(/\n/g,'<br>')}</div>
+            `;
+            document.getElementById('grat-view-modal').classList.add('active');
+        }
+
+        function closeGratModal(id, evt) {
+            if (!evt || evt.target === document.getElementById(id)) {
+                document.getElementById(id).classList.remove('active');
+            }
+        }
+
+        function setGratMode(mode, btn) {
+            _gratMode = mode;
+            document.querySelectorAll('.grat-mode-tab').forEach(t => t.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            const tmpl = document.getElementById('grat-template-section');
+            if (tmpl) tmpl.style.display = mode === 'template' ? '' : 'none';
+        }
+
+        // ── Submit ─────────────────────────────────────────────────────────
         async function submitGratitudeEntry() {
             const ta     = document.getElementById('gratitude-answer');
-            const answer = ta?.value.trim();
+            const answer = (ta?.value || '').trim();
             if (!answer) { ta?.focus(); return; }
 
-            const prompt = GRATITUDE_PROMPTS[_gratitudePromptIdx] || '';
-            const now    = new Date();
+            const prompt  = _gratMode === 'template'
+                ? (GRATITUDE_PROMPTS[_gratitudePromptIdx] || '') : '';
+            const now     = new Date();
             const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+            const color   = _gratitudeStarColor();
+            const shape   = Math.floor(Math.random() * 6) + 1;
 
-            // Animate & update count immediately
-            _animateStarDrop();
-            const newCount = _gratitudeCount() + 1;
-            localStorage.setItem('_gratitudeCount', String(newCount));
+            const entry = { id: Date.now(), date: dateStr, prompt, answer, shape, color };
+            const entries = _getGratitudeEntries();
+            entries.push(entry);
+            _saveGratitudeEntries(entries);
+
+            // Animate then refresh
+            _animateStarDrop(color, shape);
 
             setTimeout(() => {
                 renderJarStars();
                 if (ta) ta.value = '';
-                shuffleGratitudePrompt();
+                if (_gratMode === 'template') shuffleGratitudePrompt();
+                closeGratModal('grat-add-modal', null);
                 showMessage('gratitude-message', '✨ نجمة جديدة أضفتها إلى جرتك!', 'success');
             }, 950);
 
-            // Sync to GAS in background
+            // Background GAS sync
             if (CONFIG.scriptUrl) {
-                try {
-                    await fetch(CONFIG.scriptUrl, {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            sheetName: 'Gratitude',
-                            'التاريخ': dateStr,
-                            'السؤال المحفز': prompt,
-                            'الإجابة': answer
-                        })
-                    });
-                } catch(e) { /* silent — saved locally */ }
+                fetch(CONFIG.scriptUrl, {
+                    method:'POST',
+                    body: JSON.stringify({ sheetName:'Gratitude',
+                        'التاريخ': dateStr, 'السؤال المحفز': prompt, 'الإجابة': answer })
+                }).catch(() => {});
             }
         }
 
@@ -9454,6 +9822,604 @@
             }
             currentAudioInstance = null;
         }
+
+        // ╔═══════════════════════════════════════════════════════════╗
+        // ║            PDF REPORTS — تصدير التقارير                  ║
+        // ╚═══════════════════════════════════════════════════════════╝
+
+        const PDF_ANALYSIS_COLS = [
+            'تحليل AI يومي', 'تحليل داخلي',
+            'تقرير أسبوعي عام', 'تقرير أسبوعي داخلي',
+            'تقرير شهري عام', 'تقرير شهري داخلي'
+        ];
+
+        let _pdfCurrentDate  = null;
+        let _pdfReportData   = null;
+        let _pdfDistortRange = 'day';
+        let _pdfDistortData  = {};       // date → distortion strings[]
+        let _pdfDistortSel   = new Set(); // selected dates
+
+        function loadPdfReportsPage() {
+            _pdfCurrentDate = null;
+            _pdfReportData  = null;
+            _pdfDistortData = {};
+            _pdfDistortSel  = new Set();
+            // Reset to first panel
+            switchPdfTab('reports', document.getElementById('pdf-tab-reports'));
+            const sel = document.getElementById('pdf-reports-date-select');
+            if (sel) { sel.innerHTML = '<option value="">— اختر تاريخاً —</option>'; sel.style.display = 'none'; }
+            document.getElementById('pdf-date-status').textContent = '';
+            document.getElementById('pdf-reports-preview').innerHTML   = '';
+            document.getElementById('pdf-dist-date-list').innerHTML    = '';
+            document.getElementById('pdf-distortions-preview').innerHTML = '';
+            document.getElementById('pdf-dist-status').textContent     = '';
+            const exportBtn = document.getElementById('pdf-export-dist-btn');
+            if (exportBtn) exportBtn.style.display = 'none';
+        }
+
+        function switchPdfTab(tab, btn) {
+            document.querySelectorAll('.pdf-section-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.pdf-panel').forEach(p => p.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            const panel = document.getElementById('pdf-panel-' + tab);
+            if (panel) panel.classList.add('active');
+        }
+
+        // ── Panel 1: Analysis Reports ─────────────────────────────
+
+        async function fetchPdfReportDates() {
+            const statusEl = document.getElementById('pdf-date-status');
+            const sel      = document.getElementById('pdf-reports-date-select');
+            statusEl.textContent = '⏳ جارٍ التحميل...';
+            sel.style.display = 'none';
+            if (!CONFIG.scriptUrl) {
+                statusEl.innerHTML = '<span style="color:#ff7675;">⚠️ يرجى إعداد رابط Apps Script أولاً</span>';
+                return;
+            }
+            try {
+                const res  = await fetch(`${CONFIG.scriptUrl}?action=getDates&sheet=${encodeURIComponent('Form responses 1')}`);
+                const data = await res.json();
+                if (!data.success || !data.dates || !data.dates.length) {
+                    statusEl.textContent = 'لا توجد سجلات متاحة';
+                    return;
+                }
+                statusEl.textContent = '';
+                const sorted = [...data.dates].sort((a, b) => b.localeCompare(a));
+                sel.innerHTML = '<option value="">— اختر تاريخاً —</option>';
+                sorted.forEach(date => {
+                    const opt = document.createElement('option');
+                    opt.value = date;
+                    opt.textContent = formatArabicDate(date);
+                    sel.appendChild(opt);
+                });
+                sel.style.display = 'block';
+            } catch(e) {
+                statusEl.innerHTML = `<span style="color:#ff7675;">خطأ: ${e.message}</span>`;
+            }
+        }
+
+        async function selectPdfReportDate(date) {
+            _pdfCurrentDate = date;
+            const previewDiv = document.getElementById('pdf-reports-preview');
+            previewDiv.innerHTML = '<div class="pdf-status">⏳ جارٍ تحميل البيانات...</div>';
+            try {
+                const res  = await fetch(`${CONFIG.scriptUrl}?action=get&date=${date}&sheet=${encodeURIComponent('Form responses 1')}`);
+                const json = await res.json();
+                if (!json.success || !json.data) {
+                    previewDiv.innerHTML = '<div class="pdf-status">لا توجد بيانات لهذا اليوم</div>';
+                    return;
+                }
+                _pdfReportData = json.data;
+                const available = PDF_ANALYSIS_COLS.filter(c => json.data[c] && String(json.data[c]).trim());
+                if (!available.length) {
+                    previewDiv.innerHTML = '<div class="pdf-status">لا توجد تحليلات مسجّلة لهذا اليوم</div>';
+                    return;
+                }
+                previewDiv.innerHTML = `
+                    <div style="margin:0.9rem 0 0.8rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem;">
+                            <span style="font-size:0.8rem;color:var(--text-secondary);">اختر الأعمدة المراد تصديرها:</span>
+                            <span style="font-size:0.75rem;color:var(--accent-calm);cursor:pointer;"
+                                onclick="document.querySelectorAll('.pdf-col-cb').forEach(cb=>cb.checked=true)">تحديد الكل</span>
+                        </div>
+                        ${available.map(c => `
+                            <label class="pdf-date-item" style="cursor:pointer;margin-bottom:0.4rem;user-select:none;">
+                                <input type="checkbox" class="pdf-col-cb" data-col="${c}" checked>
+                                <span style="flex:1;">${c}</span>
+                            </label>`).join('')}
+                    </div>
+                    <button class="pdf-export-btn" onclick="exportDailyReport(this)">📄 تصدير PDF — ${formatArabicDate(date)}</button>`;
+            } catch(e) {
+                previewDiv.innerHTML = `<div class="pdf-status" style="color:#ff7675;">خطأ: ${e.message}</div>`;
+            }
+        }
+
+        async function exportDailyReport(btn) {
+            if (!_pdfReportData || !_pdfCurrentDate) return;
+            const selectedCols = [...document.querySelectorAll('.pdf-col-cb:checked')].map(cb => cb.dataset.col);
+            if (!selectedCols.length) {
+                btn.textContent = '⚠️ اختر عموداً على الأقل';
+                setTimeout(() => { btn.innerHTML = `📄 تصدير PDF — ${formatArabicDate(_pdfCurrentDate)}`; }, 2000);
+                return;
+            }
+            btn.disabled = true;
+            btn.textContent = '⏳ جارٍ التصدير...';
+            try {
+                await _buildAndSaveReportPdf(_pdfReportData, _pdfCurrentDate, selectedCols);
+                btn.textContent = '✅ تم التصدير!';
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = `📄 تصدير PDF — ${formatArabicDate(_pdfCurrentDate)}`;
+                }, 2500);
+            } catch(e) {
+                console.error('PDF export error:', e);
+                btn.disabled = false;
+                btn.textContent = '❌ فشل — حاول مجدداً';
+            }
+        }
+
+        // ── Panel 2: Thought Distortions ─────────────────────────
+
+        function setPdfRange(range, btn) {
+            _pdfDistortRange = range;
+            document.querySelectorAll('.pdf-range-tab').forEach(t => t.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            ['day','week','month'].forEach(r => {
+                const el = document.getElementById('pdf-range-' + r);
+                if (el) el.style.display = r === range ? 'flex' : 'none';
+            });
+        }
+
+        async function loadDistortionDay() {
+            const date = document.getElementById('pdf-dist-day-input').value;
+            if (!date) return;
+            await _loadAndAnalyseDates([date]);
+        }
+
+        async function loadDistortionWeek() {
+            const v = document.getElementById('pdf-dist-week-input').value;
+            if (!v) return;
+            const dates = _weekToDates(v);
+            const filtered = await _filterToAvailable(dates);
+            await _loadAndAnalyseDates(filtered);
+        }
+
+        async function loadDistortionMonth() {
+            const v = document.getElementById('pdf-dist-month-input').value;
+            if (!v) return;
+            const [y, m] = v.split('-');
+            const days = new Date(+y, +m, 0).getDate();
+            const all  = Array.from({length: days}, (_, i) =>
+                `${y}-${m}-${String(i+1).padStart(2,'0')}`);
+            const filtered = await _filterToAvailable(all);
+            await _loadAndAnalyseDates(filtered);
+        }
+
+        function _weekToDates(weekStr) {
+            const [yr, wk] = weekStr.split('-W');
+            const jan1  = new Date(+yr, 0, 1);
+            const offset = (wk - 1) * 7;
+            const wkStart = new Date(jan1.getTime() + offset * 86400000);
+            const dow = wkStart.getDay();
+            wkStart.setDate(wkStart.getDate() + (dow === 0 ? -6 : 1 - dow));
+            return Array.from({length: 7}, (_, i) => {
+                const d = new Date(wkStart.getTime() + i * 86400000);
+                return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+            });
+        }
+
+        async function _filterToAvailable(dates) {
+            if (!CONFIG.scriptUrl) return dates;
+            try {
+                const res  = await fetch(`${CONFIG.scriptUrl}?action=getDates&sheet=${encodeURIComponent('Form responses 1')}`);
+                const data = await res.json();
+                if (!data.success || !data.dates) return dates;
+                const avail = new Set(data.dates);
+                return dates.filter(d => avail.has(d));
+            } catch(e) { return dates; }
+        }
+
+        async function _loadAndAnalyseDates(dates) {
+            const statusEl  = document.getElementById('pdf-dist-status');
+            const listDiv   = document.getElementById('pdf-dist-date-list');
+            const prevDiv   = document.getElementById('pdf-distortions-preview');
+            const exportBtn = document.getElementById('pdf-export-dist-btn');
+
+            _pdfDistortData = {};
+            _pdfDistortSel  = new Set();
+            listDiv.innerHTML   = '';
+            prevDiv.innerHTML   = '';
+            exportBtn.style.display = 'none';
+
+            if (!dates.length) {
+                statusEl.textContent = 'لا توجد سجلات في هذه الفترة';
+                return;
+            }
+            statusEl.innerHTML = `⏳ جارٍ تحليل ${dates.length} يوم...`;
+
+            const results = await Promise.all(dates.map(async date => {
+                try {
+                    const res  = await fetch(`${CONFIG.scriptUrl}?action=get&date=${date}&sheet=${encodeURIComponent('Form responses 1')}`);
+                    const json = await res.json();
+                    if (!json.success || !json.data) return { date, items: [] };
+                    const text  = String(json.data['تحليل AI يومي'] || '');
+                    return { date, items: _extractCBTDistortions(text) };
+                } catch(e) { return { date, items: [] }; }
+            }));
+
+            const withData = results.filter(r => r.items.length);
+            withData.forEach(r => { _pdfDistortData[r.date] = r.items; });
+
+            if (!withData.length) {
+                statusEl.textContent = 'لم يُعثر على تشوهات معرفية في هذه الفترة';
+                return;
+            }
+            statusEl.textContent = `✅ تم العثور على تشوهات في ${withData.length} يوم`;
+
+            // Render checkboxed date list
+            withData.sort((a,b) => b.date.localeCompare(a.date)).forEach(({ date, items }) => {
+                const label = document.createElement('label');
+                label.className = 'pdf-date-item';
+                label.style.cursor = 'pointer';
+                const cb = document.createElement('input');
+                cb.type = 'checkbox'; cb.checked = true;
+                _pdfDistortSel.add(date);
+                cb.onchange = () => {
+                    if (cb.checked) _pdfDistortSel.add(date);
+                    else _pdfDistortSel.delete(date);
+                    _refreshDistortPreview();
+                };
+                const txt = document.createElement('span');
+                txt.textContent = `📅 ${formatArabicDate(date)}`;
+                const badge = document.createElement('span');
+                badge.style.cssText = 'margin-right:auto;font-size:0.75rem;color:var(--text-secondary);';
+                badge.textContent = `${items.length} تشوه`;
+                label.appendChild(cb);
+                label.appendChild(txt);
+                label.appendChild(badge);
+                listDiv.appendChild(label);
+            });
+            _refreshDistortPreview();
+        }
+
+        function _extractCBTDistortions(text) {
+            if (!text) return [];
+            const lines        = text.split('\n');
+            const results      = [];
+            let inSection      = false;
+            let currentBlock   = null;   // lines of current top-level distortion entry
+
+            const flushBlock = () => {
+                if (currentBlock && currentBlock.length) {
+                    const t = currentBlock.join('\n').trim();
+                    if (t) results.push(t);
+                }
+                currentBlock = null;
+            };
+
+            for (const line of lines) {
+                const trimmed = line.trim();
+
+                if (trimmed.startsWith('###')) {
+                    flushBlock();
+                    inSection = /التشوهات المعرفية|CBT/i.test(trimmed);
+                    continue;
+                }
+
+                if (!inSection) continue;
+
+                // Top-level bullet starting with ** = new distortion
+                if (/^[-*]\s+\*\*/.test(trimmed)) {
+                    flushBlock();
+                    currentBlock = [line];
+                } else if (currentBlock !== null) {
+                    // Sub-bullets, descriptions, blank lines — all part of current entry
+                    currentBlock.push(line);
+                }
+            }
+            flushBlock();
+            return results;
+        }
+
+        function _refreshDistortPreview() {
+            const prevDiv   = document.getElementById('pdf-distortions-preview');
+            const exportBtn = document.getElementById('pdf-export-dist-btn');
+            const selected  = [..._pdfDistortSel].sort((a,b) => b.localeCompare(a));
+
+            if (!selected.length) {
+                prevDiv.innerHTML = ''; exportBtn.style.display = 'none'; return;
+            }
+
+            let html = `<div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:0.6rem;">معاينة التشوهات المختارة:</div>`;
+            selected.forEach(date => {
+                const items = _pdfDistortData[date] || [];
+                html += `<div class="pdf-distortion-day">
+                    <div class="pdf-distortion-day-header">📅 ${formatArabicDate(date)}</div>
+                    ${items.map(d => `<div class="pdf-distortion-item">${_fmtDistortItem(d)}</div>`).join('')}
+                </div>`;
+            });
+            prevDiv.innerHTML = html;
+            exportBtn.style.display = 'flex';
+        }
+
+        function _fmtDistortItem(block) {
+            // Full block is already markdown — parse it properly
+            try { return marked.parse(block); } catch(e) {
+                // Fallback: minimal inline render
+                return block
+                    .replace(/^[-*]\s+/gm, '')
+                    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n/g, '<br>');
+            }
+        }
+
+        async function exportDistortionsPdf() {
+            const btn = document.getElementById('pdf-export-dist-btn');
+            btn.disabled = true;
+            btn.innerHTML = '⏳ جارٍ التصدير...';
+            try {
+                const selected = [..._pdfDistortSel].sort((a,b) => b.localeCompare(a));
+                await _buildAndSaveDistortionsPdf(selected);
+                btn.innerHTML = '✅ تم التصدير!';
+                setTimeout(() => { btn.disabled = false; btn.innerHTML = '🧠 تصدير التشوهات PDF'; }, 2500);
+            } catch(e) {
+                console.error('PDF error:', e);
+                btn.disabled = false; btn.innerHTML = '❌ فشل — حاول مجدداً';
+            }
+        }
+
+        // ── Core PDF builders ────────────────────────────────────
+
+        /**
+         * Convert all <ol>/<ul>/<li> in an HTML string into flex-based <div> rows
+         * so that list markers always appear on the RIGHT side for RTL Arabic PDFs.
+         * CSS direction on li markers is unreliable in html2canvas; flexbox is not.
+         */
+        function _fixListsRtl(htmlStr) {
+            const tmp = document.createElement('div');
+            tmp.innerHTML = htmlStr;
+
+            function convertList(listEl) {
+                const isOl = listEl.tagName === 'OL';
+                let counter = isOl ? parseInt(listEl.getAttribute('start') || '1', 10) : 0;
+
+                const wrapper = document.createElement('div');
+                wrapper.style.cssText = 'margin:.4em 0; direction:rtl; padding-right:1.2em; padding-left:0;';
+
+                Array.from(listEl.children).forEach(li => {
+                    if (li.tagName !== 'LI') return;
+
+                    // flex row: direction:rtl makes first child appear on the RIGHT
+                    const row = document.createElement('div');
+                    row.style.cssText = [
+                        'display:flex', 'direction:rtl', 'gap:0.45em',
+                        'align-items:baseline', 'margin-bottom:.45em',
+                        'font-family:\'Amiri\',serif', 'line-height:1.85'
+                    ].join(';');
+
+                    // Marker — first child → appears on RIGHT in RTL flex
+                    const markerSpan = document.createElement('span');
+                    markerSpan.style.cssText = 'flex-shrink:0; white-space:nowrap; font-family:\'Amiri\',serif; color:inherit;';
+                    markerSpan.textContent = isOl ? (counter++ + '.') : '•';
+
+                    // Content — second child → flows LEFT of the marker
+                    const contentSpan = document.createElement('span');
+                    contentSpan.style.cssText = 'flex:1; direction:rtl; text-align:right; word-break:break-word; color:inherit;';
+                    while (li.firstChild) contentSpan.appendChild(li.firstChild);
+
+                    row.appendChild(markerSpan);
+                    row.appendChild(contentSpan);
+                    wrapper.appendChild(row);
+                });
+
+                listEl.replaceWith(wrapper);
+            }
+
+            // Process innermost lists first (depth-first, inside-out)
+            let guard = 0;
+            while (tmp.querySelector('ol, ul') && guard++ < 40) {
+                const innermost = Array.from(tmp.querySelectorAll('ol, ul'))
+                    .find(el => !el.querySelector('ol, ul'));
+                if (!innermost) break;
+                convertList(innermost);
+            }
+
+            return tmp.innerHTML;
+        }
+
+        async function _buildAndSaveReportPdf(data, date, cols) {
+            // cols is the user-selected subset; fall back to all available if not provided
+            if (!cols) cols = PDF_ANALYSIS_COLS.filter(c => data[c] && String(data[c]).trim());
+            const colConfig = {
+                'تحليل AI يومي':      { emoji:'🤖', color:'#5f27cd', bg:'rgba(95,39,205,0.03)'   },
+                'تحليل داخلي':        { emoji:'💭', color:'#0abde3', bg:'rgba(10,189,227,0.03)'  },
+                'تقرير أسبوعي عام':   { emoji:'📊', color:'#10ac84', bg:'rgba(16,172,132,0.03)'  },
+                'تقرير أسبوعي داخلي': { emoji:'📝', color:'#01a3a4', bg:'rgba(1,163,164,0.03)'   },
+                'تقرير شهري عام':     { emoji:'📅', color:'#6c5ce7', bg:'rgba(108,92,231,0.03)'  },
+                'تقرير شهري داخلي':   { emoji:'🔮', color:'#e17055', bg:'rgba(225,112,85,0.03)'  },
+            };
+
+            let body = '';
+            cols.forEach(col => {
+                const cfg  = colConfig[col] || { emoji:'📄', color:'#636e72', bg:'rgba(100,100,100,0.08)' };
+                let rendered = '';
+                try { rendered = marked.parse(String(data[col])); } catch(e) { rendered = String(data[col]); }
+                // Colour bold text to match the section's header colour
+                rendered = rendered.replace(/<strong>/g, `<strong style="color:${cfg.color};">`);
+                body += `
+                    <div style="margin-bottom:22px;border-radius:12px;overflow:hidden;border:1px solid rgba(0,0,0,0.08);box-shadow:0 2px 10px rgba(0,0,0,0.06);">
+                        <div dir="rtl" style="background:${cfg.color};color:white;padding:11px 16px;display:flex;align-items:center;gap:8px;direction:rtl;">
+                            <span style="font-size:1.1rem;">${cfg.emoji}</span>
+                            <span style="font-family:'Amiri',serif;font-size:1.05rem;font-weight:700;color:white;">${col}</span>
+                        </div>
+                        <div dir="rtl" style="padding:18px 20px;font-size:14.5px;line-height:1.95;color:#2d3436;background:${cfg.bg};direction:rtl;text-align:right;font-family:'Amiri',serif;">
+                            ${rendered}
+                        </div>
+                    </div>`;
+            });
+
+            // Header: use system Arabic fonts, NO letter-spacing (breaks ligatures),
+            // explicit dir="rtl" on every text element
+            const html = `
+                <div dir="rtl" style="background:#1a1a2e;color:white;padding:28px 24px;border-radius:16px;margin-bottom:28px;direction:rtl;text-align:center;">
+                    <div style="font-size:2.2rem;margin-bottom:10px;line-height:1;">📖</div>
+                    <div dir="rtl" style="font-family:'Amiri',serif;font-size:1.55rem;font-weight:700;color:white;direction:rtl;unicode-bidi:embed;letter-spacing:0;">يوميات التعافي</div>
+                    <div dir="rtl" style="font-family:'Amiri',serif;font-size:0.95rem;color:rgba(255,255,255,0.72);margin-top:8px;direction:rtl;">${formatArabicDate(date)}</div>
+                    <div dir="rtl" style="font-family:'Amiri',serif;font-size:0.82rem;color:rgba(255,255,255,0.45);margin-top:4px;direction:rtl;">${cols.length} تقرير</div>
+                </div>
+                ${body}
+                <div dir="rtl" style="text-align:center;margin-top:28px;font-size:11px;color:#bbb;border-top:1px solid #eee;padding-top:14px;font-family:Arial,Tahoma,sans-serif;">
+                    تم التصدير بتاريخ ${new Date().toLocaleDateString('ar-SA')} · يوميات التعافي
+                </div>`;
+
+            await _htmlToPdf(html, `تقرير_${date}.pdf`);
+        }
+
+        async function _buildAndSaveDistortionsPdf(dates) {
+            const total = dates.reduce((s, d) => s + (_pdfDistortData[d]||[]).length, 0);
+            const rangeLabel = dates.length === 1
+                ? formatArabicDate(dates[0])
+                : `من ${formatArabicDate(dates[dates.length-1])} إلى ${formatArabicDate(dates[0])}`;
+
+            let body = '';
+            dates.forEach(date => {
+                const items = _pdfDistortData[date] || [];
+                if (!items.length) return;
+                body += `
+                    <div style="margin-bottom:22px;">
+                        <div style="background:#ede7ff;padding:9px 14px;border-radius:8px;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+                            <span>📅</span>
+                            <span style="font-family:'Amiri',serif;font-size:1rem;font-weight:700;color:#6c5ce7;">${formatArabicDate(date)}</span>
+                        </div>
+                        ${items.map((d, i) => `
+                            <div style="padding:11px 14px;margin-bottom:6px;border-radius:8px;
+                                background:${i%2===0?'#fafafa':'#f5f5f5'};
+                                border-right:3px solid #a29bfe;
+                                font-size:13.5px;line-height:1.8;color:#2d3436;direction:rtl;text-align:right;">
+                                ${_fmtDistortItem(d).replace(/<strong>/g,'<strong style="color:#6c5ce7;">') }
+                            </div>`).join('')}
+                    </div>`;
+            });
+
+            const html = `
+                <div style="background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:white;padding:26px 20px;border-radius:16px;margin-bottom:26px;text-align:center;">
+                    <div style="font-size:2rem;margin-bottom:8px;">🧠</div>
+                    <div style="font-family:'Amiri',serif;font-size:1.5rem;font-weight:700;">التشوهات المعرفية</div>
+                    <div style="font-size:0.9rem;opacity:0.85;margin-top:8px;">${rangeLabel}</div>
+                    <div style="font-size:0.8rem;opacity:0.65;margin-top:4px;">${dates.length} يوم · ${total} تشوه</div>
+                </div>
+                ${body}
+                <div style="text-align:center;margin-top:26px;font-size:11px;color:#aaa;border-top:1px solid #eee;padding-top:14px;">
+                    تم التصدير بتاريخ ${new Date().toLocaleDateString('ar-SA')} · يوميات التعافي
+                </div>`;
+
+            const fileName = dates.length === 1
+                ? `تشوهات_${dates[0]}.pdf`
+                : `تشوهات_${dates[dates.length-1]}_${dates[0]}.pdf`;
+            await _htmlToPdf(html, fileName);
+        }
+
+        // ── Shared: render HTML element → multi-page A4 PDF ──────
+
+        async function _htmlToPdf(innerHtml, fileName) {
+            // ── Scoped style: override dark-theme CSS vars so text is dark on white ──
+            const scopeId  = '_pdf_render_scope';
+            const tempStyle = document.createElement('style');
+            tempStyle.textContent = `
+                /* ── base: reset any dark-theme overrides ── */
+                #${scopeId} { color:#2d3436 !important; font-family:'Amiri',serif !important; }
+                /* headings */
+                #${scopeId} h1 { font-size:1.45em !important; font-weight:700 !important; color:#1a1a2e !important;
+                    font-family:'Amiri',serif !important; margin:.9em 0 .4em !important; line-height:1.4 !important; }
+                #${scopeId} h2 { font-size:1.25em !important; font-weight:700 !important; color:#1a1a2e !important;
+                    font-family:'Amiri',serif !important; margin:.8em 0 .38em !important; line-height:1.4 !important; }
+                #${scopeId} h3 { font-size:1.1em !important; font-weight:700 !important; color:#2c3e6b !important;
+                    font-family:'Amiri',serif !important; margin:.75em 0 .35em !important; line-height:1.4 !important; }
+                #${scopeId} h4,#${scopeId} h5,#${scopeId} h6 { font-size:1em !important; font-weight:700 !important;
+                    color:#2c3e6b !important; font-family:'Amiri',serif !important; margin:.65em 0 .3em !important; }
+                /* paragraphs */
+                #${scopeId} p { color:#2d3436 !important; margin:.55em 0 !important; line-height:1.95 !important;
+                    font-family:'Amiri',serif !important; }
+                /* lists are converted to flex divs by _fixListsRtl() before render,
+                   so ul/ol/li rules here are only a fallback safety net */
+                #${scopeId} ul,#${scopeId} ol { direction:rtl !important; padding-right:1.2em !important; padding-left:0 !important; margin:.4em 0 !important; }
+                #${scopeId} li  { direction:rtl !important; text-align:right !important; color:#2d3436 !important; line-height:1.85 !important; font-family:'Amiri',serif !important; }
+                /* inline formatting — strong has NO color override so inline style wins per-section */
+                #${scopeId} strong,#${scopeId} b { font-weight:700 !important; }
+                #${scopeId} em,#${scopeId} i    { font-style:italic !important; color:#2d3436 !important; }
+                #${scopeId} code { background:#f0f0f0 !important; padding:.12em .35em !important;
+                    border-radius:3px !important; font-size:.88em !important; color:#c0392b !important; }
+                #${scopeId} pre  { background:#f5f5f5 !important; padding:.8em 1em !important; border-radius:8px !important; }
+                /* block elements */
+                #${scopeId} blockquote { border-right:3px solid #a29bfe !important; padding-right:.9em !important;
+                    margin-right:0 !important; color:#555 !important; font-style:italic !important; }
+                #${scopeId} hr { border:none !important; border-top:1px solid #ddd !important; margin:1em 0 !important; }
+                #${scopeId} a  { color:#6c5ce7 !important; }
+                /* keep colored column-header spans white */
+                #${scopeId} [style*="color:white"] { color:white !important; }
+            `;
+            document.head.appendChild(tempStyle);
+
+            const wrapper = document.createElement('div');
+            wrapper.id = scopeId;
+            // Off-screen but fully rendered (opacity:0 would break html2canvas)
+            wrapper.style.cssText = [
+                'position:fixed', 'top:0', 'left:-9999px',
+                'width:794px', 'background:#ffffff',
+                'padding:40px', 'box-sizing:border-box',
+                'direction:rtl', 'font-family:Amiri,Arial,sans-serif',
+                'color:#2d3436', 'pointer-events:none'
+            ].join(';');
+            // Convert lists to flex rows so markers appear on the RIGHT for RTL Arabic
+            wrapper.innerHTML = _fixListsRtl(innerHtml);
+            document.body.appendChild(wrapper);
+
+            try {
+                // Ensure Amiri and all fonts are fully loaded before capturing
+                await document.fonts.ready;
+                const canvas = await html2canvas(wrapper, {
+                    scale: 2, useCORS: true, backgroundColor: '#ffffff',
+                    logging: false, allowTaint: true,
+                });
+
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+
+                const margin    = 12;          // mm
+                const pageW     = 210;
+                const pageH     = 297;
+                const contentW  = pageW - margin * 2;
+                const contentH  = pageH - margin * 2;
+                const imgW      = canvas.width;
+                const imgH      = canvas.height;
+                const pxPerMm   = imgW / contentW;        // canvas px per mm
+                const pageHpx   = contentH * pxPerMm;     // canvas rows per A4 page
+
+                let offsetY = 0;
+                let firstPage = true;
+
+                while (offsetY < imgH) {
+                    if (!firstPage) pdf.addPage();
+                    firstPage = false;
+
+                    const sliceH = Math.min(pageHpx, imgH - offsetY);
+                    const slice  = document.createElement('canvas');
+                    slice.width  = imgW;
+                    slice.height = sliceH;
+                    slice.getContext('2d').drawImage(canvas, 0, offsetY, imgW, sliceH, 0, 0, imgW, sliceH);
+
+                    const sliceMmH = sliceH / pxPerMm;
+                    pdf.addImage(slice.toDataURL('image/jpeg', 0.92), 'JPEG', margin, margin, contentW, sliceMmH);
+                    offsetY += pageHpx;
+                }
+
+                pdf.save(fileName);
+            } finally {
+                document.body.removeChild(wrapper);
+                document.head.removeChild(tempStyle);
+            }
+        }
+
     </script>
 </body>
 </html>
