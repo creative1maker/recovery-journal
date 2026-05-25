@@ -2587,20 +2587,65 @@
         .inventory-empty { text-align:center; padding:0.8rem; color:var(--text-secondary); font-size:0.83rem; }
         /* Home daily reminder */
         .inventory-reminder-card {
-            background:linear-gradient(135deg, rgba(255,255,255,0.10) 0%, rgba(200,220,255,0.07) 100%);
-            border:1px solid rgba(255,255,255,0.11);
-            border-radius:16px; padding:1rem 1.15rem;
-            display:flex; flex-direction:column; gap:0.7rem;
+            background:
+                /* richer navy glow */
+                radial-gradient(
+                    circle at top left,
+                    rgba(36, 58, 96, 0.22) 0%,
+                    transparent 36%
+                ),
+
+                /* saturated golden glow */
+                radial-gradient(
+                    circle at bottom left,
+                    rgba(255, 197, 72, 0.877) 0%,
+                    transparent 34%
+                ),
+
+                /* richer coral/red glow */
+                radial-gradient(
+                    circle at top right,
+                    rgba(255, 99, 72, 0.482) 0%,
+                    transparent 40%
+                ),
+
+                /* warm light base */
+                linear-gradient(
+                    135deg,
+                    #fff9f3 0%,
+                    #fff0e6 70%,
+                    #fff8ef 48%
+                );
+
+            border: 1px solid rgba(255,255,255,0.6);
+
+            border-radius: 22px;
+            padding: 1.2rem;
+
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+
+            box-shadow:
+                0 10px 30px rgba(0,0,0,0.07),
+                inset 0 1px 1px rgba(255,255,255,0.7);
+
+            backdrop-filter: blur(12px);
+
+            color: #334155;
+
+            overflow: hidden;
+            position: relative;
         }
-        .inventory-reminder-label { font-size:0.7rem; color:rgba(255,255,255,0.5); letter-spacing:0.02em; }
+        .inventory-reminder-label { font-size:0.7rem;font-weight: 500; color:rgba(26, 24, 24, 0.5); letter-spacing:0.02em; }
         .inventory-reminder-loss {
-            font-size:0.86rem; color:#ff9f9f; line-height:1.7;
-            border-right:2px solid rgba(255,159,159,0.45); padding-right:0.65rem;
+            font-size:1rem; font-weight: 700; color:#b93a3a; line-height:1.7;
+            border-right:2px solid rgba(196, 74, 84, 0.233); padding-right:0.65rem;
         }
-        .inventory-reminder-divider { height:0; border-top:1px dashed rgba(255,255,255,0.18); margin:0; }
+        .inventory-reminder-divider { height:0; border-top:1.35px dashed rgba(214, 158, 52, 0.676); margin:0 20px; }
         .inventory-reminder-gain {
-            font-size:0.86rem; color:#81ecec; line-height:1.7;
-            border-right:2px solid rgba(129,236,236,0.45); padding-right:0.65rem;
+            font-size:1.1rem; font-weight: 700; color:#508f85; line-height:1.7;
+            border-right:2px solid rgba(80, 148, 142, 0.45); padding-right:0.65rem;
         }
 
         /* ── Gratitude Journal (يوميات الامتنان) ── */
@@ -2637,9 +2682,9 @@
         }
         .jar-svg { width:100%; display:block; }
         .jar-stars-overlay {
-            position:absolute; bottom:4.9%; left:50%; transform:translateX(-50%);
-            width:62%; height:70%; display:flex; flex-wrap:wrap;
-            align-content:flex-end; align-items:center;
+            position:absolute; bottom:8%; left:50%; transform:translateX(-50%);
+            width:62%; height:70%; display:flex; flex-wrap:wrap-reverse;
+            align-content:flex-start; align-items:center;
             justify-content:center; gap:4px 3px;
             overflow:hidden; pointer-events:none;
         }
@@ -3081,7 +3126,7 @@
             </div>
 
             <!-- Daily Inventory Reminder -->
-            <div id="inventory-reminder" style="display:none; margin-bottom:0.75rem;">
+            <div id="inventory-reminder" style="margin-bottom:0.75rem;">
                 <div class="inventory-reminder-card">
                     <div class="inventory-reminder-label">تذكير اليوم 🌅</div>
                     <div class="inventory-reminder-loss" id="reminder-loss-text"></div>
@@ -4216,11 +4261,11 @@
                         </div>
                     </div>
 
-                    <!-- 7. يوميات الامتنان -->
+                    <!-- 7. يوميات الإمتنان -->
                     <div class="journal-hub-card" style="border-color:rgba(162,155,254,0.3);">
                         <div class="jhc-icon-wrap" style="background:linear-gradient(135deg,#a29bfe,#6c5ce7);">✨</div>
                         <div class="jhc-body">
-                            <div class="jhc-title">يوميات الامتنان</div>
+                            <div class="jhc-title">يوميات الإمتنان</div>
                             <div class="jhc-desc">جمّع لحظات السعادة في جرة النجوم</div>
                         </div>
                         <div class="jhc-actions">
@@ -4343,7 +4388,7 @@
 
                     <!-- Header -->
                     <div class="grat-header">
-                        <div class="grat-title">يوميات الامتنان ✨</div>
+                        <div class="grat-title">يوميات الإمتنان ✨</div>
                         <div style="margin-top:0.35rem;">
                             <span class="grat-subtitle" id="gratitude-count-num">0 نجمة</span>
                         </div>
@@ -8901,6 +8946,46 @@
         function loadInventoryPage() {
             renderInventoryList('loss');
             renderInventoryList('gain');
+            _syncInventoryFromGAS();
+        }
+
+        async function _syncInventoryFromGAS() {
+            if (!CONFIG.scriptUrl) return;
+            try {
+                const res  = await fetch(`${CONFIG.scriptUrl}?action=getAll&sheet=Inventory`);
+                const data = await res.json();
+                if (!data.success || !Array.isArray(data.data) || data.data.length < 1) return;
+
+                const headers = data.data[0].map(h => String(h).trim());
+                const idxType = headers.indexOf('النوع');
+                const idxText = headers.indexOf('النص');
+                if (idxText === -1) return;
+
+                const gasLosses = [], gasGains = [];
+                data.data.slice(1).forEach(row => {
+                    const text = String(row[idxText] || '').trim();
+                    if (!text) return;
+                    (idxType !== -1 && String(row[idxType] || '') === 'خسارة' ? gasLosses : gasGains).push(text);
+                });
+
+                const localLosses = JSON.parse(localStorage.getItem('_inventoryLosses') || '[]');
+                const localGains  = JSON.parse(localStorage.getItem('_inventoryGains')  || '[]');
+                let changed = false;
+
+                if (JSON.stringify(gasLosses) !== JSON.stringify(localLosses)) {
+                    localStorage.setItem('_inventoryLosses', JSON.stringify(gasLosses));
+                    changed = true;
+                }
+                if (JSON.stringify(gasGains) !== JSON.stringify(localGains)) {
+                    localStorage.setItem('_inventoryGains', JSON.stringify(gasGains));
+                    changed = true;
+                }
+                if (changed) {
+                    renderInventoryList('loss');
+                    renderInventoryList('gain');
+                    refreshInventoryReminder();
+                }
+            } catch(e) { /* silent */ }
         }
 
         function updateInventoryReminder() {
@@ -9104,22 +9189,64 @@
         function loadGratitudePage() {
             _migrateGratitudeData();
             renderJarStars();
-            _syncGratitudeCount();
+            _syncGratitudeFromGAS();
         }
 
-        async function _syncGratitudeCount() {
+        async function _syncGratitudeFromGAS() {
             if (!CONFIG.scriptUrl) return;
             try {
                 const res  = await fetch(`${CONFIG.scriptUrl}?action=getAll&sheet=Gratitude`);
                 const data = await res.json();
-                if (data.success && Array.isArray(data.data) && data.data.length > 1) {
-                    const serverCount = data.data.length - 1;
-                    if (serverCount > _getGratitudeEntries().length) {
-                        // Server has more — update count badge only; full sync would need GAS schema change
-                        localStorage.setItem('_gratitudeCount', String(serverCount));
-                        document.getElementById('gratitude-count-num').textContent = `${serverCount} نجمة`;
-                    }
-                }
+                if (!data.success || !Array.isArray(data.data) || data.data.length < 2) return;
+
+                const headers = data.data[0].map(h => String(h).trim());
+                const idx = {
+                    date:   headers.indexOf('التاريخ'),
+                    prompt: headers.indexOf('السؤال المحفز'),
+                    answer: headers.indexOf('الإجابة')
+                };
+                if (idx.answer === -1) return;
+
+                const localEntries = _getGratitudeEntries();
+                const localByKey   = new Map(
+                    localEntries.map(e => [`${e.date}_${e.answer.trim().substring(0, 30)}`, e])
+                );
+
+                const gasEntries = data.data.slice(1).map((row, i) => {
+                    const answer = String(row[idx.answer] || '').trim();
+                    if (!answer) return null;
+                    const date   = idx.date   !== -1 ? String(row[idx.date]   || '').substring(0, 10) : '';
+                    const prompt = idx.prompt !== -1 ? String(row[idx.prompt] || '') : '';
+                    const key    = `${date}_${answer.substring(0, 30)}`;
+                    if (localByKey.has(key)) return localByKey.get(key);
+                    // Entry from another device — assign deterministic shape/color
+                    const shape = (i % 6) + 1;
+                    const month = date ? new Date(date + 'T12:00:00').getMonth() : new Date().getMonth();
+                    const color = STAR_MONTH_COLORS[isNaN(month) ? 0 : month] || STAR_MONTH_COLORS[0];
+                    return { id: date ? new Date(date + 'T12:00:00').getTime() + i : Date.now() - i * 1000, date, prompt, answer, shape, color };
+                }).filter(Boolean);
+
+                if (!gasEntries.length) return;
+
+                // Keep entries added in the last 60 s that haven't reached GAS yet
+                const gasKeys = new Set(gasEntries.map(e => `${e.date}_${e.answer.trim().substring(0, 30)}`));
+                const pending = localEntries.filter(e => {
+                    const key = `${e.date}_${e.answer.trim().substring(0, 30)}`;
+                    return !gasKeys.has(key) && e.id && (Date.now() - e.id) < 60000;
+                });
+
+                const merged = [...gasEntries, ...pending].sort((a, b) => {
+                    if (a.date < b.date) return -1;
+                    if (a.date > b.date) return  1;
+                    return (a.id || 0) - (b.id || 0);
+                });
+
+                const localSig  = localEntries.map(e => `${e.date}_${e.answer.trim().substring(0, 30)}`).sort().join(',');
+                const mergedSig = merged.map(e => `${e.date}_${e.answer.trim().substring(0, 30)}`).sort().join(',');
+                if (localSig === mergedSig) return;
+
+                _saveGratitudeEntries(merged);
+                renderJarStars();
             } catch(e) { /* silent */ }
         }
 
@@ -9195,15 +9322,13 @@
             entries.push(entry);
             _saveGratitudeEntries(entries);
 
-            // Animate then refresh
-            _animateStarDrop(color, shape);
-
             setTimeout(() => {
                 renderJarStars();
                 if (ta) ta.value = '';
                 if (_gratMode === 'template') shuffleGratitudePrompt();
                 closeGratModal('grat-add-modal', null);
                 showMessage('gratitude-message', '✨ نجمة جديدة أضفتها إلى جرتك!', 'success');
+                setTimeout(() => _animateStarDrop(color, shape), 400);
             }, 950);
 
             // Background GAS sync
